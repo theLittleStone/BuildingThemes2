@@ -30,7 +30,8 @@ namespace BuildingThemes
             }
             catch (Exception e)
             {
-                Debugger.LogException(e);
+                UnityEngine.Debug.LogError("Building Themes: Exception in OnCreated.");
+                UnityEngine.Debug.LogException(e);
             }
         }
 
@@ -42,18 +43,30 @@ namespace BuildingThemes
 
             try
             {
-                // Don't load if it's not a game
-                if (mode != LoadMode.LoadGame && mode != LoadMode.NewGame) return;
+                UnityEngine.Debug.Log("Building Themes 2: OnLevelLoaded mode=" + mode + " (" + (int)mode + ")");
+
+                // Accept all in-game modes (not map/asset/scenario editors)
+                bool isGameMode = mode == LoadMode.NewGame
+                               || mode == LoadMode.LoadGame
+                               || mode == LoadMode.NewGameFromScenario
+                               || mode == LoadMode.LoadScenario;
+                if (!isGameMode) return;
 
                 BuildingThemesManager.instance.ImportThemes();
+                UnityEngine.Debug.Log("Building Themes 2: ImportThemes done.");
 
                 PolicyPanelEnabler.UnlockPolicyToolbarButton();
+                UnityEngine.Debug.Log("Building Themes 2: PolicyPanelEnabler done.");
+
                 UIThemeManager.Initialize();
+                UnityEngine.Debug.Log("Building Themes 2: UIThemeManager.Initialize done. instance=" + (UIThemeManager.instance != null ? "OK" : "NULL"));
+
                 UIStyleButtonReplacer.ReplaceStyleButton();
             }
             catch (Exception e)
             {
-                Debugger.LogException(e);
+                UnityEngine.Debug.LogError("Building Themes 2: Exception in OnLevelLoaded.");
+                UnityEngine.Debug.LogException(e);
             }
         }
 
@@ -65,6 +78,7 @@ namespace BuildingThemes
 
             BuildingThemesManager.instance.Reset();
             UIThemeManager.Destroy();
+            GUI.UIUtils.ClearAtlasCache();
         }
 
         public override void OnReleased()

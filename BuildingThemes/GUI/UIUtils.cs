@@ -197,6 +197,11 @@ namespace BuildingThemes.GUI
 
         public static UITextureAtlas[] s_atlases;
 
+        public static void ClearAtlasCache()
+        {
+            s_atlases = null;
+        }
+
         public static UITextureAtlas GetAtlas(string name)
         {
             if (s_atlases == null)
@@ -204,6 +209,8 @@ namespace BuildingThemes.GUI
 
             for (int i = 0; i < s_atlases.Length; i++)
             {
+                // Atlas objects may be destroyed between scene loads — skip null/destroyed entries.
+                if (s_atlases[i] == null) continue;
                 if (s_atlases[i].name == name)
                     return s_atlases[i];
             }

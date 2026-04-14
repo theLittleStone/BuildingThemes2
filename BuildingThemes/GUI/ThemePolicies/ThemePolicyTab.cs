@@ -23,6 +23,8 @@ namespace BuildingThemes.GUI
                 return;
             }
 
+            if (ToolsModifierControl.policiesPanel == null) return;
+
             UITabstrip tabstrip = ToolsModifierControl.policiesPanel.Find("Tabstrip") as UITabstrip;
 
             if (tabstrip == null) return;
@@ -105,7 +107,15 @@ namespace BuildingThemes.GUI
             showThemeManager.width = controls.width;
             showThemeManager.text = "Theme Manager";
 
-            showThemeManager.eventClick += (c, p) => GUI.UIThemeManager.instance.Toggle();
+            showThemeManager.eventClick += (c, p) =>
+            {
+                if (GUI.UIThemeManager.instance == null)
+                {
+                    UnityEngine.Debug.LogError("Building Themes: UIThemeManager instance is null — UI failed to initialize. Check the log for earlier errors.");
+                    return;
+                }
+                GUI.UIThemeManager.instance.Toggle();
+            };
 
             RefreshThemesContainer();
         }
@@ -131,6 +141,8 @@ namespace BuildingThemes.GUI
 
         public static void RemoveThemesTab()
         {
+            if (ToolsModifierControl.policiesPanel == null) return;
+
             UITabstrip tabstrip = ToolsModifierControl.policiesPanel.Find("Tabstrip") as UITabstrip;
 
             if (tabstrip == null) return;

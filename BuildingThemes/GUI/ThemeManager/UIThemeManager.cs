@@ -75,8 +75,8 @@ namespace BuildingThemes.GUI
             catch (Exception e)
             {
                 // Catching any exception to not block the loading process of other mods
-                Debugger.Log("Building Themes: An error has happened during the UI creation.");
-                Debugger.LogException(e);
+                Debug.LogError("Building Themes: An error has happened during the UI creation.");
+                Debug.LogException(e);
             }
         }
 
@@ -86,12 +86,14 @@ namespace BuildingThemes.GUI
             {
                 if (_gameObject != null)
                     GameObject.Destroy(_gameObject);
+                _instance = null;
+                _gameObject = null;
             }
             catch (Exception e)
             {
                 // Catching any exception to not block the unloading process of other mods
-                Debugger.Log("Building Themes: An error has happened during the UI destruction.");
-                Debugger.LogException(e);
+                Debug.LogError("Building Themes: An error has happened during the UI destruction.");
+                Debug.LogException(e);
             }
         }
 
@@ -358,8 +360,8 @@ namespace BuildingThemes.GUI
             }
             catch(Exception e)
             {
-                Debugger.Log("Building Themes: An error has happened during the UI start.");
-                Debugger.LogException(e);
+                Debug.LogError("Building Themes: An error has happened during the UI start.");
+                Debug.LogException(e);
                 Destroy();
             }
         }
