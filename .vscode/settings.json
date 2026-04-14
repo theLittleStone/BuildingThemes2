@@ -1,0 +1,49 @@
+{
+  "// EXTENSION MANAGEMENT COMMENT": "Disable language/framework specific extensions not needed for this C# project",
+
+  "extensions.ignoreRecommendations": false,
+
+  "// Python Extensions": "Disable Python-related extensions for this project",
+  "extensions.ignoredRecommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.debugpy",
+    "ms-toolsai.jupyter",
+    "ms-toolsai.jupyter-keymap",
+    "ms-toolsai.jupyter-renderers",
+    "ms-toolsai.vscode-jupyter-cell-tags",
+    "ms-toolsai.vscode-jupyter-slideshow",
+    "ms-toolsai.vscode-python-envs",
+    "ms-python.isort"
+  ],
+
+  "// Disable These Extensions Workspace-Wide": "",
+  "extensions.ignoreRecommendationsOnSearch": false,
+  "extensions.recommendations": [
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "ms-vscode.makefile-tools",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+    "github.copilot-chat"
+  ],
+
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit"
+    }
+  },
+
+  "// Other recommended settings for C# development": "",
+  "editor.formatOnSave": true,
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+  "chat.tools.terminal.autoApprove": {
+    "/^sudo umount /mnt/cities_skylines 2>/dev/null \\|\\| true$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
+}

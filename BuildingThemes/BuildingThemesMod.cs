@@ -3,7 +3,6 @@ using ICities;
 using BuildingThemes.GUI;
 using CitiesHarmony.API;
 using ColossalFramework.UI;
-using Epic.OnlineServices.Platform;
 using UnityEngine;
 
 namespace BuildingThemes
@@ -11,8 +10,8 @@ namespace BuildingThemes
     public class BuildingThemesMod : IUserMod
     {
         public static bool xmlCorrupt = false;
-        
-        
+
+
         // we'll use this variable to pass the building position to GetRandomBuildingInfo method. It's here to make possible 81 Tiles compatibility
         public static Vector3 position;
         public static readonly string EIGHTY_ONE_MOD = "81 Tiles (Fixed for C:S 1.2+)";
@@ -47,7 +46,8 @@ namespace BuildingThemes
 
         }
 
-        public void OnEnabled() {
+        public void OnEnabled()
+        {
             HarmonyHelper.EnsureHarmonyInstalled();
         }
     }
