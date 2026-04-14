@@ -21,6 +21,7 @@ build/
 bld/
 [Bb]in/
 [Oo]bj/
+dist
 
 # Visual Studo 2015 cache/options directory
 .vs/
@@ -129,7 +130,7 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-# TODO: Comment the next line if you want to checkin your web deploy settings 
+# TODO: Comment the next line if you want to checkin your web deploy settings
 # but database connection strings (with potential passwords) will be unencrypted
 *.pubxml
 *.publishproj
@@ -197,4 +198,7 @@ FakesAssemblies/
 
 #Rider stuff
 .idea
+
+# Local machine-specific config (copy .env.example → .env and fill in values)
+.env
 *.iml
