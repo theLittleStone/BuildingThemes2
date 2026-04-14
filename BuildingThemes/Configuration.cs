@@ -41,6 +41,34 @@ namespace BuildingThemes
             [XmlIgnoreAttribute]
             public bool isBuiltIn = false;
 
+            /// <summary>Locale key set at import time (e.g. "STYLES_EUROPEANSUBURBIA"). Null for user/mod themes.</summary>
+            [XmlIgnore]
+            public string localeKey;
+
+            [XmlIgnore]
+            public string displayName
+            {
+                get
+                {
+                    if (!isBuiltIn) return name;
+                    return "[Vanilla] " + ResolveLocaleName();
+                }
+            }
+
+            private string ResolveLocaleName()
+            {
+                if (localeKey != null)
+                {
+                    try
+                    {
+                        // Same call the game uses for style display names (see StylesHelper IL)
+                        return ColossalFramework.Globalization.Locale.Get(localeKey);
+                    }
+                    catch { }
+                }
+                return name;
+            }
+
             [XmlAttribute("style-package"), DefaultValue(null)]
             public string stylePackage = null;
 

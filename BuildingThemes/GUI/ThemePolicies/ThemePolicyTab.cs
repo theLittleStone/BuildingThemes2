@@ -41,6 +41,7 @@ namespace BuildingThemes.GUI
             }
 
             // The container for the policies was created by the game when we added the tab
+            if (tabstrip.tabPages == null) return;
             var pageIndex = tabstrip.tabPages.childCount - 1;
             container = (UIPanel)tabstrip.tabPages.components[pageIndex];
 
@@ -156,10 +157,10 @@ namespace BuildingThemes.GUI
 
             if (container != null)
             {
-                tabstrip.tabPages.RemoveUIComponent(container);
+                if (tabstrip.tabPages != null)
+                    tabstrip.tabPages.RemoveUIComponent(container);
                 GameObject.Destroy(container.gameObject);
                 container = null;
-
             }
         }
 

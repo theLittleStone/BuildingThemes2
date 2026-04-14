@@ -57,7 +57,7 @@ namespace BuildingThemes.GUI
             }
 
             m_theme = data as Configuration.Theme;
-            m_name.text = m_theme.name;
+            m_name.text = m_theme.displayName;
             UIUtils.TruncateLabel(m_name, parent.width - 30);
 
             string validityError = UIThemeManager.instance.ThemeValidityError(m_theme);

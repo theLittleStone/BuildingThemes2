@@ -133,7 +133,7 @@ namespace BuildingThemes.GUI
             SetupControls();
 
             m_theme = data as Configuration.Theme;
-            m_policyButton.text = m_theme.name;
+            m_policyButton.text = m_theme.displayName;
             m_policyCheckBox.objectUserData = m_theme;
 
             var districtId = ToolsModifierControl.policiesPanel.targetDistrict;

@@ -1,7 +1,9 @@
+using System;
 using System.Reflection;
 using CitiesHarmony.API;
 using ColossalFramework.UI;
 using BuildingThemes.GUI;
+using UnityEngine;
 
 namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
 {
@@ -50,12 +52,14 @@ namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
         // so we remove the Themes tab before the call and restore it after.
         public static void RefreshPanel_Prefix()
         {
-            ThemePolicyTab.RemoveThemesTab();
+            try { ThemePolicyTab.RemoveThemesTab(); }
+            catch (Exception e) { Debug.LogException(e); }
         }
 
         public static void RefreshPanel_Postfix()
         {
-            ThemePolicyTab.AddThemesTab();
+            try { ThemePolicyTab.AddThemesTab(); }
+            catch (Exception e) { Debug.LogException(e); }
         }
 
         // SetParentButton searches for a TutorialUITag on each button — our tab doesn't have one,
@@ -63,13 +67,15 @@ namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
         public static void SetParentButton_Prefix(UIButton button)
         {
             if (button == null) return;
-            ThemePolicyTab.RemoveThemesTab();
+            try { ThemePolicyTab.RemoveThemesTab(); }
+            catch (Exception e) { Debug.LogException(e); }
         }
 
         public static void SetParentButton_Postfix(UIButton button)
         {
             if (button == null) return;
-            ThemePolicyTab.AddThemesTab();
+            try { ThemePolicyTab.AddThemesTab(); }
+            catch (Exception e) { Debug.LogException(e); }
         }
     }
 }
