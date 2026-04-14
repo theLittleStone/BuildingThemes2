@@ -17,9 +17,12 @@ namespace BuildingThemes
         public static readonly string EIGHTY_ONE_MOD = "81 Tiles (Fixed for C:S 1.2+)";
         public static readonly string EIGHTY_ONE_2_ASSEMBLY = "EightyOne2";
 
-        public string Name => "Building Themes";
+        public string Name => "Building Themes 2";
 
-        public string Description => "Create building themes and apply them to cities and districts.";
+        public string Description =>
+            "Create building themes and apply them to cities and districts. " +
+            "Community-maintained fork of Building Themes by boformer (Sebastian Schöner). " +
+            "Harmony 2.x migration by roberto-naharro.";
 
         public void OnSettingsUI(UIHelperBase helper)
         {
@@ -48,7 +51,15 @@ namespace BuildingThemes
 
         public void OnEnabled()
         {
-            HarmonyHelper.EnsureHarmonyInstalled();
+            HarmonyHelper.DoOnHarmonyReady(() => HarmonyPatches.Patcher.PatchAll());
+        }
+
+        public void OnDisabled()
+        {
+            if (HarmonyHelper.IsHarmonyInstalled)
+            {
+                HarmonyPatches.Patcher.UnpatchAll();
+            }
         }
     }
 }

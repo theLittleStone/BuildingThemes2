@@ -1,9 +1,26 @@
-# BuildingThemes
+# Building Themes 2
 
-BuildingThemes is a Cities: Skylines mod.
+Building Themes 2 is a community-maintained fork of **Building Themes** by
+[boformer (Sebastian Schöner)](https://github.com/boformer).
+All original work and concept belong to him. Thank you, boformer.
 
-Using the C# detours code created by Sebastian Schoener, released under the MIT license:
-<https://github.com/sschoener/cities-skylines-detour>
+Thanks also to **BloodyPenguin** for prior compatibility fixes.
+
+Harmony 2.x migration maintained by [roberto-naharro](https://github.com/roberto-naharro).
+
+---
+
+Building Themes 2 is a Cities: Skylines 1 mod.
+It lets you create building themes and apply them to cities and districts,
+restricting which growable buildings can spawn in each area.
+
+**Steam Workshop dependency:** [CitiesHarmony (Harmony 2.2)](https://steamcommunity.com/sharedfiles/filedetails/?id=2040656402)
+must be subscribed and enabled.
+
+---
+
+_Original detour system by Sebastian Schöner, MIT license:_
+_<https://github.com/sschoener/cities-skylines-detour> (removed in v2.0.0)_
 
 ## Linux Build Setup (Windows game files on SMB share)
 
