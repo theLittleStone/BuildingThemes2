@@ -203,13 +203,17 @@ namespace BuildingThemes
 
             var allBuildingInfos = style.GetBuildingInfos();
 
-            // Derive the ModderPackBitMask for this style by OR-ing the pack bits of all its
-            // buildings (including non-growable ones such as unique buildings and service buildings,
-            // which reliably carry the correct DLC bit even when the growable buildings do not).
+            // Derive DLC masks for this style by OR-ing the bits of all its buildings
+            // (including non-growable ones, which reliably carry the correct DLC bits).
             var packMask = SteamHelper.ModderPackBitMask.None;
+            var expansionMask = SteamHelper.ExpansionBitMask.None;
             if (allBuildingInfos != null)
                 foreach (var b in allBuildingInfos)
-                    if (b != null) packMask |= b.m_requiredModderPack;
+                {
+                    if (b == null) continue;
+                    packMask      |= b.m_requiredModderPack;
+                    expansionMask |= b.m_requiredExpansion;
+                }
 
             // Collect growable zone buildings (Placement.Automatic) from the style.
             // Non-growable buildings (unique, service, parks, sub-buildings) are skipped:
@@ -223,6 +227,30 @@ namespace BuildingThemes
                     if (b == null || b.m_placementStyle != ItemClass.Placement.Automatic) continue;
                     if (styleNames.Add(b.name))
                         buildings.Add(new Configuration.Building { name = b.name, fromStyle = true });
+                }
+            }
+
+            // If this is a paid DLC pack, skip it entirely when the player doesn't own it.
+            bool isModderPackDlc = packMask != SteamHelper.ModderPackBitMask.None;
+            bool isExpansionDlc  = expansionMask != SteamHelper.ExpansionBitMask.None;
+
+            if (isModderPackDlc)
+            {
+                var ownedMask = SteamHelper.GetOwnedModderPackMask();
+                if ((ownedMask & packMask) == SteamHelper.ModderPackBitMask.None)
+                {
+                    Debugger.LogFormat("Skipping style \"{0}\": modder pack DLC not owned (mask {1}).", style.FullName, packMask);
+                    return;
+                }
+            }
+
+            if (isExpansionDlc)
+            {
+                var ownedMask = SteamHelper.GetOwnedExpansionMask();
+                if ((ownedMask & expansionMask) == SteamHelper.ExpansionBitMask.None)
+                {
+                    Debugger.LogFormat("Skipping style \"{0}\": expansion DLC not owned (mask {1}).", style.FullName, expansionMask);
+                    return;
                 }
             }
 
@@ -245,6 +273,7 @@ namespace BuildingThemes
             }
 
             var theme = AddImportedTheme(buildings, FormatStyleName(style), style.PackageName);
+            theme.isDlc = isModderPackDlc || isExpansionDlc;
 
             // Wire up the locale key so the UI can show the official expansion name.
             string localeKey;
@@ -252,8 +281,8 @@ namespace BuildingThemes
                 theme.localeKey = localeKey;
 
             Debugger.LogFormat(
-                "Imported style \"{0}\" as theme \"{1}\". Pack mask: {2}. Style buildings: {3}. Theme buildings: {4}.",
-                style.FullName, theme.name, packMask,
+                "Imported style \"{0}\" as theme \"{1}\". isDlc={2}. Style buildings: {3}. Theme buildings: {4}.",
+                style.FullName, theme.name, theme.isDlc,
                 allBuildingInfos != null ? allBuildingInfos.Length : 0,
                 theme.buildings.Count);
         }

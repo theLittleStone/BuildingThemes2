@@ -62,8 +62,11 @@ namespace BuildingThemes.GUI
 
             string validityError = UIThemeManager.instance.ThemeValidityError(m_theme);
 
-            m_name.textColor = (validityError == null) ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 0, 255); ;
+            m_name.textColor = (validityError == null) ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 0, 255);
             tooltip = validityError;
+            m_name.tooltip = validityError == null
+                ? m_theme.displayName
+                : m_theme.displayName + "\n" + validityError;
 
             if (isRowOdd)
             {

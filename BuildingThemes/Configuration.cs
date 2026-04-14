@@ -41,6 +41,10 @@ namespace BuildingThemes
             [XmlIgnoreAttribute]
             public bool isBuiltIn = false;
 
+            /// <summary>True when this theme comes from a paid DLC (ModderPackBitMask != None).</summary>
+            [XmlIgnore]
+            public bool isDlc = false;
+
             /// <summary>Locale key set at import time (e.g. "STYLES_EUROPEANSUBURBIA"). Null for user/mod themes.</summary>
             [XmlIgnore]
             public string localeKey;
@@ -51,7 +55,8 @@ namespace BuildingThemes
                 get
                 {
                     if (!isBuiltIn) return name;
-                    return "[Vanilla] " + ResolveLocaleName();
+                    string prefix = isDlc ? "[DLC] " : "[Vanilla] ";
+                    return prefix + ResolveLocaleName();
                 }
             }
 

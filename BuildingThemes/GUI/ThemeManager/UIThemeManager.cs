@@ -572,8 +572,6 @@ namespace BuildingThemes.GUI
             }
         }
 
-        private static bool s_diagLogged = false;
-
         private List<BuildingItem> GetBuildingItemList(Configuration.Theme theme)
         {
             List<BuildingItem> list = new List<BuildingItem>();
@@ -581,13 +579,11 @@ namespace BuildingThemes.GUI
             // List of all growables prefabs
             Dictionary<string, BuildingItem> buildingDictionary = new Dictionary<string, BuildingItem>();
             uint totalPrefabs = (uint)PrefabCollection<BuildingInfo>.PrefabCount();
-            int automaticCount = 0;
             for (uint i = 0; i < totalPrefabs; i++)
             {
                 BuildingInfo prefab = PrefabCollection<BuildingInfo>.GetPrefab(i);
                 if (prefab != null && prefab.m_placementStyle == ItemClass.Placement.Automatic)
                 {
-                    automaticCount++;
                     BuildingItem item = new BuildingItem();
                     item.prefab = PrefabCollection<BuildingInfo>.GetPrefab(i);
                     if(!buildingDictionary.ContainsKey(item.name)) buildingDictionary.Add(item.name, item);
@@ -596,21 +592,9 @@ namespace BuildingThemes.GUI
                         list.Add(item);
                 }
             }
-            if (!s_diagLogged)
-            {
-                s_diagLogged = true;
-                var sb = new System.Text.StringBuilder();
-                sb.AppendFormat("Building Themes 2 DIAG: PrefabCount={0} Automatic={1} DictSize={2}\nAutomatic prefabs:\n", (int)totalPrefabs, automaticCount, buildingDictionary.Count);
-                foreach (var kv in buildingDictionary)
-                    sb.AppendFormat("  PREFAB: {0}\n", kv.Key);
-                Debug.Log(sb.ToString());
-            }
 
             // Combine growables with buildings in configuration
             Configuration.Building[] buildings = theme.buildings.ToArray();
-            int matched = 0, unmatched = 0;
-            var diagSb = new System.Text.StringBuilder();
-            diagSb.AppendFormat("Building Themes 2 DIAG theme={0} buildings={1}:\n", theme.name, buildings.Length);
             for (int i = 0; i < buildings.Length; i++)
             {
                 if (buildingDictionary.ContainsKey(buildings[i].name))
@@ -618,8 +602,6 @@ namespace BuildingThemes.GUI
                     // Associate building with prefab
                     BuildingItem item = buildingDictionary[buildings[i].name];
                     item.building = buildings[i];
-                    matched++;
-                    diagSb.AppendFormat("  OK: {0}\n", buildings[i].name);
 
                     if (!list.Contains(item)) list.Add(item);
                 }
@@ -635,15 +617,11 @@ namespace BuildingThemes.GUI
                         continue;
                     }
 
-                    unmatched++;
-                    diagSb.AppendFormat("  MISSING: {0}\n", buildings[i].name);
                     BuildingItem item = new BuildingItem();
                     item.building = buildings[i];
                     list.Add(item);
                 }
             }
-            diagSb.AppendFormat("  matched={0} unmatched={1}", matched, unmatched);
-            Debug.Log(diagSb.ToString());
 
             // Sorting
             try
