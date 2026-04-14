@@ -201,15 +201,49 @@ namespace BuildingThemes
         {
             if (style.Name == DistrictStyle.kEuropeanStyleName) return; //skip builtin style
 
-            var buildingInfos = style.GetBuildingInfos();
-            List<Configuration.Building> buildings = null;
-            if (buildingInfos != null)
+            var allBuildingInfos = style.GetBuildingInfos();
+
+            // Derive the ModderPackBitMask for this style by OR-ing the pack bits of all its
+            // buildings (including non-growable ones such as unique buildings and service buildings,
+            // which reliably carry the correct DLC bit even when the growable buildings do not).
+            var packMask = SteamHelper.ModderPackBitMask.None;
+            if (allBuildingInfos != null)
+                foreach (var b in allBuildingInfos)
+                    if (b != null) packMask |= b.m_requiredModderPack;
+
+            // Collect growable zone buildings (Placement.Automatic) from the style.
+            // Non-growable buildings (unique, service, parks, sub-buildings) are skipped:
+            // they cannot spawn in zones and would show as "(Not Loaded)" in the Theme Manager.
+            var styleNames = new System.Collections.Generic.HashSet<string>();
+            var buildings = new System.Collections.Generic.List<Configuration.Building>();
+            if (allBuildingInfos != null)
             {
-                buildings = buildingInfos.Select(buildingInfo => new Configuration.Building
+                foreach (var b in allBuildingInfos)
                 {
-                    name = buildingInfo.name, fromStyle = true
-                }).ToList();
+                    if (b == null || b.m_placementStyle != ItemClass.Placement.Automatic) continue;
+                    if (styleNames.Add(b.name))
+                        buildings.Add(new Configuration.Building { name = b.name, fromStyle = true });
+                }
             }
+
+            // Some DLC packs tag their growable buildings with m_requiredModderPack but do not
+            // register them all in the DistrictStyle (e.g. Heart of Korea KR R* residential).
+            // Scan PrefabCollection for any Placement.Automatic building that carries this
+            // style's pack bit and hasn't been added yet. Works for any current or future DLC.
+            if (packMask != SteamHelper.ModderPackBitMask.None)
+            {
+                uint prefabCount = (uint)PrefabCollection<BuildingInfo>.PrefabCount();
+                for (uint i = 0; i < prefabCount; i++)
+                {
+                    BuildingInfo prefab = PrefabCollection<BuildingInfo>.GetPrefab(i);
+                    if (prefab == null) continue;
+                    if (prefab.m_placementStyle != ItemClass.Placement.Automatic) continue;
+                    if ((prefab.m_requiredModderPack & packMask) == SteamHelper.ModderPackBitMask.None) continue;
+                    if (!styleNames.Add(prefab.name)) continue;
+                    buildings.Add(new Configuration.Building { name = prefab.name, fromStyle = true });
+                }
+            }
+
             var theme = AddImportedTheme(buildings, FormatStyleName(style), style.PackageName);
 
             // Wire up the locale key so the UI can show the official expansion name.
@@ -218,8 +252,9 @@ namespace BuildingThemes
                 theme.localeKey = localeKey;
 
             Debugger.LogFormat(
-                "Imported style \"{0}\" as theme \"{1}\". Buildings in style: {2}. Buildings in theme: {3} ",
-                style.FullName, theme.name, buildingInfos?.Length ?? 0,
+                "Imported style \"{0}\" as theme \"{1}\". Pack mask: {2}. Style buildings: {3}. Theme buildings: {4}.",
+                style.FullName, theme.name, packMask,
+                allBuildingInfos != null ? allBuildingInfos.Length : 0,
                 theme.buildings.Count);
         }
 
