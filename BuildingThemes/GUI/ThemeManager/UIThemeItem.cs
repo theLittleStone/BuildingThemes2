@@ -57,10 +57,21 @@ namespace BuildingThemes.GUI
             }
 
             m_theme = data as Configuration.Theme;
-            m_name.text = m_theme.displayName;
-            UIUtils.TruncateLabel(m_name, parent.width - 30);
 
             string validityError = UIThemeManager.instance.ThemeValidityError(m_theme);
+
+            if (validityError != null)
+            {
+                // Append X/Y count badge to the displayed name
+                var stats = UIThemeManager.instance.GetThemeStats(m_theme);
+                m_name.text = string.Format("{0} ({1}/{2})", m_theme.displayName,
+                    stats.LoadedBuildings, stats.LoadedBuildings + stats.MissingBuildings);
+            }
+            else
+            {
+                m_name.text = m_theme.displayName;
+            }
+            UIUtils.TruncateLabel(m_name, parent.width - 30);
 
             m_name.textColor = (validityError == null) ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 0, 255);
             tooltip = validityError;

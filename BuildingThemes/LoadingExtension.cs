@@ -55,6 +55,9 @@ namespace BuildingThemes
                 BuildingThemesManager.instance.ImportThemes();
                 UnityEngine.Debug.Log("Building Themes 2: ImportThemes done.");
 
+                if (Debugger.Enabled)
+                    BuildingThemesManager.instance.ValidateAllThemes();
+
                 PolicyPanelEnabler.UnlockPolicyToolbarButton();
                 UnityEngine.Debug.Log("Building Themes 2: PolicyPanelEnabler done.");
 

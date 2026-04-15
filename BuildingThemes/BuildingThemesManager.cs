@@ -4,7 +4,9 @@ using ColossalFramework;
 using System;
 using ColossalFramework.Plugins;
 using System.IO;
+using System.Text;
 using UnityEngine;
+using BuildingThemes.Diagnostics;
 
 namespace BuildingThemes
 {
@@ -89,7 +91,7 @@ namespace BuildingThemes
             m_areaBuildingsDirty = true;
             importedModThemes = false;
             importedStyles = false;
-
+            ThemeDiagnostics.Reset();
         }
 
         public void ImportThemes() 
@@ -432,10 +434,11 @@ namespace BuildingThemes
             {
                 Debugger.LogFormat("Compiling theme data for district {0}. Enabled Themes: {1}, Blacklist Themes: {2}",
                     districtId, enabledThemes.Count, blacklistedThemes == null ? 0 : blacklistedThemes.Count);
+                ThemeDiagnostics.BeginCompile(districtId);
             }
 
             // Create custom areaBuildings fastlist array for this district
-            RefreshAreaBuildings(info.areaBuildings, enabledThemes, blacklistedThemes, true);
+            RefreshAreaBuildings(info.areaBuildings, enabledThemes, blacklistedThemes, true, districtId);
 
             // Create upgrade mapping
             info.upgradeBuildings.Clear();
@@ -458,6 +461,7 @@ namespace BuildingThemes
             if (Debugger.Enabled)
             {
                 Debugger.LogFormat("Upgrade Mappings in district {0}: {1}", districtId, info.upgradeBuildings.Count);
+                ThemeDiagnostics.LogReport(districtId);
             }
         }
 
@@ -524,8 +528,10 @@ namespace BuildingThemes
             return PrefabCollection<BuildingInfo>.GetPrefab(upgradePrefabIndex);
         }
 
-        private void RefreshAreaBuildings(FastList<ushort>[] m_areaBuildings, HashSet<Configuration.Theme> enabledThemes, HashSet<Configuration.Theme> blacklistedThemes, bool includeVariations)
+        private void RefreshAreaBuildings(FastList<ushort>[] m_areaBuildings, HashSet<Configuration.Theme> enabledThemes, HashSet<Configuration.Theme> blacklistedThemes, bool includeVariations, byte diagnosticsDistrictId = 255)
         {
+            bool recordDiagnostics = Debugger.Enabled && diagnosticsDistrictId != 255;
+
             int areaBuildingsLength = m_areaBuildings.Length;
             for (int i = 0; i < areaBuildingsLength; i++)
             {
@@ -547,7 +553,11 @@ namespace BuildingThemes
                         else
                         {
                             // mod begin
-                            if (!includeVariations && BuildingVariationManager.instance.IsVariation(prefab.name)) continue;
+                            if (!includeVariations && BuildingVariationManager.instance.IsVariation(prefab.name))
+                            {
+                                if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.Variation);
+                                continue;
+                            }
 
                             int spawnRateSum = 0;
                             int hits = 0;
@@ -561,7 +571,7 @@ namespace BuildingThemes
                                     if (building != null && building.include)
                                     {
                                         hits++;
-                                        // limit spawn rate to 50
+                                        // limit spawn rate to 100
                                         spawnRateSum += Mathf.Clamp(building.spawnRate, 0, 100);
                                         break;
                                     }
@@ -590,6 +600,7 @@ namespace BuildingThemes
 
                                 if (onBlacklist)
                                 {
+                                    if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.NotInTheme);
                                     continue;
                                 }
                                 else
@@ -599,10 +610,19 @@ namespace BuildingThemes
                                 }
                             }
 
-                            if (hits == 0 || spawnRateSum == 0)
+                            if (hits == 0)
                             {
+                                if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.NotInTheme);
                                 continue;
                             }
+
+                            if (spawnRateSum == 0)
+                            {
+                                if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.ZeroSpawnRate);
+                                continue;
+                            }
+
+                            if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.Accepted);
 
                             // mod end
 
@@ -753,6 +773,47 @@ namespace BuildingThemes
         public List<Configuration.Theme> GetAllThemes()
         {
             return Configuration.themes;
+        }
+
+        /// <summary>
+        /// Logs a validation summary for all themes to the debug log.
+        /// Called after ImportThemes() on level load. Requires Debugger.Enabled.
+        /// </summary>
+        public void ValidateAllThemes()
+        {
+            var themes = GetAllThemes();
+            var sb = new StringBuilder();
+            sb.AppendLine("[BuildingThemes2] Theme validation summary:");
+
+            int prefabCount = PrefabCollection<BuildingInfo>.PrefabCount();
+            var loadedNames = new HashSet<string>();
+            for (int i = 0; i < prefabCount; i++)
+            {
+                var prefab = PrefabCollection<BuildingInfo>.GetPrefab((uint)i);
+                if (prefab != null) loadedNames.Add(prefab.name);
+            }
+
+            foreach (var theme in themes)
+            {
+                int total = 0, loaded = 0, missing = 0;
+                foreach (var building in theme.buildings)
+                {
+                    if (!building.include) continue;
+                    total++;
+                    if (loadedNames.Contains(building.name)) loaded++;
+                    else missing++;
+                }
+
+                if (total == 0)
+                    sb.AppendFormat("  {0}: EMPTY (no buildings)\n", theme.name);
+                else if (missing == 0)
+                    sb.AppendFormat("  {0}: {1} buildings, all loaded\n", theme.name, total);
+                else
+                    sb.AppendFormat("  {0}: {1} buildings, {2} loaded, {3} MISSING\n",
+                        theme.name, total, loaded, missing);
+            }
+
+            Debugger.Log(sb.ToString());
         }
 
         public Configuration.Theme GetThemeByName(string themeName)

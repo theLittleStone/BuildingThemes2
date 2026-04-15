@@ -270,6 +270,58 @@ namespace BuildingThemes.GUI
             BuildingNotLoaded = 4
         }
 
+        public struct ThemeStats
+        {
+            public int TotalBuildings;
+            public int LoadedBuildings;
+            public int MissingBuildings;
+            public bool HasLevel1;
+        }
+
+        /// <summary>
+        /// Returns counts of loaded vs. missing buildings for the given theme.
+        /// Only counts buildings that are actually included and expected to be loaded
+        /// (skips DLC-locked and environment-filtered entries).
+        /// </summary>
+        public ThemeStats GetThemeStats(Configuration.Theme theme)
+        {
+            var stats = new ThemeStats();
+            if (!m_themes.ContainsKey(theme))
+            {
+                InitBuildingLists();
+                if (!m_themes.ContainsKey(theme)) return stats;
+            }
+
+            List<BuildingItem> list = m_themes[theme];
+            foreach (BuildingItem item in list)
+            {
+                if (!item.included) continue;
+                stats.TotalBuildings++;
+
+                if (item.prefab == null)
+                {
+                    // Don't count as "missing" if excluded by DLC or environment
+                    if (item.building != null)
+                    {
+                        if (item.building.dlc != null && !PlatformService.IsDlcInstalled(Convert.ToUInt32(item.building.dlc))) continue;
+                        if (item.building.environments != null
+                            && (item.building.environments.Contains("-" + SimulationManager.instance.m_metaData.m_environment)
+                                || !item.building.environments.Contains("+" + SimulationManager.instance.m_metaData.m_environment)))
+                        {
+                            continue;
+                        }
+                    }
+                    stats.MissingBuildings++;
+                }
+                else
+                {
+                    stats.LoadedBuildings++;
+                    if (item.level == 1) stats.HasLevel1 = true;
+                }
+            }
+            return stats;
+        }
+
         public string ThemeValidityError(Configuration.Theme theme)
         {
             if (!m_themes.ContainsKey(theme))
@@ -278,37 +330,12 @@ namespace BuildingThemes.GUI
                 if (!m_themes.ContainsKey(theme)) return "Theme not found";
             }
 
-            List<BuildingItem> list = m_themes[theme];
+            var stats = GetThemeStats(theme);
             ThemeValidity validity = ThemeValidity.Valid;
 
-            int includedCount = 0;
-            int l1Count = 0;
-
-            foreach (BuildingItem item in list)
-            {
-                if (item.included)
-                {
-                    includedCount++;
-                    if (item.prefab == null)
-                    {
-                        if (item.building != null)
-                        {
-                            if (item.building.dlc != null && !PlatformService.IsDlcInstalled(Convert.ToUInt32(item.building.dlc))) continue;
-                            if (item.building.environments != null
-                                && (item.building.environments.Contains("-" + SimulationManager.instance.m_metaData.m_environment)
-                                    || !item.building.environments.Contains("+" + SimulationManager.instance.m_metaData.m_environment)))
-                            {
-                                continue;
-                            }
-                        }
-                        validity |= ThemeValidity.BuildingNotLoaded;
-                    }
-                    if (item.level == 1) l1Count++;
-                }
-            }
-
-            if (includedCount == 0) validity |= ThemeValidity.Empty;
-            if (l1Count == 0) validity |= ThemeValidity.MissingL1;
+            if (stats.TotalBuildings == 0) validity |= ThemeValidity.Empty;
+            if (!stats.HasLevel1 && stats.TotalBuildings > 0) validity |= ThemeValidity.MissingL1;
+            if (stats.MissingBuildings > 0) validity |= ThemeValidity.BuildingNotLoaded;
 
             if (validity == 0) return null;
 
@@ -318,10 +345,11 @@ namespace BuildingThemes.GUI
             else if ((validity & ThemeValidity.MissingL1) == ThemeValidity.MissingL1)
                 errorMessage.Append("No level 1 building included.\n");
             if ((validity & ThemeValidity.BuildingNotLoaded) == ThemeValidity.BuildingNotLoaded)
-                errorMessage.Append("Not all buildings are loaded.\n");
+                errorMessage.AppendFormat("{0}/{1} buildings loaded.\n",
+                    stats.LoadedBuildings, stats.LoadedBuildings + stats.MissingBuildings);
             errorMessage.Length--;
 
-            return errorMessage.ToString(); ;
+            return errorMessage.ToString();
         }
 
         public override void Update()

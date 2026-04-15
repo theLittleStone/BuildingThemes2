@@ -133,8 +133,6 @@ namespace BuildingThemes.GUI
             SetupControls();
 
             m_theme = data as Configuration.Theme;
-            m_policyButton.text = m_theme.displayName;
-            m_policyButton.tooltip = m_theme.displayName;
             m_policyCheckBox.objectUserData = m_theme;
 
             var districtId = ToolsModifierControl.policiesPanel.targetDistrict;
@@ -144,7 +142,25 @@ namespace BuildingThemes.GUI
             if (UIThemeManager.instance != null)
             {
                 string validityError = UIThemeManager.instance.ThemeValidityError(m_theme);
+                if (validityError != null)
+                {
+                    var stats = UIThemeManager.instance.GetThemeStats(m_theme);
+                    m_policyButton.text = string.Format("{0} ({1}/{2})",
+                        m_theme.displayName,
+                        stats.LoadedBuildings, stats.LoadedBuildings + stats.MissingBuildings);
+                    m_policyButton.tooltip = m_theme.displayName + "\n" + validityError;
+                }
+                else
+                {
+                    m_policyButton.text = m_theme.displayName;
+                    m_policyButton.tooltip = m_theme.displayName;
+                }
                 tooltip = validityError;
+            }
+            else
+            {
+                m_policyButton.text = m_theme.displayName;
+                m_policyButton.tooltip = m_theme.displayName;
             }
         }
 

@@ -84,7 +84,9 @@
         <Compile Include="GUI\ThemeManager\UICloneBuildingModal.cs" />
         <Compile Include="GUI\UIStyleButtonReplacer.cs" />
         <Compile Include="GUI\UIWarningModal.cs" />
+        <Compile Include="GUI\ThemePolicies\UIThemeDiagnosticsModal.cs" />
         <Compile Include="GUI\ThemePolicies\ThemePolicyTab.cs" />
+        <Compile Include="Diagnostics\ThemeDiagnostics.cs" />
         <Compile Include="GUI\ThemePolicies\PolicyPanelEnabler.cs" />
         <Compile Include="GUI\ThemePolicies\BlacklistModeCheckboxContainer.cs" />
         <Compile Include="GUI\ThemeManager\PreviewRenderer.cs" />

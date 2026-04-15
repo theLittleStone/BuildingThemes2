@@ -118,6 +118,25 @@ namespace BuildingThemes.GUI
                 GUI.UIThemeManager.instance.Toggle();
             };
 
+            // Add a button to show spawn diagnostics for the current district
+            UIButton showDiagnostics = GUI.UIUtils.CreateButton(controls);
+            showDiagnostics.width = controls.width;
+            showDiagnostics.text = "Spawn Diagnostics";
+            showDiagnostics.tooltip = "Show why buildings are or are not spawning in this district.\nRequires 'Generate Debug Output' to be enabled in mod settings.";
+
+            showDiagnostics.eventClick += (c, p) =>
+            {
+                try
+                {
+                    byte districtId = ToolsModifierControl.policiesPanel.targetDistrict;
+                    UIThemeDiagnosticsModal.instance.ShowForDistrict(districtId);
+                }
+                catch (Exception e)
+                {
+                    UnityEngine.Debug.LogException(e);
+                }
+            };
+
             RefreshThemesContainer();
         }
 
