@@ -22,6 +22,16 @@ namespace BuildingThemes
         private bool importedModThemes = false;
         private bool importedStyles = false;
 
+        // Missing asset behavior — persisted to game settings (same mechanism as Debugger.Enabled)
+        private static readonly ColossalFramework.SavedInt s_missingAssetMode =
+            new ColossalFramework.SavedInt("missingAssetMode", "BuildingThemes2", (int)MissingAssetMode.FillWithVanilla, true);
+
+        public static MissingAssetMode MissingAssetBehavior
+        {
+            get { return (MissingAssetMode)(int)s_missingAssetMode; }
+            set { s_missingAssetMode.value = (int)value; }
+        }
+
         private class DistrictThemeInfo
         {
             public bool blacklistMode = false;
@@ -437,6 +447,14 @@ namespace BuildingThemes
                 ThemeDiagnostics.BeginCompile(districtId);
             }
 
+            // Ensure the vanilla area-buildings list is populated.
+            // Required for FillWithVanilla / FallbackToVanilla miss-asset handling.
+            if (m_areaBuildingsDirty)
+            {
+                RefreshAreaBuildings(m_areaBuildings, null, null, false);
+                m_areaBuildingsDirty = false;
+            }
+
             // Create custom areaBuildings fastlist array for this district
             RefreshAreaBuildings(info.areaBuildings, enabledThemes, blacklistedThemes, true, districtId);
 
@@ -674,6 +692,45 @@ namespace BuildingThemes
                                         fastList.Add(fastList2.m_buffer[num5]);
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Phase 3 — missing-asset fill/fallback.
+            // Only applied to district lists (enabledThemes set) and when mode is not Skip.
+            // Uses this.m_areaBuildings (the vanilla copy, field — not the parameter) as reference.
+            // A bucket that is non-null but smaller than vanilla is treated as "has missing assets".
+            if (enabledThemes != null && enabledThemes.Count > 0)
+            {
+                var mode = MissingAssetBehavior;
+                if (mode != MissingAssetMode.Skip)
+                {
+                    FastList<ushort>[] vanillaBuildings = this.m_areaBuildings;
+                    for (int i = 0; i < areaBuildingsLength; i++)
+                    {
+                        // Only touch buckets the theme put something into.
+                        if (m_areaBuildings[i] == null) continue;
+
+                        FastList<ushort> vanillaBucket = vanillaBuildings[i];
+                        if (vanillaBucket == null || vanillaBucket.m_size == 0) continue;
+
+                        if (m_areaBuildings[i].m_size < vanillaBucket.m_size)
+                        {
+                            // Bucket is smaller than vanilla — likely some theme buildings are missing.
+                            if (mode == MissingAssetMode.FillWithVanilla)
+                            {
+                                // Supplement with vanilla buildings cycling through the vanilla list.
+                                int deficit = vanillaBucket.m_size - m_areaBuildings[i].m_size;
+                                int vanillaSize = vanillaBucket.m_size;
+                                for (int s = 0; s < deficit; s++)
+                                    m_areaBuildings[i].Add(vanillaBucket.m_buffer[s % vanillaSize]);
+                            }
+                            else // FallbackToVanilla
+                            {
+                                // Abandon theme for this bucket — null means vanilla takes over.
+                                m_areaBuildings[i] = null;
                             }
                         }
                     }

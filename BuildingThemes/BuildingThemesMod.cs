@@ -40,17 +40,30 @@ namespace BuildingThemes
                 var debugCheck = group.AddCheckbox("Generate Debug Output", Debugger.Enabled,
                     delegate (bool c) { Debugger.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
 
+                var missingModeDropdown = group.AddDropdown(
+                    "When theme buildings are not loaded:",
+                    new string[] {
+                        "Skip — theme uses only loaded buildings (may be sparse)",
+                        "Fill with vanilla — supplement missing slots with vanilla buildings",
+                        "Fall back to vanilla — use vanilla for any sparse area bucket"
+                    },
+                    (int)BuildingThemesManager.MissingAssetBehavior,
+                    delegate (int idx) { BuildingThemesManager.MissingAssetBehavior = (MissingAssetMode)idx; }
+                ) as ColossalFramework.UI.UIDropDown;
+
                 group.AddButton("Reset to Defaults", () =>
                 {
                     PolicyPanelEnabler.Unlock = true;
                     BuildingVariationManager.Enabled = false;
                     UIThemePolicyItem.showWarning = true;
                     Debugger.Enabled = false;
+                    BuildingThemesManager.MissingAssetBehavior = MissingAssetMode.FillWithVanilla;
 
                     if (unlockCheck != null)  unlockCheck.isChecked  = true;
                     if (cloningCheck != null) cloningCheck.isChecked = false;
                     if (warningCheck != null) warningCheck.isChecked = true;
                     if (debugCheck != null)   debugCheck.isChecked   = false;
+                    if (missingModeDropdown != null) missingModeDropdown.selectedIndex = (int)MissingAssetMode.FillWithVanilla;
                 });
             }
             catch

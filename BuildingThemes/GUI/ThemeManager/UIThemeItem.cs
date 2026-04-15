@@ -59,11 +59,12 @@ namespace BuildingThemes.GUI
             m_theme = data as Configuration.Theme;
 
             string validityError = UIThemeManager.instance.ThemeValidityError(m_theme);
+            UIThemeManager.ThemeStats stats = default(UIThemeManager.ThemeStats);
 
             if (validityError != null)
             {
                 // Append X/Y count badge to the displayed name
-                var stats = UIThemeManager.instance.GetThemeStats(m_theme);
+                stats = UIThemeManager.instance.GetThemeStats(m_theme);
                 m_name.text = string.Format("{0} ({1}/{2})", m_theme.displayName,
                     stats.LoadedBuildings, stats.LoadedBuildings + stats.MissingBuildings);
             }
@@ -75,9 +76,19 @@ namespace BuildingThemes.GUI
 
             m_name.textColor = (validityError == null) ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 0, 255);
             tooltip = validityError;
+
+            // Build tooltip — append mode note when there are missing buildings and mode ≠ Skip.
+            string modeNote = null;
+            if (validityError != null && stats.MissingBuildings > 0
+                && BuildingThemesManager.MissingAssetBehavior != MissingAssetMode.Skip)
+            {
+                modeNote = BuildingThemesManager.MissingAssetBehavior == MissingAssetMode.FillWithVanilla
+                    ? stats.MissingBuildings + " missing: supplemented with vanilla."
+                    : stats.MissingBuildings + " missing: affected buckets fall back to vanilla.";
+            }
             m_name.tooltip = validityError == null
                 ? m_theme.displayName
-                : m_theme.displayName + "\n" + validityError;
+                : m_theme.displayName + "\n" + validityError + (modeNote != null ? "\n" + modeNote : "");
 
             if (isRowOdd)
             {

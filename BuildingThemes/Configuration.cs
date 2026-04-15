@@ -9,6 +9,19 @@ using UnityEngine;
 
 namespace BuildingThemes
 {
+    /// <summary>
+    /// Controls how the spawning system handles theme buildings whose assets are not loaded.
+    /// </summary>
+    public enum MissingAssetMode
+    {
+        /// <summary>Current behavior: theme applies with only the loaded buildings. Buckets may be sparse.</summary>
+        Skip = 0,
+        /// <summary>Missing slots in each area bucket are supplemented with vanilla buildings from the same bucket.</summary>
+        FillWithVanilla = 1,
+        /// <summary>If an area bucket appears sparse (fewer entries than vanilla), vanilla spawning takes over for that bucket.</summary>
+        FallbackToVanilla = 2
+    }
+
     public class Configuration
     {
         public int version = 0;
