@@ -18,6 +18,16 @@ namespace BuildingThemes.GUI
         public UIDropDown sizeFilterY;
         public UITextField nameFilter;
 
+        // Row 3 — asset loading status toggles
+        public bool showLoaded = true;
+        public bool showMissing = true;
+        public bool showDLCLocked = true;
+        public bool canSpawnOnly = false;
+        private UICheckBox m_showLoadedCb;
+        private UICheckBox m_showMissingCb;
+        private UICheckBox m_showDLCCb;
+        private UICheckBox m_canSpawnCb;
+
         public bool IsZoneSelected(Category zone)
         {
             return zoningToggles[(int)zone].isChecked;
@@ -278,6 +288,41 @@ namespace BuildingThemes.GUI
 
             nameFilter.eventTextChanged += (c, s) => eventFilteringChanged(this, 5);
             nameFilter.eventTextSubmitted += (c, s) => eventFilteringChanged(this, 5);
+
+            // Row 3 (y=78): four checkboxes + counter label
+            // "Show loaded" — hides buildings whose prefab is available
+            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 78, true);
+            m_showLoadedCb.tooltip = "Show buildings whose prefab is loaded and available";
+            m_showLoadedCb.eventCheckChanged += (c, v) => { showLoaded = v; eventFilteringChanged(this, 6); };
+
+            // "Show missing" — hides workshop/custom assets that failed to load
+            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 78, true);
+            m_showMissingCb.tooltip = "Show workshop/custom assets that are not currently loaded\n(not subscribed, disabled by Skyve, or load error)";
+            m_showMissingCb.eventCheckChanged += (c, v) => { showMissing = v; eventFilteringChanged(this, 6); };
+
+            // "Show DLC/Env" — hides assets gated by unowned DLC or wrong environment
+            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 78, true);
+            m_showDLCCb.tooltip = "Show vanilla/DLC assets not available\n(DLC not owned, or asset excluded for this map environment)";
+            m_showDLCCb.eventCheckChanged += (c, v) => { showDLCLocked = v; eventFilteringChanged(this, 6); };
+
+            // "Spawnable only" — show only loaded + included + valid-dimension buildings
+            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 78, false);
+            m_canSpawnCb.tooltip = "Show only buildings that are loaded, included in the theme,\nand have cell dimensions (1–4) valid for zone spawning";
+            m_canSpawnCb.eventCheckChanged += (c, v) => { canSpawnOnly = v; eventFilteringChanged(this, 7); };
+
+        }
+
+        private UICheckBox MakeFilterCheckbox(string label, float x, float y, bool checkedByDefault)
+        {
+            UICheckBox cb = UIUtils.CreateCheckBox(this);
+            cb.width = 115;
+            cb.height = 20;
+            cb.clipChildren = false;
+            cb.relativePosition = new Vector3(x, y);
+            cb.label.text = label;
+            cb.label.textScale = 0.8f;
+            cb.isChecked = checkedByDefault;
+            return cb;
         }
     }
 }

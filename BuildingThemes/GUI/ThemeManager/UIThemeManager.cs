@@ -17,10 +17,15 @@ namespace BuildingThemes.GUI
         private UIFastList m_themeSelection;
         private UIButton m_themeAdd;
         private UIButton m_themeRemove;
+        private UIButton m_dependencies;
         private UIFastList m_buildingSelection;
         private UIButton m_includeAll;
         private UIButton m_includeNone;
         private UILabel m_includeLabel;
+        private UIButton m_excludeMissing;
+        private UIButton m_includeValid;
+        private UILabel m_excludeLabel;
+        private UILabel m_counterLabel;
         private UIBuildingPreview m_buildingPreview;
         private UIBuildingOptions m_buildingOptions;
         private UIButton m_cloneBuilding;
@@ -274,6 +279,13 @@ namespace BuildingThemes.GUI
             return null;
         }
 
+        /// <summary>Returns all BuildingItems for the given theme (used by UIWorkshopDependenciesModal).</summary>
+        public List<BuildingItem> GetBuildingItems(Configuration.Theme theme)
+        {
+            if (m_themes.ContainsKey(theme)) return m_themes[theme];
+            return new List<BuildingItem>();
+        }
+
         private enum ThemeValidity
         {
             Valid = 0,
@@ -416,7 +428,7 @@ namespace BuildingThemes.GUI
             // Filter
             m_filter = AddUIComponent<UIBuildingFilter>();
             m_filter.width = width - SPACING * 2;
-            m_filter.height = 70;
+            m_filter.height = 105;
             m_filter.relativePosition = new Vector3(SPACING, TITLE_HEIGHT);
 
             m_filter.eventFilteringChanged += (c, i) =>
@@ -453,7 +465,7 @@ namespace BuildingThemes.GUI
 
             m_themeSelection.backgroundSprite = "UnlockingPanel";
             m_themeSelection.width = left.width;
-            m_themeSelection.height = left.height - 40;
+            m_themeSelection.height = left.height - 80; // 80 = 40 (New/Delete row) + 40 (Dependencies row)
             m_themeSelection.canSelect = true;
             m_themeSelection.rowHeight = 40;
             m_themeSelection.autoHideScrollbar = true;
@@ -507,16 +519,39 @@ namespace BuildingThemes.GUI
                     (d, i) => { if (i == 1) DeleteTheme(selectedTheme); });
             };
 
+            // Workshop Dependencies button (full-width, second row below Add/Delete)
+            m_dependencies = UIUtils.CreateButton(left);
+            m_dependencies.width = LEFT_WIDTH;
+            m_dependencies.text = "Workshop Dependencies";
+            m_dependencies.tooltip = "List all workshop assets in this theme grouped by Loaded / Missing status";
+            m_dependencies.relativePosition = new Vector3(0, m_themeSelection.height + 40 + SPACING);
+
+            m_dependencies.eventClick += (c, p) =>
+            {
+                if (selectedTheme != null)
+                    UIWorkshopDependenciesModal.instance.ShowFor(selectedTheme);
+            };
+
+            // Counter label — filtered item stats, shown above the building list
+            m_counterLabel = middle.AddUIComponent<UILabel>();
+            m_counterLabel.width = middle.width;
+            m_counterLabel.height = 18;
+            m_counterLabel.textScale = 0.72f;
+            m_counterLabel.textColor = new Color32(150, 150, 150, 255);
+            m_counterLabel.text = "";
+            m_counterLabel.padding = new RectOffset(3, 0, 3, 0);
+            m_counterLabel.relativePosition = Vector3.zero;
+
             // Building selection
             m_buildingSelection = UIFastList.Create<UIBuildingItem>(middle);
 
             m_buildingSelection.backgroundSprite = "UnlockingPanel";
             m_buildingSelection.width = middle.width;
-            m_buildingSelection.height = middle.height - 40;
+            m_buildingSelection.height = middle.height - 40 - 18;
             m_buildingSelection.canSelect = true;
             m_buildingSelection.rowHeight = 40;
             m_buildingSelection.autoHideScrollbar = true;
-            m_buildingSelection.relativePosition = Vector3.zero;
+            m_buildingSelection.relativePosition = new Vector3(0, 18);
 
             m_buildingSelection.rowsData = new FastList<object>();
 
@@ -536,23 +571,47 @@ namespace BuildingThemes.GUI
                 UpdateBuildingInfo(selectedBuilding);
             };
 
-            // Include buttons
+            float initialListBottom = 18 + m_buildingSelection.height + SPACING;
+
+            // Right-aligned: Include: [All] [None] [Valid]
             m_includeNone = UIUtils.CreateButton(middle);
-            m_includeNone.width = 55;
+            m_includeNone.width = 50;
             m_includeNone.text = "None";
-            m_includeNone.relativePosition = new Vector3(MIDDLE_WIDTH - m_includeNone.width, m_buildingSelection.height + SPACING);
+            m_includeNone.tooltip = "Exclude all buildings in the current filtered view from this theme";
+            m_includeNone.relativePosition = new Vector3(MIDDLE_WIDTH - m_includeNone.width, initialListBottom);
 
             m_includeAll = UIUtils.CreateButton(middle);
-            m_includeAll.width = 55;
+            m_includeAll.width = 45;
             m_includeAll.text = "All";
-            m_includeAll.relativePosition = new Vector3(m_includeNone.relativePosition.x - m_includeAll.width - SPACING, m_buildingSelection.height + SPACING);
+            m_includeAll.tooltip = "Include all buildings in the current filtered view in this theme";
+            m_includeAll.relativePosition = new Vector3(m_includeNone.relativePosition.x - m_includeAll.width - SPACING, initialListBottom);
+
+            m_includeValid = UIUtils.CreateButton(middle);
+            m_includeValid.width = 50;
+            m_includeValid.text = "Valid";
+            m_includeValid.tooltip = "Include all spawnable buildings in the current filtered view\n(loaded + valid cell dimensions 1–4)";
+            m_includeValid.relativePosition = new Vector3(m_includeAll.relativePosition.x - m_includeValid.width - SPACING, initialListBottom);
 
             m_includeLabel = middle.AddUIComponent<UILabel>();
-            m_includeLabel.width = 100;
+            m_includeLabel.width = 65;
             m_includeLabel.padding = new RectOffset(0, 0, 8, 0);
             m_includeLabel.textScale = 0.8f;
             m_includeLabel.text = "Include:";
-            m_includeLabel.relativePosition = new Vector3(m_includeAll.relativePosition.x - m_includeLabel.width - SPACING, m_buildingSelection.height + SPACING);
+            m_includeLabel.relativePosition = new Vector3(m_includeValid.relativePosition.x - m_includeLabel.width - SPACING, initialListBottom);
+
+            // Left-aligned: Exclude: [Missing]
+            m_excludeLabel = middle.AddUIComponent<UILabel>();
+            m_excludeLabel.width = 60;
+            m_excludeLabel.padding = new RectOffset(0, 0, 8, 0);
+            m_excludeLabel.textScale = 0.8f;
+            m_excludeLabel.text = "Exclude:";
+            m_excludeLabel.relativePosition = new Vector3(0, initialListBottom);
+
+            m_excludeMissing = UIUtils.CreateButton(middle);
+            m_excludeMissing.width = 70;
+            m_excludeMissing.text = "Missing";
+            m_excludeMissing.tooltip = "Exclude all missing/unloaded buildings in the current filtered view from this theme";
+            m_excludeMissing.relativePosition = new Vector3(m_excludeLabel.width + SPACING, initialListBottom);
 
             m_includeAll.eventClick += (c, p) =>
             {
@@ -561,7 +620,6 @@ namespace BuildingThemes.GUI
                     BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
                     if (item != null) ChangeBuildingStatus(item, true);
                 }
-
                 m_buildingSelection.Refresh();
             };
 
@@ -572,8 +630,55 @@ namespace BuildingThemes.GUI
                     BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
                     if (item != null) ChangeBuildingStatus(item, false);
                 }
-
                 m_buildingSelection.Refresh();
+            };
+
+            m_excludeMissing.eventClick += (c, p) =>
+            {
+                int count = 0;
+                for (int i = 0; i < m_buildingSelection.rowsData.m_size; i++)
+                {
+                    BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
+                    if (item != null && item.prefab == null && item.included) count++;
+                }
+                if (count == 0) return;
+                ConfirmPanel.ShowModal("Exclude Missing",
+                    string.Format("Exclude {0} missing building(s) in the current filtered view from this theme?", count),
+                    (d, result) =>
+                    {
+                        if (result != 1) return;
+                        for (int i = 0; i < m_buildingSelection.rowsData.m_size; i++)
+                        {
+                            BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
+                            if (item != null && item.prefab == null && item.included)
+                                ChangeBuildingStatus(item, false);
+                        }
+                        m_buildingSelection.Refresh();
+                    });
+            };
+
+            m_includeValid.eventClick += (c, p) =>
+            {
+                int count = 0;
+                for (int i = 0; i < m_buildingSelection.rowsData.m_size; i++)
+                {
+                    BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
+                    if (item != null && item.canSpawn && !item.included) count++;
+                }
+                if (count == 0) return;
+                ConfirmPanel.ShowModal("Include Valid",
+                    string.Format("Include {0} spawnable building(s) from the current filtered view in this theme?", count),
+                    (d, result) =>
+                    {
+                        if (result != 1) return;
+                        for (int i = 0; i < m_buildingSelection.rowsData.m_size; i++)
+                        {
+                            BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
+                            if (item != null && item.canSpawn && !item.included)
+                                ChangeBuildingStatus(item, true);
+                        }
+                        m_buildingSelection.Refresh();
+                    });
             };
 
             // Preview
@@ -601,6 +706,9 @@ namespace BuildingThemes.GUI
                 UIView.PushModal(UICloneBuildingModal.instance);
                 UICloneBuildingModal.instance.Show(true);
             };
+
+            // Pre-create the workshop dependencies modal so its Start() runs before the first user click
+            UIWorkshopDependenciesModal.instance.Hide();
 
             // Resize handle — draggable corner at bottom-right
             m_resizeHandle = AddUIComponent<UISprite>();
@@ -652,19 +760,29 @@ namespace BuildingThemes.GUI
 
             // Left panel — width stays fixed, height grows
             m_leftPanel.height = panelHeight;
-            m_themeSelection.height = panelHeight - 40;
+            m_themeSelection.height = panelHeight - 80;
             m_themeAdd.relativePosition = new Vector3(0, m_themeSelection.height + SPACING);
             m_themeRemove.relativePosition = new Vector3(LEFT_WIDTH - m_themeRemove.width, m_themeSelection.height + SPACING);
+            m_dependencies.relativePosition = new Vector3(0, m_themeSelection.height + 40 + SPACING);
 
             // Middle panel — both width and height grow
             m_middlePanel.width = currentMiddleWidth;
             m_middlePanel.height = panelHeight;
             m_middlePanel.relativePosition = new Vector3(LEFT_WIDTH + SPACING * 2, TITLE_HEIGHT + m_filter.height + SPACING);
+            m_counterLabel.width = currentMiddleWidth;
+            m_counterLabel.relativePosition = Vector3.zero;
             m_buildingSelection.width = currentMiddleWidth;
-            m_buildingSelection.height = panelHeight - 40;
-            m_includeNone.relativePosition = new Vector3(currentMiddleWidth - m_includeNone.width, m_buildingSelection.height + SPACING);
-            m_includeAll.relativePosition = new Vector3(m_includeNone.relativePosition.x - m_includeAll.width - SPACING, m_buildingSelection.height + SPACING);
-            m_includeLabel.relativePosition = new Vector3(m_includeAll.relativePosition.x - m_includeLabel.width - SPACING, m_buildingSelection.height + SPACING);
+            m_buildingSelection.height = panelHeight - 40 - 18;
+            m_buildingSelection.relativePosition = new Vector3(0, 18);
+            float listBottom = 18 + m_buildingSelection.height + SPACING;
+            // Right-aligned: Include: [All] [None] [Valid]
+            m_includeNone.relativePosition = new Vector3(currentMiddleWidth - m_includeNone.width, listBottom);
+            m_includeAll.relativePosition = new Vector3(m_includeNone.relativePosition.x - m_includeAll.width - SPACING, listBottom);
+            m_includeValid.relativePosition = new Vector3(m_includeAll.relativePosition.x - m_includeValid.width - SPACING, listBottom);
+            m_includeLabel.relativePosition = new Vector3(m_includeValid.relativePosition.x - m_includeLabel.width - SPACING, listBottom);
+            // Left-aligned: Exclude: [Missing]
+            m_excludeLabel.relativePosition = new Vector3(0, listBottom);
+            m_excludeMissing.relativePosition = new Vector3(m_excludeLabel.width + SPACING, listBottom);
 
             // Right panel — width stays fixed, height grows
             m_rightPanel.height = panelHeight;
@@ -802,37 +920,76 @@ namespace BuildingThemes.GUI
                 if (m_filter.buildingOrigin == Origin.Custom && !item.isCustomAsset) continue;
                 if (m_filter.buildingOrigin == Origin.Cloned && !item.isCloned) continue;
 
-                // Status
+                // Status (include/exclude)
                 if (m_filter.buildingStatus == Status.Included && !item.included) continue;
                 if (m_filter.buildingStatus == Status.Excluded && item.included) continue;
+
+                // Asset loading status toggles
+                AssetStatus aStatus = item.assetStatus;
+                if (!m_filter.showLoaded && aStatus == AssetStatus.Available) continue;
+                if (!m_filter.showMissing && aStatus == AssetStatus.Missing) continue;
+                if (!m_filter.showDLCLocked && aStatus == AssetStatus.DLCLocked) continue;
+
+                // Can spawn only
+                if (m_filter.canSpawnOnly && !item.canSpawn) continue;
 
                 // Level
                 int level = (int)(m_filter.buildingLevel + 1);
                 if (m_filter.buildingLevel != ItemClass.Level.None && item.level != level) continue;
 
-                // size
+                // Size
                 Vector2 buildingSize = m_filter.buildingSize;
                 if (buildingSize != Vector2.zero && item.size != buildingSize) continue;
 
-                // zone
+                // Zone
                 if (!m_filter.IsAllZoneSelected())
                 {
                     Category category = item.category;
                     if (category == Category.None || !m_filter.IsZoneSelected(category)) continue;
                 }
-                // Name
-                if (!m_filter.buildingName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(m_filter.buildingName.ToLower())) continue;
+
+                // Name / Steam ID search
+                if (!m_filter.buildingName.IsNullOrWhiteSpace())
+                {
+                    string search = m_filter.buildingName.ToLower();
+                    bool nameMatch = item.name.ToLower().Contains(search)
+                        || item.displayName.ToLower().Contains(search);
+                    bool steamMatch = item.steamID != null && item.steamID.Contains(search);
+                    if (!nameMatch && !steamMatch) continue;
+                }
 
                 filtered.Add(item);
             }
 
-            list = filtered;
+            // Update counter label
+            UpdateCounterLabel(filtered);
 
             FastList<object> fastList = new FastList<object>();
-            fastList.m_buffer = list.ToArray();
-            fastList.m_size = list.Count;
+            fastList.m_buffer = filtered.ToArray();
+            fastList.m_size = filtered.Count;
 
             return fastList;
+        }
+
+        private void UpdateCounterLabel(List<BuildingItem> filtered)
+        {
+            if (m_counterLabel == null) return;
+
+            int spawnable = 0, missing = 0, dlc = 0;
+            for (int i = 0; i < filtered.Count; i++)
+            {
+                BuildingItem item = filtered[i];
+                if (item.canSpawn) spawnable++;
+                AssetStatus s = item.assetStatus;
+                if (s == AssetStatus.Missing) missing++;
+                else if (s == AssetStatus.DLCLocked) dlc++;
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendFormat("{0} spawnable / {1} shown", spawnable, filtered.Count);
+            if (missing > 0) sb.AppendFormat("  |  {0} missing", missing);
+            if (dlc > 0) sb.AppendFormat("  |  {0} DLC/env", dlc);
+            m_counterLabel.text = sb.ToString();
         }
 
         private static int ThemeCompare(Configuration.Theme a, Configuration.Theme b)

@@ -200,6 +200,31 @@ namespace BuildingThemes.GUI
             }
         }
 
+        /// <summary>Asset loading status, independent of theme inclusion.</summary>
+        public AssetStatus assetStatus
+        {
+            get
+            {
+                if (prefab != null) return AssetStatus.Available;
+                if (!isCustomAsset) return AssetStatus.DLCLocked;
+                return AssetStatus.Missing;
+            }
+        }
+
+        /// <summary>
+        /// True when the building is included in the theme, is loaded, and has cell dimensions
+        /// that map to a valid spawn area bucket (1–4 cells in both width and length).
+        /// </summary>
+        public bool canSpawn
+        {
+            get
+            {
+                if (prefab == null || !included) return false;
+                return prefab.m_cellWidth >= 1 && prefab.m_cellWidth <= 4
+                    && prefab.m_cellLength >= 1 && prefab.m_cellLength <= 4;
+            }
+        }
+
         public bool isCustomAsset
         {
             get

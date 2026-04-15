@@ -20,6 +20,15 @@ namespace BuildingThemes.GUI
         Excluded
     }
 
+    /// <summary>Asset-loading status for a BuildingItem, independent of theme inclusion.</summary>
+    public enum AssetStatus
+    {
+        All,
+        Available,   // prefab != null (loaded)
+        Missing,     // workshop/custom asset whose prefab couldn't be loaded
+        DLCLocked,   // vanilla or DLC asset not available (DLC not owned, wrong env)
+    }
+
     public enum Category
     {
         None = -1,
