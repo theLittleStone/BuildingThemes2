@@ -29,15 +29,29 @@ namespace BuildingThemes
             UIHelperBase group = helper.AddGroup("Building Themes");
             try
             {
-                group.AddCheckbox("Unlock Policies Panel From Start", PolicyPanelEnabler.Unlock,
-                    delegate (bool c) { PolicyPanelEnabler.Unlock = c; });
-                group.AddCheckbox("Enable Prefab Cloning (experimental, not stable!)", BuildingVariationManager.Enabled,
-                    delegate (bool c) { BuildingVariationManager.Enabled = c; });
+                var unlockCheck = group.AddCheckbox("Unlock Policies Panel From Start", PolicyPanelEnabler.Unlock,
+                    delegate (bool c) { PolicyPanelEnabler.Unlock = c; }) as ColossalFramework.UI.UICheckBox;
+                var cloningCheck = group.AddCheckbox("Enable Prefab Cloning (experimental, not stable!)", BuildingVariationManager.Enabled,
+                    delegate (bool c) { BuildingVariationManager.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
                 group.AddGroup("Warning: When you disable this option, spawned clones will disappear!");
 
-                group.AddCheckbox("Warning message when selecting an invalid theme", UIThemePolicyItem.showWarning,
-                    delegate (bool c) { UIThemePolicyItem.showWarning = c; });
-                group.AddCheckbox("Generate Debug Output", Debugger.Enabled, delegate (bool c) { Debugger.Enabled = c; });
+                var warningCheck = group.AddCheckbox("Warning message when selecting an invalid theme", UIThemePolicyItem.showWarning,
+                    delegate (bool c) { UIThemePolicyItem.showWarning = c; }) as ColossalFramework.UI.UICheckBox;
+                var debugCheck = group.AddCheckbox("Generate Debug Output", Debugger.Enabled,
+                    delegate (bool c) { Debugger.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
+
+                group.AddButton("Reset to Defaults", () =>
+                {
+                    PolicyPanelEnabler.Unlock = true;
+                    BuildingVariationManager.Enabled = false;
+                    UIThemePolicyItem.showWarning = true;
+                    Debugger.Enabled = false;
+
+                    if (unlockCheck != null)  unlockCheck.isChecked  = true;
+                    if (cloningCheck != null) cloningCheck.isChecked = false;
+                    if (warningCheck != null) warningCheck.isChecked = true;
+                    if (debugCheck != null)   debugCheck.isChecked   = false;
+                });
             }
             catch
             {
@@ -46,7 +60,6 @@ namespace BuildingThemes
                                "To fix it, delete this file and restart the game:\n" +
                                "{Steam folder}\\steamapps\\common\\Cities_Skylines\\BuildingThemes.xml");
             }
-
         }
 
         public void OnEnabled()

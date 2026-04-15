@@ -55,7 +55,7 @@ namespace BuildingThemes.GUI
 
             // Name
             m_buildingName = AddUIComponent<UILabel>();
-            m_buildingName.textScale = 0.9f;
+            m_buildingName.textScale = 0.8f;
             m_buildingName.useDropShadow = true;
             m_buildingName.dropShadowColor = new Color32(80, 80, 80, 255);
             m_buildingName.dropShadowOffset = new Vector2(2, -2);
@@ -71,7 +71,7 @@ namespace BuildingThemes.GUI
 
             // Level
             m_level = AddUIComponent<UILabel>();
-            m_level.textScale = 0.9f;
+            m_level.textScale = 0.8f;
             m_level.useDropShadow = true;
             m_level.dropShadowColor = new Color32(80, 80, 80, 255);
             m_level.dropShadowOffset = new Vector2(2, -2);
@@ -81,7 +81,7 @@ namespace BuildingThemes.GUI
 
             // Size
             m_size = AddUIComponent<UILabel>();
-            m_size.textScale = 0.9f;
+            m_size.textScale = 0.8f;
             m_size.useDropShadow = true;
             m_size.dropShadowColor = new Color32(80, 80, 80, 255);
             m_size.dropShadowOffset = new Vector2(2, -2);

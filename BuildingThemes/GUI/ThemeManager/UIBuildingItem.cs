@@ -71,6 +71,7 @@ namespace BuildingThemes.GUI
             m_name.width = 20;
             m_name.clipChildren = false;
             m_name.relativePosition = new Vector3(5, 13);
+            m_name.label.textScale = 0.8f;
 
             m_name.eventCheckChanged += (c, state) =>
             {
@@ -99,10 +100,12 @@ namespace BuildingThemes.GUI
             m_size = AddUIComponent<UILabel>();
             m_size.width = 30;
             m_size.textAlignment = UIHorizontalAlignment.Center;
+            m_size.textScale = 0.75f;
 
             m_level = AddUIComponent<UILabel>();
             m_level.width = 30;
             m_level.textAlignment = UIHorizontalAlignment.Center;
+            m_level.textScale = 0.75f;
 
             m_category = AddUIComponent<UISprite>();
             m_category.size = new Vector2(20, 20);

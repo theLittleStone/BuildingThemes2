@@ -14,6 +14,9 @@ namespace BuildingThemes.GUI
         private UICheckBox m_include;
         private UITextField m_spawnRate;
 
+        private UILabel m_assetIdLabel;
+        private UITextField m_assetName;
+
         private UITextField m_baseName;
         private UITextField m_upgradeName;
 
@@ -54,12 +57,13 @@ namespace BuildingThemes.GUI
 
             // No option available
             m_noOption = AddUIComponent<UILabel>();
-            m_noOption.textScale = 0.9f;
+            m_noOption.textScale = 0.8f;
             m_noOption.text = "No option available";
 
             // Include
             m_include = UIUtils.CreateCheckBox(this);
             m_include.text = "Include";
+            m_include.label.textScale = 0.8f;
             m_include.isVisible = false;
 
             m_include.eventCheckChanged += (c, state) =>
@@ -74,7 +78,7 @@ namespace BuildingThemes.GUI
             spawnRatePanel.isVisible = false;
 
             UILabel spawnRateLabel = spawnRatePanel.AddUIComponent<UILabel>();
-            spawnRateLabel.textScale = 0.9f;
+            spawnRateLabel.textScale = 0.8f;
             spawnRateLabel.text = "Spawn rate:";
             spawnRateLabel.relativePosition = new Vector3(0, 5);
 
@@ -101,7 +105,7 @@ namespace BuildingThemes.GUI
             upgradeNamePanel.isVisible = false;
 
             UILabel upgradeNameLabel = upgradeNamePanel.AddUIComponent<UILabel>();
-            upgradeNameLabel.textScale = 0.9f;
+            upgradeNameLabel.textScale = 0.8f;
             upgradeNameLabel.text = "Upgrade:";
             upgradeNameLabel.relativePosition = new Vector3(0, 5);
 
@@ -124,13 +128,13 @@ namespace BuildingThemes.GUI
 
             m_upgradeName.eventEnterFocus += (c, p) =>
             {
-                if (!m_upgradeName.text.IsNullOrWhiteSpace())
-                    ShowDropDown();
+                // Always show candidates when the field is focused, even if empty
+                ShowDropDown();
             };
 
             m_upgradeName.eventTextChanged += (c, name) =>
             {
-                if (m_upgradeName.hasFocus && !name.IsNullOrWhiteSpace())
+                if (m_upgradeName.hasFocus)
                     ShowDropDown();
             };
 
@@ -142,6 +146,33 @@ namespace BuildingThemes.GUI
                     HideDropDown();
 
                 Show(m_item);
+            };
+
+            // Asset name (always shown, read-only)
+            UIPanel assetNamePanel = AddUIComponent<UIPanel>();
+            assetNamePanel.height = 50;
+            assetNamePanel.isVisible = false;
+
+            m_assetIdLabel = assetNamePanel.AddUIComponent<UILabel>();
+            m_assetIdLabel.textScale = 0.8f;
+            m_assetIdLabel.text = "Asset name:";
+            m_assetIdLabel.relativePosition = new Vector3(0, 5);
+
+            m_assetName = UIUtils.CreateTextField(assetNamePanel);
+            m_assetName.size = new Vector2(width - 10, 25);
+            m_assetName.padding = new RectOffset(6, 6, 6, 0);
+            m_assetName.isEnabled = true;
+            m_assetName.tooltip = "Full internal prefab name. For workshop assets this includes the Steam Workshop ID.\nClick to select and copy.";
+            m_assetName.relativePosition = new Vector3(0, 25);
+
+            // Keep field read-only: restore original name on any edit or focus loss
+            m_assetName.eventTextChanged += (c, val) =>
+            {
+                if (m_item != null && val != m_item.name) m_assetName.text = m_item.name;
+            };
+            m_assetName.eventLostFocus += (c, p) =>
+            {
+                if (m_item != null) m_assetName.text = m_item.name;
             };
 
             var constructionPanel = AddUIComponent<UIPanel>();
@@ -174,7 +205,7 @@ namespace BuildingThemes.GUI
             baseNamePanel.isVisible = false;
 
             UILabel baseNameLabel = baseNamePanel.AddUIComponent<UILabel>();
-            baseNameLabel.textScale = 0.9f;
+            baseNameLabel.textScale = 0.8f;
             baseNameLabel.text = "Base:";
             baseNameLabel.relativePosition = new Vector3(0, 5);
 
@@ -241,6 +272,7 @@ namespace BuildingThemes.GUI
             m_spawnRate.parent.isVisible = false;
             m_upgradeName.parent.isVisible = false;
             m_baseName.parent.isVisible = false;
+            m_assetName.parent.isVisible = false;
             m_plop.isVisible = false;
             m_destroy.isVisible = false;
 
@@ -249,6 +281,14 @@ namespace BuildingThemes.GUI
                 m_noOption.isVisible = true;
                 return;
             }
+
+            // Always show the raw asset name
+            m_assetName.text = m_item.name;
+            if (m_item.steamID != null)
+                m_assetIdLabel.text = "Asset name (Workshop " + m_item.steamID + "):";
+            else
+                m_assetIdLabel.text = "Asset name:";
+            m_assetName.parent.isVisible = true;
 
             m_include.isVisible = true;
             m_include.isChecked = m_item.included;
@@ -332,7 +372,7 @@ namespace BuildingThemes.GUI
     public class UIDropDownItem: UIPanel, IUIFastListRow
     {
         private UILabel m_name;
-        private UILabel m_size;
+        private UILabel m_badge; // combined "L2 2x2"
 
         private BuildingItem m_building;
 
@@ -342,7 +382,7 @@ namespace BuildingThemes.GUI
 
             if (m_name == null) return;
 
-            m_size.relativePosition = new Vector3(width - 35f, 5);
+            m_badge.relativePosition = new Vector3(width - 60f, 5);
         }
 
         private void SetupControls()
@@ -356,13 +396,15 @@ namespace BuildingThemes.GUI
 
             m_name = AddUIComponent<UILabel>();
             m_name.relativePosition = new Vector3(5, 5);
+            m_name.textScale = 0.8f;
             m_name.textColor = new Color32(170, 170, 170, 255);
 
-            m_size = AddUIComponent<UILabel>();
-            m_size.width = 30;
-            m_size.textAlignment = UIHorizontalAlignment.Center;
-            m_size.textColor = new Color32(170, 170, 170, 255);
-            m_size.relativePosition = new Vector3(width - 35f, 5);
+            m_badge = AddUIComponent<UILabel>();
+            m_badge.width = 55;
+            m_badge.textAlignment = UIHorizontalAlignment.Right;
+            m_badge.textScale = 0.75f;
+            m_badge.textColor = new Color32(120, 120, 120, 255);
+            m_badge.relativePosition = new Vector3(width - 60f, 5);
         }
 
         protected override void OnMouseDown(UIMouseEventParameter p)
@@ -392,10 +434,19 @@ namespace BuildingThemes.GUI
             SetupControls();
 
             m_building = data as BuildingItem;
-            m_name.text = m_building.displayName;
+            m_name.text = m_building.name;
 
-            UIUtils.TruncateLabel(m_name, width - 40);
-            m_size.text = m_building.sizeAsString;
+            // Level + size badge: "L2 2x2"
+            string levelStr = m_building.level > 0 ? "L" + m_building.level : "";
+            string sizeStr  = m_building.sizeAsString;
+            m_badge.text = (levelStr + " " + sizeStr).Trim();
+
+            // Tooltip: show workshop ID explicitly when available
+            tooltip = m_building.steamID != null
+                ? "Workshop ID: " + m_building.steamID
+                : null;
+
+            UIUtils.TruncateLabel(m_name, width - 65);
 
             backgroundSprite = null;
         }

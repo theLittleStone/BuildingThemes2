@@ -41,15 +41,7 @@ namespace BuildingThemes.GUI
         {
             get
             {
-                if (Debugger.Enabled) return name; // display the real names in debug mode
-
                 if (m_displayName != null) return m_displayName;
-
-                if (Debugger.Enabled)
-                {
-                    m_displayName = name;
-                    return m_displayName;
-                }
 
                 m_displayName = Locale.GetUnchecked("BUILDING_TITLE", name);
                 if (m_displayName.StartsWith("BUILDING_TITLE"))
@@ -235,11 +227,8 @@ namespace BuildingThemes.GUI
             name = Regex.Replace(name, @"^{{.*?}}\.", "");
             name = Regex.Replace(name, @"[_+\.]", " ");
             name = Regex.Replace(name, @"(\d[xX]\d)|([HL]\d)", "");
-            if (cleanNumbers)
-            {
-                name = Regex.Replace(name, @"(\d+[\da-z])", "");
-                name = Regex.Replace(name, @"\s\d+", " ");
-            }
+            // Insert a space between a letter and a digit so e.g. "Detached03" becomes "Detached 03"
+            name = Regex.Replace(name, @"(?<=[a-zA-Z])(?=\d)", " ");
             name = Regex.Replace(name, @"\s+", " ").Trim();
 
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name);

@@ -20,20 +20,32 @@ namespace BuildingThemes.GUI
         private UIFastList m_buildingSelection;
         private UIButton m_includeAll;
         private UIButton m_includeNone;
+        private UILabel m_includeLabel;
         private UIBuildingPreview m_buildingPreview;
         private UIBuildingOptions m_buildingOptions;
         private UIButton m_cloneBuilding;
+        private UIPanel m_leftPanel;
+        private UIPanel m_middlePanel;
+        private UIPanel m_rightPanel;
+        private UISprite m_resizeHandle;
 
-        private Dictionary<Configuration.Theme, List<BuildingItem>> m_themes = new Dictionary<Configuration.Theme,List<BuildingItem>>();
+        private bool m_resizing = false;
+        private Vector3 m_resizeStartMouse;
+        private Vector2 m_resizeStartSize;
+
+        private Dictionary<Configuration.Theme, List<BuildingItem>> m_themes = new Dictionary<Configuration.Theme, List<BuildingItem>>();
         private bool m_isDistrictThemesDirty = false;
 
         #region Constant values
         private const float LEFT_WIDTH = 250;
-        private const float MIDDLE_WIDTH = 450;
-        private const float RIGHT_WIDTH = 250;
+        private const float MIDDLE_WIDTH = 425;
+        private const float RIGHT_WIDTH = 275;
         private const float HEIGHT = 550;
         private const float SPACING = 5;
         private const float TITLE_HEIGHT = 40;
+        // Minimum window dimensions (= original fixed size)
+        private const float MIN_WIDTH = SPACING + LEFT_WIDTH + SPACING + MIDDLE_WIDTH + SPACING + RIGHT_WIDTH + SPACING;
+        private const float MIN_HEIGHT = TITLE_HEIGHT + HEIGHT + SPACING;
         #endregion
 
         private static GameObject _gameObject;
@@ -223,7 +235,7 @@ namespace BuildingThemes.GUI
             CreateBuilding(selectedBuilding);
 
             spawnRate = Mathf.Clamp(spawnRate, 0, 100);
-            if(selectedBuilding.building.spawnRate != spawnRate)
+            if (selectedBuilding.building.spawnRate != spawnRate)
             {
                 selectedBuilding.building.spawnRate = spawnRate;
                 m_isDistrictThemesDirty = true;
@@ -254,7 +266,7 @@ namespace BuildingThemes.GUI
         public BuildingItem GetBuildingItem(string name)
         {
             List<BuildingItem> list = m_themes[selectedTheme];
-            for(int i = 0; i< list.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
                 if (list[i].name == name) return list[i];
             }
@@ -386,7 +398,7 @@ namespace BuildingThemes.GUI
                 InitBuildingLists();
                 SetupControls();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.LogError("Building Themes: An error has happened during the UI start.");
                 Debug.LogException(e);
@@ -418,20 +430,23 @@ namespace BuildingThemes.GUI
             };
 
             // Panels
-            UIPanel left = AddUIComponent<UIPanel>();
-            left.width = LEFT_WIDTH;
-            left.height = HEIGHT - m_filter.height;
-            left.relativePosition = new Vector3(SPACING, TITLE_HEIGHT + m_filter.height + SPACING);
+            m_leftPanel = AddUIComponent<UIPanel>();
+            m_leftPanel.width = LEFT_WIDTH;
+            m_leftPanel.height = HEIGHT - m_filter.height;
+            m_leftPanel.relativePosition = new Vector3(SPACING, TITLE_HEIGHT + m_filter.height + SPACING);
+            UIPanel left = m_leftPanel;
 
-            UIPanel middle = AddUIComponent<UIPanel>();
-            middle.width = MIDDLE_WIDTH;
-            middle.height = HEIGHT - m_filter.height;
-            middle.relativePosition = new Vector3(LEFT_WIDTH + SPACING * 2, TITLE_HEIGHT + m_filter.height + SPACING);
+            m_middlePanel = AddUIComponent<UIPanel>();
+            m_middlePanel.width = MIDDLE_WIDTH;
+            m_middlePanel.height = HEIGHT - m_filter.height;
+            m_middlePanel.relativePosition = new Vector3(LEFT_WIDTH + SPACING * 2, TITLE_HEIGHT + m_filter.height + SPACING);
+            UIPanel middle = m_middlePanel;
 
-            UIPanel right = AddUIComponent<UIPanel>();
-            right.width = RIGHT_WIDTH;
-            right.height = HEIGHT - m_filter.height;
-            right.relativePosition = new Vector3(LEFT_WIDTH + MIDDLE_WIDTH + SPACING * 3, TITLE_HEIGHT + m_filter.height + SPACING);
+            m_rightPanel = AddUIComponent<UIPanel>();
+            m_rightPanel.width = RIGHT_WIDTH;
+            m_rightPanel.height = HEIGHT - m_filter.height;
+            m_rightPanel.relativePosition = new Vector3(LEFT_WIDTH + MIDDLE_WIDTH + SPACING * 3, TITLE_HEIGHT + m_filter.height + SPACING);
+            UIPanel right = m_rightPanel;
 
             // Theme selection
             m_themeSelection = UIFastList.Create<UIThemeItem>(left);
@@ -532,12 +547,12 @@ namespace BuildingThemes.GUI
             m_includeAll.text = "All";
             m_includeAll.relativePosition = new Vector3(m_includeNone.relativePosition.x - m_includeAll.width - SPACING, m_buildingSelection.height + SPACING);
 
-            UILabel include = middle.AddUIComponent<UILabel>();
-            include.width = 100;
-            include.padding = new RectOffset(0, 0, 8, 0);
-            include.textScale = 0.8f;
-            include.text = "Include:";
-            include.relativePosition = new Vector3(m_includeAll.relativePosition.x - include.width - SPACING, m_buildingSelection.height + SPACING);
+            m_includeLabel = middle.AddUIComponent<UILabel>();
+            m_includeLabel.width = 100;
+            m_includeLabel.padding = new RectOffset(0, 0, 8, 0);
+            m_includeLabel.textScale = 0.8f;
+            m_includeLabel.text = "Include:";
+            m_includeLabel.relativePosition = new Vector3(m_includeAll.relativePosition.x - m_includeLabel.width - SPACING, m_buildingSelection.height + SPACING);
 
             m_includeAll.eventClick += (c, p) =>
             {
@@ -586,6 +601,81 @@ namespace BuildingThemes.GUI
                 UIView.PushModal(UICloneBuildingModal.instance);
                 UICloneBuildingModal.instance.Show(true);
             };
+
+            // Resize handle — draggable corner at bottom-right
+            m_resizeHandle = AddUIComponent<UISprite>();
+            m_resizeHandle.size = new Vector2(16, 16);
+            m_resizeHandle.spriteName = "buttonresize";
+            m_resizeHandle.relativePosition = new Vector3(width - 16, height - 16);
+            m_resizeHandle.canFocus = true;
+            m_resizeHandle.isInteractive = true;
+            m_resizeHandle.tooltip = "Drag to resize";
+            m_resizeHandle.BringToFront();
+
+            m_resizeHandle.eventMouseDown += (c, p) =>
+            {
+                m_resizing = true;
+                m_resizeStartMouse = Input.mousePosition;
+                m_resizeStartSize = new Vector2(width, height);
+                p.Use();
+            };
+
+            m_resizeHandle.eventMouseMove += (c, p) =>
+            {
+                if (!m_resizing || p.buttons != UIMouseButton.Left) return;
+                Vector3 delta = Input.mousePosition - m_resizeStartMouse;
+                width = Mathf.Max(MIN_WIDTH, m_resizeStartSize.x + delta.x);
+                height = Mathf.Max(MIN_HEIGHT, m_resizeStartSize.y - delta.y); // screen Y is inverted
+                p.Use();
+            };
+
+            m_resizeHandle.eventMouseUp += (c, p) =>
+            {
+                m_resizing = false;
+            };
+        }
+
+        protected override void OnSizeChanged()
+        {
+            base.OnSizeChanged();
+            if (m_leftPanel == null) return;
+            ResizeUI();
+        }
+
+        private void ResizeUI()
+        {
+            float currentMiddleWidth = width - LEFT_WIDTH - RIGHT_WIDTH - SPACING * 4;
+            float panelHeight = height - TITLE_HEIGHT - m_filter.height - SPACING;
+
+            // Filter bar
+            m_filter.width = width - SPACING * 2;
+
+            // Left panel — width stays fixed, height grows
+            m_leftPanel.height = panelHeight;
+            m_themeSelection.height = panelHeight - 40;
+            m_themeAdd.relativePosition = new Vector3(0, m_themeSelection.height + SPACING);
+            m_themeRemove.relativePosition = new Vector3(LEFT_WIDTH - m_themeRemove.width, m_themeSelection.height + SPACING);
+
+            // Middle panel — both width and height grow
+            m_middlePanel.width = currentMiddleWidth;
+            m_middlePanel.height = panelHeight;
+            m_middlePanel.relativePosition = new Vector3(LEFT_WIDTH + SPACING * 2, TITLE_HEIGHT + m_filter.height + SPACING);
+            m_buildingSelection.width = currentMiddleWidth;
+            m_buildingSelection.height = panelHeight - 40;
+            m_includeNone.relativePosition = new Vector3(currentMiddleWidth - m_includeNone.width, m_buildingSelection.height + SPACING);
+            m_includeAll.relativePosition = new Vector3(m_includeNone.relativePosition.x - m_includeAll.width - SPACING, m_buildingSelection.height + SPACING);
+            m_includeLabel.relativePosition = new Vector3(m_includeAll.relativePosition.x - m_includeLabel.width - SPACING, m_buildingSelection.height + SPACING);
+
+            // Right panel — width stays fixed, height grows
+            m_rightPanel.height = panelHeight;
+            m_rightPanel.relativePosition = new Vector3(LEFT_WIDTH + currentMiddleWidth + SPACING * 3, TITLE_HEIGHT + m_filter.height + SPACING);
+            m_buildingPreview.height = (panelHeight - SPACING) / 2;
+            m_buildingOptions.height = (panelHeight - SPACING) / 2 - 40;
+            m_buildingOptions.relativePosition = new Vector3(0, m_buildingPreview.height + SPACING);
+            m_cloneBuilding.relativePosition = new Vector3(0, m_buildingOptions.relativePosition.y + m_buildingOptions.height + SPACING);
+
+            // Resize handle stays at bottom-right corner
+            m_resizeHandle.relativePosition = new Vector3(width - 16, height - 16);
         }
 
         private void InitBuildingLists()
@@ -614,7 +704,7 @@ namespace BuildingThemes.GUI
                 {
                     BuildingItem item = new BuildingItem();
                     item.prefab = PrefabCollection<BuildingInfo>.GetPrefab(i);
-                    if(!buildingDictionary.ContainsKey(item.name)) buildingDictionary.Add(item.name, item);
+                    if (!buildingDictionary.ContainsKey(item.name)) buildingDictionary.Add(item.name, item);
 
                     if (!BuildingVariationManager.instance.IsVariation(item.name))
                         list.Add(item);
@@ -665,30 +755,38 @@ namespace BuildingThemes.GUI
         }
 
         #region Filtering/Sorting
-        public FastList<object> GetBuildingsFiltered(Category category, int level, Vector2 size, string name)
+        public FastList<object> GetBuildingsFiltered(Category category, int preferredLevel, Vector2 size, string name)
         {
             List<BuildingItem> list = m_themes[selectedTheme];
-            FastList<object> filtered = new FastList<object>();
+            string lowerName = name == null ? "" : name.Trim().ToLower();
 
+            var result = new List<BuildingItem>();
             for (int i = 0; i < list.Count; i++)
             {
-                BuildingItem item = (BuildingItem)list[i];
-
-                // Category
+                BuildingItem item = list[i];
                 if (category != Category.None && item.category != category) continue;
-
-                // Level
-                if (item.level != level) continue;
-
-                // size
-                if (item.size.x != size.x || item.size.y > size.y) continue;
-
-                // Name
-                if (!item.name.ToLower().Contains(name.ToLower())) continue;
-
-                filtered.Add(item);
+                if (!lowerName.IsNullOrWhiteSpace() && !item.name.ToLower().Contains(lowerName)) continue;
+                result.Add(item);
             }
 
+            // Sort: level starting from preferredLevel ascending, then below; within level by size then name
+            result.Sort((a, b) =>
+            {
+                int aLevelOrder = a.level >= preferredLevel ? a.level - preferredLevel : 1000 + (preferredLevel - a.level);
+                int bLevelOrder = b.level >= preferredLevel ? b.level - preferredLevel : 1000 + (preferredLevel - b.level);
+                int cmp = aLevelOrder.CompareTo(bLevelOrder);
+                if (cmp != 0) return cmp;
+
+                cmp = a.size.x.CompareTo(b.size.x);
+                if (cmp != 0) return cmp;
+                cmp = a.size.y.CompareTo(b.size.y);
+                if (cmp != 0) return cmp;
+
+                return string.Compare(a.name, b.name, System.StringComparison.OrdinalIgnoreCase);
+            });
+
+            FastList<object> filtered = new FastList<object>();
+            foreach (var item in result) filtered.Add(item);
             return filtered;
         }
 

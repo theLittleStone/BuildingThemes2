@@ -52,7 +52,7 @@ namespace BuildingThemes.GUI
             if (m_name == null)
             {
                 m_name = AddUIComponent<UILabel>();
-                m_name.textScale = 0.9f;
+                m_name.textScale = 0.8f;
                 m_name.relativePosition = new Vector3(5, 13);
             }
 

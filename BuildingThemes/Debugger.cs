@@ -15,34 +15,29 @@ namespace BuildingThemes
     {
         private static bool initialized = false;
 
-        private static bool _enabled = false;
+        // Persisted via the game's settings file system (survives game restarts)
+        private static readonly SavedBool s_enabled = new SavedBool("debugOutput", "BuildingThemes2", false, true);
 
         public static bool xmlCorrupt = false;
-
 
         private static bool loaded = false;
         private static string exceptions = "";
 
-        public static bool Enabled 
-        { 
-            get 
+        public static bool Enabled
+        {
+            get
             {
-                return _enabled;
-            } 
-            set 
+                return s_enabled;
+            }
+            set
             {
-                if (value != _enabled) 
-                {
-                    if (_enabled = value)
-                    {
-                        Initialize();
-                    }
-                    else
-                    {
-                        Deinitialize();
-                    }
-                }
-            } 
+                if ((bool)s_enabled == value) return;
+                s_enabled.value = value;
+                if (value)
+                    Initialize();
+                else
+                    Deinitialize();
+            }
         }
 
         public static void Initialize()
