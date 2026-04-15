@@ -32,9 +32,68 @@ namespace BuildingThemes
             set { s_missingAssetMode.value = (int)value; }
         }
 
+        // Empty level behavior — what to do when a theme has no buildings for a given level
+        private static readonly ColossalFramework.SavedInt s_emptyLevelMode =
+            new ColossalFramework.SavedInt("emptyLevelMode", "BuildingThemes2", (int)EmptyLevelBehavior.VanillaFallback, true);
+
+        public static EmptyLevelBehavior EmptyLevelBehavior
+        {
+            get { return (EmptyLevelBehavior)(int)s_emptyLevelMode; }
+            set { s_emptyLevelMode.value = (int)value; }
+        }
+
+        /// <summary>
+        /// Returns true when the given district (or the city-wide district 0) has theme management enabled.
+        /// Used by strict mode to decide whether an empty area bucket is intentionally restricted.
+        /// </summary>
+        public bool IsEffectivelyThemed(byte districtId)
+        {
+            if (districtThemeInfos[districtId] != null) return true;
+            if (districtId != 0 && districtThemeInfos[0] != null) return true;
+            return false;
+        }
+
+        // --- Per-district setting accessors ---
+
+        public MissingAssetMode GetDistrictMissingAssetMode(byte districtId)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info != null) return info.missingAssetMode;
+            if (districtId != 0) { var c = districtThemeInfos[0]; if (c != null) return c.missingAssetMode; }
+            return MissingAssetBehavior;
+        }
+
+        public void SetDistrictMissingAssetMode(byte districtId, MissingAssetMode mode)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null || info.missingAssetMode == mode) return;
+            info.missingAssetMode = mode;
+            CompileDistrictThemes(districtId);
+        }
+
+        public EmptyLevelBehavior GetDistrictEmptyLevelBehavior(byte districtId)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info != null) return info.emptyLevelBehavior;
+            if (districtId != 0) { var c = districtThemeInfos[0]; if (c != null) return c.emptyLevelBehavior; }
+            return EmptyLevelBehavior;
+        }
+
+        public void SetDistrictEmptyLevelBehavior(byte districtId, EmptyLevelBehavior behavior)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null || info.emptyLevelBehavior == behavior) return;
+            info.emptyLevelBehavior = behavior;
+            CompileDistrictThemes(districtId);
+        }
+
         private class DistrictThemeInfo
         {
             public bool blacklistMode = false;
+
+            // Per-district behavior settings (default to global at creation time)
+            public MissingAssetMode missingAssetMode = MissingAssetMode.FillWithVanilla;
+            public EmptyLevelBehavior emptyLevelBehavior = EmptyLevelBehavior.VanillaFallback;
 
             public readonly HashSet<Configuration.Theme> themes = new HashSet<Configuration.Theme>();
 
@@ -408,6 +467,9 @@ namespace BuildingThemes
             if (info == null)
             {
                 info = new DistrictThemeInfo();
+                // Inherit global defaults so a new district starts with the user's preferred behaviour
+                info.missingAssetMode = MissingAssetBehavior;
+                info.emptyLevelBehavior = EmptyLevelBehavior;
                 districtThemeInfos[districtId] = info;
             }
             else
@@ -698,30 +760,53 @@ namespace BuildingThemes
                 }
             }
 
-            // Phase 3 — missing-asset fill/fallback.
-            // Only applied to district lists (enabledThemes set) and when mode is not Skip.
-            // Uses this.m_areaBuildings (the vanilla copy, field — not the parameter) as reference.
-            // A bucket that is non-null but smaller than vanilla is treated as "has missing assets".
             if (enabledThemes != null && enabledThemes.Count > 0)
             {
-                var mode = MissingAssetBehavior;
-                if (mode != MissingAssetMode.Skip)
+                // Resolve per-district settings; fall back to global defaults.
+                var distInfo = (diagnosticsDistrictId != 255) ? districtThemeInfos[diagnosticsDistrictId] : null;
+                EmptyLevelBehavior levelMode   = distInfo != null ? distInfo.emptyLevelBehavior  : EmptyLevelBehavior;
+                MissingAssetMode   missingMode = distInfo != null ? distInfo.missingAssetMode    : MissingAssetBehavior;
+
+                // Phase 3 — empty-level cascade.
+                // When CascadeFromTheme: propagate non-null lower-level buckets into empty higher-level buckets
+                // within the same service/subService/size column.
+                // Index layout: ((serviceIdx * 5 + level) * 4 + width-1) * 4 + length-1) * 2 + zoningMode
+                // → each level step = 4 * 4 * 2 = 32 index units.
+                if (levelMode == EmptyLevelBehavior.CascadeFromTheme)
+                {
+                    const int levelStep = 32;
+                    for (int i = 0; i < areaBuildingsLength; i++)
+                    {
+                        if (m_areaBuildings[i] != null) continue;
+                        int levelInColumn = (i / levelStep) % 5;
+                        if (levelInColumn == 0) continue;
+                        for (int lvl = levelInColumn - 1; lvl >= 0; lvl--)
+                        {
+                            int sourceIdx = i - (levelInColumn - lvl) * levelStep;
+                            if (m_areaBuildings[sourceIdx] != null)
+                            {
+                                m_areaBuildings[i] = m_areaBuildings[sourceIdx];
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Phase 3 — missing-asset fill/fallback.
+                // Uses this.m_areaBuildings (vanilla field, not the parameter) as reference.
+                // A non-null bucket smaller than vanilla is treated as "has missing assets".
+                if (missingMode != MissingAssetMode.Skip)
                 {
                     FastList<ushort>[] vanillaBuildings = this.m_areaBuildings;
                     for (int i = 0; i < areaBuildingsLength; i++)
                     {
-                        // Only touch buckets the theme put something into.
                         if (m_areaBuildings[i] == null) continue;
-
                         FastList<ushort> vanillaBucket = vanillaBuildings[i];
                         if (vanillaBucket == null || vanillaBucket.m_size == 0) continue;
-
                         if (m_areaBuildings[i].m_size < vanillaBucket.m_size)
                         {
-                            // Bucket is smaller than vanilla — likely some theme buildings are missing.
-                            if (mode == MissingAssetMode.FillWithVanilla)
+                            if (missingMode == MissingAssetMode.FillWithVanilla)
                             {
-                                // Supplement with vanilla buildings cycling through the vanilla list.
                                 int deficit = vanillaBucket.m_size - m_areaBuildings[i].m_size;
                                 int vanillaSize = vanillaBucket.m_size;
                                 for (int s = 0; s < deficit; s++)
@@ -729,7 +814,6 @@ namespace BuildingThemes
                             }
                             else // FallbackToVanilla
                             {
-                                // Abandon theme for this bucket — null means vanilla takes over.
                                 m_areaBuildings[i] = null;
                             }
                         }

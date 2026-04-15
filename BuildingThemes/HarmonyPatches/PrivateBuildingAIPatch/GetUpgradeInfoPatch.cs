@@ -68,8 +68,13 @@ namespace BuildingThemes.HarmonyPatches.PrivateBuildingAIPatch
                 info.m_class.m_service, info.m_class.m_subService,
                 level, data.Width, data.Length, info.m_zoningMode, style);
 
-            // Return false (skip original) only when we found a themed upgrade.
-            return __result == null;
+            // Consume the intentional-null flag set by strict mode.
+            bool intentional = RandomBuildings.s_intentionalNull;
+            RandomBuildings.s_intentionalNull = false;
+
+            // Return false (skip original) when we found a themed upgrade OR when strict mode
+            // deliberately blocked the upgrade (intentional == true → building stays at current level).
+            return __result == null && !intentional;
         }
     }
 }

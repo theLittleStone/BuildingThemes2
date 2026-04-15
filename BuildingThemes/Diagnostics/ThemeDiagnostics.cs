@@ -101,7 +101,12 @@ namespace BuildingThemes.Diagnostics
         {
             var report = GetReport(districtId);
             if (report == null)
-                return "No diagnostics available for this district.\nEnable 'Generate Debug Output' in mod settings and re-assign a theme to generate data.";
+            {
+                if (!Debugger.Enabled)
+                    return "Debug output is disabled.\n\nEnable 'Generate Debug Output' in the mod settings (main menu → Options → Building Themes 2), then re-enable theme management for this district to collect data.";
+                else
+                    return "No data for this district yet.\n\nDebug output is enabled — re-enable theme management for this district (uncheck and re-check 'Enable Theme Management') to trigger a fresh compile and collect diagnostics.";
+            }
 
             var sb = new StringBuilder();
             sb.AppendFormat("District {0} — Last theme compile\n", districtId);

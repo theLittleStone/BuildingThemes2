@@ -1,4 +1,4 @@
-﻿using ColossalFramework;
+using ColossalFramework;
 using ColossalFramework.UI;
 using System;
 using System.Collections.Generic;
@@ -52,40 +52,16 @@ namespace BuildingThemes.GUI
             // Only make the container visible if our tab was selected when the panel was closed last time
             container.isVisible = tabstrip.selectedIndex == pageIndex;
 
-            // Theme buttons
-            themePolicyButtons = UIFastList.Create<UIThemePolicyItem>(container);
-            themePolicyButtons.width = 364f;
-            themePolicyButtons.rowHeight = 49f;
-            themePolicyButtons.autoHideScrollbar = true;
-
-            // The panel holding the controls
+            // Controls at the top — the outer tab scroll (shared with other policy tabs) handles
+            // all scrolling, so there is no inner scroll to fight with.
             controls = container.AddUIComponent<UIPanel>();
-
             controls.width = container.width;
             controls.height = 100f;
             controls.autoLayout = true;
             controls.autoLayoutDirection = LayoutDirection.Vertical;
             controls.autoLayoutPadding.top = 5;
 
-            // Add a checkbox to toggle "Blacklist Mode"
-            UICheckBox blacklistModeCheckBox = CreateCheckBox(controls);
-            blacklistModeCheckBox.name = "Blacklist Mode Checkbox";
-            blacklistModeCheckBox.gameObject.AddComponent<BlacklistModeCheckboxContainer>();
-            blacklistModeCheckBox.text = "Allow buildings which are not in any theme";
-            blacklistModeCheckBox.isChecked = false;
-
-            blacklistModeCheckBox.eventCheckChanged += delegate(UIComponent component, bool isChecked)
-            {
-                lock (component)
-                {
-                    var districtId1 = ToolsModifierControl.policiesPanel.targetDistrict;
-
-                    Singleton<BuildingThemesManager>.instance.ToggleBlacklistMode(districtId1, isChecked);
-                }
-
-            };
-
-            // Add a checkbox to "Enable Theme Management for this district"
+            // Checkbox: "Enable Theme Management for this district"
             UICheckBox enableThemeManagementCheckBox = CreateCheckBox(controls);
             enableThemeManagementCheckBox.name = "Theme Management Checkbox";
             enableThemeManagementCheckBox.gameObject.AddComponent<ThemeManagementCheckboxContainer>();
@@ -97,13 +73,11 @@ namespace BuildingThemes.GUI
                 lock (component)
                 {
                     var districtId1 = ToolsModifierControl.policiesPanel.targetDistrict;
-
                     Singleton<BuildingThemesManager>.instance.ToggleThemeManagement(districtId1, isChecked);
                 }
-
             };
 
-            // Add a button to show the Building Theme Manager
+            // Button: open the Building Theme Manager window
             UIButton showThemeManager = GUI.UIUtils.CreateButton(controls);
             showThemeManager.width = controls.width;
             showThemeManager.text = "Theme Manager";
@@ -118,26 +92,30 @@ namespace BuildingThemes.GUI
                 GUI.UIThemeManager.instance.Toggle();
             };
 
-            // Add a button to show spawn diagnostics for the current district
-            UIButton showDiagnostics = GUI.UIUtils.CreateButton(controls);
-            showDiagnostics.width = controls.width;
-            showDiagnostics.text = "Spawn Diagnostics";
-            showDiagnostics.tooltip = "Show why buildings are or are not spawning in this district.\nRequires 'Generate Debug Output' to be enabled in mod settings.";
+            // Button: open the per-district options panel (enabled only when theme management is on)
+            UIButton showDistrictOptions = GUI.UIUtils.CreateButton(controls);
+            showDistrictOptions.name = "District Options Button";
+            showDistrictOptions.gameObject.AddComponent<DistrictOptionsButtonContainer>();
+            showDistrictOptions.width = controls.width;
+            showDistrictOptions.text = "District Options";
+            showDistrictOptions.tooltip =
+                "Configure blacklist mode, level behaviour,\n" +
+                "missing asset handling and spawn diagnostics for this district.";
 
-            showDiagnostics.eventClick += (c, p) =>
+            showDistrictOptions.eventClick += (c, p) =>
             {
-                try
-                {
-                    byte districtId = ToolsModifierControl.policiesPanel.targetDistrict;
-                    UIThemeDiagnosticsModal.instance.ShowForDistrict(districtId);
-                }
-                catch (Exception e)
-                {
-                    UnityEngine.Debug.LogException(e);
-                }
+                UIDistrictOptionsPanel.instance.Toggle();
             };
 
+            // Theme list below the controls, with its own scrollbar (UITabContainer does not
+            // scroll its tab page children — a UIScrollablePanel inside the tab page does).
+            themePolicyButtons = UIFastList.Create<UIThemePolicyItem>(container);
+            themePolicyButtons.width = 364f;
+            themePolicyButtons.rowHeight = 49f;
+            themePolicyButtons.autoHideScrollbar = true;
+
             RefreshThemesContainer();
+
         }
 
         // This method has to be called when the theme list was modified!
@@ -152,11 +130,13 @@ namespace BuildingThemes.GUI
             themePolicyButtons.rowsData.m_size = themePolicyButtons.rowsData.m_buffer.Length;
             Array.Sort(themePolicyButtons.rowsData.m_buffer as Configuration.Theme[], ThemeCompare);
 
+            // Fit the list to the remaining container space; UIFastList's own scrollbar handles
+            // scrolling through themes. UITabContainer does not scroll its tab page children.
             controls.autoSize = true;
-            themePolicyButtons.height = Mathf.Min(themePolicyButtons.rowsData.m_size * themePolicyButtons.rowHeight, container.height - controls.height - 5);
+            themePolicyButtons.height = Mathf.Min(
+                themePolicyButtons.rowsData.m_size * themePolicyButtons.rowHeight,
+                container.height - controls.height - 5);
             themePolicyButtons.Refresh();
-
-            if (controls != null) controls.BringToFront();
         }
 
         public static void RemoveThemesTab()
@@ -216,4 +196,3 @@ namespace BuildingThemes.GUI
         }
     }
 }
-

@@ -39,9 +39,14 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
                 BuildingThemesMod.position, ref r, service, subService, level,
                 width, length, zoningMode, style);
 
-            // Return false (skip original) only when we found a themed building.
-            // Return true (run original) when result is null so vanilla fallback applies.
-            return __result == null;
+            // Consume the intentional-null flag set by strict mode.
+            bool intentional = RandomBuildings.s_intentionalNull;
+            RandomBuildings.s_intentionalNull = false;
+
+            // Return false (skip original) when we found a themed building OR when strict mode
+            // deliberately produced no result (intentional == true → do not run vanilla).
+            // Return true (run original) only for a genuine null with no theme restriction.
+            return __result == null && !intentional;
         }
     }
 }

@@ -89,6 +89,10 @@
         <Compile Include="Diagnostics\ThemeDiagnostics.cs" />
         <Compile Include="GUI\ThemePolicies\PolicyPanelEnabler.cs" />
         <Compile Include="GUI\ThemePolicies\BlacklistModeCheckboxContainer.cs" />
+        <Compile Include="GUI\ThemePolicies\EmptyLevelDropdownContainer.cs" />
+        <Compile Include="GUI\ThemePolicies\MissingAssetDropdownContainer.cs" />
+        <Compile Include="GUI\ThemePolicies\UIDistrictOptionsPanel.cs" />
+        <Compile Include="GUI\ThemePolicies\DistrictOptionsButtonContainer.cs" />
         <Compile Include="GUI\ThemeManager\PreviewRenderer.cs" />
         <Compile Include="GUI\ThemePolicies\ThemeManagementCheckboxContainer.cs" />
         <Compile Include="GUI\ThemeManager\UIBuildingFilter.cs" />

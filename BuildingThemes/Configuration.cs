@@ -10,6 +10,19 @@ using UnityEngine;
 namespace BuildingThemes
 {
     /// <summary>
+    /// Controls what happens when a district theme has no buildings for a particular level.
+    /// </summary>
+    public enum EmptyLevelBehavior
+    {
+        /// <summary>Vanilla buildings spawn for levels not covered by the theme (current behavior).</summary>
+        VanillaFallback = 0,
+        /// <summary>Buildings from the nearest lower level that IS in the theme are reused for empty higher levels.</summary>
+        CascadeFromTheme = 1,
+        /// <summary>Levels with no theme buildings stay empty — no vanilla fallback, no upgrades past the included levels.</summary>
+        StrictThemeOnly = 2
+    }
+
+    /// <summary>
     /// Controls how the spawning system handles theme buildings whose assets are not loaded.
     /// </summary>
     public enum MissingAssetMode

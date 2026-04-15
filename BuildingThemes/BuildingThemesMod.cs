@@ -40,15 +40,28 @@ namespace BuildingThemes
                 var debugCheck = group.AddCheckbox("Generate Debug Output", Debugger.Enabled,
                     delegate (bool c) { Debugger.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
 
+                // Global defaults — applied to new districts when theme management is first enabled.
+                // Each district can override these in its own Themes tab (district policies panel).
                 var missingModeDropdown = group.AddDropdown(
-                    "When theme buildings are not loaded:",
+                    "Default: missing workshop buildings",
                     new string[] {
-                        "Skip — theme uses only loaded buildings (may be sparse)",
-                        "Fill with vanilla — supplement missing slots with vanilla buildings",
-                        "Fall back to vanilla — use vanilla for any sparse area bucket"
+                        "Skip (sparse slots, theme-only)",
+                        "Fill with vanilla (supplement missing slots)",
+                        "Fall back to vanilla (use vanilla if sparse)"
                     },
                     (int)BuildingThemesManager.MissingAssetBehavior,
                     delegate (int idx) { BuildingThemesManager.MissingAssetBehavior = (MissingAssetMode)idx; }
+                ) as ColossalFramework.UI.UIDropDown;
+
+                var emptyLevelDropdown = group.AddDropdown(
+                    "Default: when theme has no buildings for a level",
+                    new string[] {
+                        "Vanilla fallback (spawn vanilla for uncovered levels)",
+                        "Cascade from theme (reuse lower level buildings)",
+                        "Strict (freeze levels, block upgrades past theme)"
+                    },
+                    (int)BuildingThemesManager.EmptyLevelBehavior,
+                    delegate (int idx) { BuildingThemesManager.EmptyLevelBehavior = (EmptyLevelBehavior)idx; }
                 ) as ColossalFramework.UI.UIDropDown;
 
                 group.AddButton("Reset to Defaults", () =>
@@ -58,12 +71,14 @@ namespace BuildingThemes
                     UIThemePolicyItem.showWarning = true;
                     Debugger.Enabled = false;
                     BuildingThemesManager.MissingAssetBehavior = MissingAssetMode.FillWithVanilla;
+                    BuildingThemesManager.EmptyLevelBehavior = EmptyLevelBehavior.VanillaFallback;
 
                     if (unlockCheck != null)  unlockCheck.isChecked  = true;
                     if (cloningCheck != null) cloningCheck.isChecked = false;
                     if (warningCheck != null) warningCheck.isChecked = true;
                     if (debugCheck != null)   debugCheck.isChecked   = false;
                     if (missingModeDropdown != null) missingModeDropdown.selectedIndex = (int)MissingAssetMode.FillWithVanilla;
+                    if (emptyLevelDropdown != null)  emptyLevelDropdown.selectedIndex  = (int)EmptyLevelBehavior.VanillaFallback;
                 });
             }
             catch
