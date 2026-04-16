@@ -950,17 +950,15 @@ namespace BuildingThemes.GUI
             {
                 BuildingItem item = (BuildingItem)list[i];
 
-                // Source (Workshop / DLC / Vanilla)
-                string sourceKey = m_filter.buildingSourceKey;
-                if (sourceKey != null)
+                // DLC filter — uses BuildingInfo.m_requiredExpansion / m_requiredModderPack
+                var filterExp  = m_filter.dlcExpansionFilter;
+                var filterPack = m_filter.dlcModderPackFilter;
+                if (filterExp != SteamHelper.ExpansionBitMask.None || filterPack != SteamHelper.ModderPackBitMask.None)
                 {
-                    if (sourceKey == "workshop" && item.steamID == null) continue;
-                    else if (sourceKey == "vanilla" && (item.steamID != null || (item.building != null && item.building.dlc != null))) continue;
-                    else if (sourceKey != "workshop" && sourceKey != "vanilla")
-                    {
-                        // Specific DLC: only show items whose building.dlc matches
-                        if (item.building == null || item.building.dlc != sourceKey) continue;
-                    }
+                    if (item.prefab == null) continue; // unloaded buildings have no mask — skip when filter active
+                    bool expMatch  = filterExp  == SteamHelper.ExpansionBitMask.None  || (item.prefab.m_requiredExpansion  & filterExp)  != SteamHelper.ExpansionBitMask.None;
+                    bool packMatch = filterPack == SteamHelper.ModderPackBitMask.None || (item.prefab.m_requiredModderPack & filterPack) != SteamHelper.ModderPackBitMask.None;
+                    if (!expMatch || !packMatch) continue;
                 }
 
                 // Origin
@@ -1020,32 +1018,12 @@ namespace BuildingThemes.GUI
         }
 
         /// <summary>
-        /// Rebuilds the source-filter dropdown options based on what origins are actually
-        /// present in the given building list (Workshop / DLC IDs / Vanilla).
+        /// Rebuilds the DLC filter dropdown from the loaded prefab masks of the theme's buildings.
         /// </summary>
         private void UpdateSourceFilter(List<BuildingItem> buildings)
         {
             if (m_filter == null) return;
-
-            var dlcIds = new List<string>();
-            bool hasVanilla = false;
-
-            foreach (BuildingItem item in buildings)
-            {
-                if (item.steamID != null) continue; // workshop — always shown under "Workshop"
-
-                string dlc = item.building != null ? item.building.dlc : null;
-                if (dlc != null)
-                {
-                    if (!dlcIds.Contains(dlc)) dlcIds.Add(dlc);
-                }
-                else
-                {
-                    hasVanilla = true;
-                }
-            }
-
-            m_filter.SetSourceOptions(dlcIds, hasVanilla);
+            m_filter.SetDlcOptions(buildings);
         }
 
         private void UpdateCounterLabel(List<BuildingItem> filtered)

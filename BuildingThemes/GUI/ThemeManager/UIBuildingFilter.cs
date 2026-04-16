@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ColossalFramework.Globalization;
 using ColossalFramework.PlatformServices;
 using UnityEngine;
 using ColossalFramework.UI;
@@ -17,87 +18,153 @@ namespace BuildingThemes.GUI
         public UIDropDown levelFilter;
         public UIDropDown sizeFilterX;
         public UIDropDown sizeFilterY;
-        public UIDropDown sourceFilter;
+        public UIDropDown dlcFilter;
         public UITextField nameFilter;
 
-        // Sentinel values used as source filter keys (parallel to sourceFilter.items).
-        // null = "All", "workshop" = Workshop only, "vanilla" = no DLC/workshop.
-        // Any other string = a DLC app-ID string (matches building.dlc).
-        private readonly List<string> m_sourceKeys = new List<string>();
+        // Parallel list to dlcFilter.items.  Index 0 = "All DLC" (both masks None).
+        private struct DlcEntry
+        {
+            public SteamHelper.ExpansionBitMask expansion;
+            public SteamHelper.ModderPackBitMask modderPack;
+        }
+        private readonly List<DlcEntry> m_dlcEntries = new List<DlcEntry>();
 
-        /// <summary>
-        /// Returns the current source filter key: null = All, "workshop" = Workshop,
-        /// "vanilla" = Vanilla/no-DLC, or a DLC app-ID string for a specific DLC.
-        /// </summary>
-        public string buildingSourceKey
+        /// <summary>Active expansion DLC filter; None = no filter.</summary>
+        public SteamHelper.ExpansionBitMask dlcExpansionFilter
         {
             get
             {
-                if (sourceFilter == null || m_sourceKeys.Count == 0) return null;
-                int idx = sourceFilter.selectedIndex;
-                return (idx >= 0 && idx < m_sourceKeys.Count) ? m_sourceKeys[idx] : null;
+                int idx = dlcFilter == null ? 0 : dlcFilter.selectedIndex;
+                return (idx > 0 && idx < m_dlcEntries.Count) ? m_dlcEntries[idx].expansion : SteamHelper.ExpansionBitMask.None;
+            }
+        }
+
+        /// <summary>Active modder-pack DLC filter; None = no filter.</summary>
+        public SteamHelper.ModderPackBitMask dlcModderPackFilter
+        {
+            get
+            {
+                int idx = dlcFilter == null ? 0 : dlcFilter.selectedIndex;
+                return (idx > 0 && idx < m_dlcEntries.Count) ? m_dlcEntries[idx].modderPack : SteamHelper.ModderPackBitMask.None;
             }
         }
 
         /// <summary>
-        /// Rebuild the "Source" dropdown based on which DLC IDs are actually present
-        /// in the currently selected theme.  Call this whenever the theme changes.
-        /// <paramref name="dlcIds"/> is the set of distinct non-null building.dlc values
-        /// found in the theme. Pass an empty list if the theme has no DLC buildings.
-        /// <paramref name="hasVanilla"/> is true when the theme contains at least one
-        /// building with no steamID and no dlc requirement.
+        /// Rebuild the DLC dropdown from the building items of the currently selected theme.
+        /// Only DLCs that are (a) owned and (b) have at least one loaded building in the
+        /// theme are shown.  Index 0 is always "All DLC".
         /// </summary>
-        public void SetSourceOptions(IList<string> dlcIds, bool hasVanilla)
+        public void SetDlcOptions(List<BuildingItem> buildings)
         {
-            if (sourceFilter == null) return;
+            if (dlcFilter == null) return;
 
-            // Preserve the current selection if the key still exists after rebuild.
-            string prevKey = buildingSourceKey;
+            // Remember current selection by value so we can restore it after rebuild.
+            int prevIdx = dlcFilter.selectedIndex;
+            DlcEntry prevEntry = (prevIdx > 0 && prevIdx < m_dlcEntries.Count)
+                ? m_dlcEntries[prevIdx]
+                : new DlcEntry();
 
-            m_sourceKeys.Clear();
-            m_sourceKeys.Add(null);           // "All"
-            m_sourceKeys.Add("workshop");     // "Workshop (Steam)"
-            foreach (string id in dlcIds)
-                m_sourceKeys.Add(id);
-            if (hasVanilla)
-                m_sourceKeys.Add("vanilla");
+            var ownedExp  = SteamHelper.GetOwnedExpansionMask();
+            var ownedPack = SteamHelper.GetOwnedModderPackMask();
 
-            // Build display names.
-            string[] items = new string[m_sourceKeys.Count];
-            items[0] = "All";
-            items[1] = "Workshop (Steam)";
-            for (int i = 2; i < m_sourceKeys.Count; i++)
+            // Collect unique DLC entries that have buildings in this theme.
+            var seen    = new HashSet<ulong>();
+            var entries = new List<DlcEntry>();
+            entries.Add(new DlcEntry()); // index 0 = "All DLC"
+            seen.Add(0UL);
+
+            foreach (BuildingItem item in buildings)
             {
-                string key = m_sourceKeys[i];
-                if (key == "vanilla") { items[i] = "Vanilla"; continue; }
-                uint appId;
-                items[i] = uint.TryParse(key, out appId) ? GetDlcName(appId) : "DLC " + key;
+                if (item.prefab == null) continue;
+
+                var exp  = item.prefab.m_requiredExpansion;
+                var pack = item.prefab.m_requiredModderPack;
+
+                if (exp != SteamHelper.ExpansionBitMask.None && (ownedExp & exp) != SteamHelper.ExpansionBitMask.None)
+                {
+                    ulong key = (ulong)(int)exp;
+                    if (seen.Add(key))
+                        entries.Add(new DlcEntry { expansion = exp, modderPack = SteamHelper.ModderPackBitMask.None });
+                }
+
+                if (pack != SteamHelper.ModderPackBitMask.None && (ownedPack & pack) != SteamHelper.ModderPackBitMask.None)
+                {
+                    ulong key = 0x1_0000_0000UL + (ulong)(int)pack;
+                    if (seen.Add(key))
+                        entries.Add(new DlcEntry { expansion = SteamHelper.ExpansionBitMask.None, modderPack = pack });
+                }
             }
 
-            sourceFilter.items = items;
+            m_dlcEntries.Clear();
+            m_dlcEntries.AddRange(entries);
 
-            // Restore previous selection if it still exists; else reset to "All".
-            int restored = m_sourceKeys.IndexOf(prevKey);
-            sourceFilter.selectedIndex = restored >= 0 ? restored : 0;
+            string[] items = new string[entries.Count];
+            items[0] = "All DLC";
+            for (int i = 1; i < entries.Count; i++)
+                items[i] = entries[i].expansion != SteamHelper.ExpansionBitMask.None
+                    ? GetExpansionName(entries[i].expansion)
+                    : GetModderPackName(entries[i].modderPack);
+
+            dlcFilter.items = items;
+
+            // Restore previous selection if same DLC is still present.
+            int restored = 0;
+            for (int i = 1; i < entries.Count; i++)
+            {
+                if (entries[i].expansion == prevEntry.expansion && entries[i].modderPack == prevEntry.modderPack)
+                { restored = i; break; }
+            }
+            dlcFilter.selectedIndex = restored;
         }
 
-        private static string GetDlcName(uint appId)
+        private static string GetExpansionName(SteamHelper.ExpansionBitMask mask)
         {
-            if (appId == SteamHelper.kAfterDLCAppID)               return "After Dark";
-            if (appId == SteamHelper.kWinterDLCAppID)              return "Snowfall";
-            if (appId == SteamHelper.kNaturalDisastersDLCAppID)    return "Natural Disasters";
-            if (appId == SteamHelper.kMotionDLCAppID)              return "Mass Transit";
-            if (appId == SteamHelper.kGreenDLCAppID)               return "Green Cities";
-            if (appId == SteamHelper.kParksDLCAppID)               return "Parklife";
-            if (appId == SteamHelper.kIndustryDLCAppID)            return "Industries";
-            if (appId == SteamHelper.kCampusDLCAppID)              return "Campus";
-            if (appId == SteamHelper.kUrbanDLCAppID)               return "Sunset Harbor";
-            if (appId == SteamHelper.kAirportDLCAppID)             return "Airports";
-            if (appId == SteamHelper.kPlazasAndPromenadesDLCAppID) return "Plazas & Promenades";
-            if (appId == SteamHelper.kFinancialDistrictsDLCAppID)  return "Financial Districts";
-            if (appId == SteamHelper.kHotelsAppID)                 return "Hotels & Retreats";
-            if (appId == SteamHelper.kRacesAndParadesDLCAppID)     return "Hubs & Transport";
-            return "DLC " + appId;
+            if (mask == SteamHelper.ExpansionBitMask.AfterDark)            return "After Dark";
+            if (mask == SteamHelper.ExpansionBitMask.SnowFall)             return "Snowfall";
+            if (mask == SteamHelper.ExpansionBitMask.NaturalDisasters)     return "Natural Disasters";
+            if (mask == SteamHelper.ExpansionBitMask.InMotion)             return "Mass Transit";
+            if (mask == SteamHelper.ExpansionBitMask.GreenCities)          return "Green Cities";
+            if (mask == SteamHelper.ExpansionBitMask.Parks)                return "Parklife";
+            if (mask == SteamHelper.ExpansionBitMask.Industry)             return "Industries";
+            if (mask == SteamHelper.ExpansionBitMask.Campus)               return "Campus";
+            if (mask == SteamHelper.ExpansionBitMask.SunsetHarbor)         return "Sunset Harbor";
+            if (mask == SteamHelper.ExpansionBitMask.Airport)              return "Airports";
+            if (mask == SteamHelper.ExpansionBitMask.PlazasAndPromenades)  return "Plazas & Promenades";
+            if (mask == SteamHelper.ExpansionBitMask.FinancialDistricts)   return "Financial Districts";
+            if (mask == SteamHelper.ExpansionBitMask.Hotel)                return "Hotels & Retreats";
+            if (mask == SteamHelper.ExpansionBitMask.RacesAndParades)      return "Hubs & Transport";
+            return "Expansion DLC";
+        }
+
+        // Maps ModderPackBitMask → locale key (mirrors BuildingThemesManager.s_styleLocaleKeys).
+        private static readonly Dictionary<SteamHelper.ModderPackBitMask, string> s_packLocale =
+            new Dictionary<SteamHelper.ModderPackBitMask, string>
+        {
+            { SteamHelper.ModderPackBitMask.Pack5,  "STYLES_MODDERPACKFIVE"      },
+            { SteamHelper.ModderPackBitMask.Pack11, "STYLES_MODDERPACKELEVEN"    },
+            { SteamHelper.ModderPackBitMask.Pack14, "STYLES_MODDERPACKFOURTEEN"  },
+            { SteamHelper.ModderPackBitMask.Pack16, "STYLES_MODDERPACKSIXTEEN"   },
+            { SteamHelper.ModderPackBitMask.Pack18, "STYLES_MODDERPACKEIGHTEEN"  },
+            { SteamHelper.ModderPackBitMask.Pack20, "STYLES_MODDERPACKTWENTY"    },
+            { SteamHelper.ModderPackBitMask.Pack21, "STYLES_MODDERPACKTWENTYONE" },
+            { SteamHelper.ModderPackBitMask.Pack24, "STYLES_MODDERPACKTWENTYFOUR"},
+            { SteamHelper.ModderPackBitMask.Pack25, "STYLES_MODDERPACKTWENTYFIVE"},
+            { SteamHelper.ModderPackBitMask.Pack26, "STYLES_MODDERPACKTWENTYSIX" },
+        };
+
+        private static string GetModderPackName(SteamHelper.ModderPackBitMask mask)
+        {
+            string localeKey;
+            if (s_packLocale.TryGetValue(mask, out localeKey))
+            {
+                try
+                {
+                    string name = Locale.Get(localeKey);
+                    if (!string.IsNullOrEmpty(name)) return name;
+                }
+                catch { }
+            }
+            return "Content Creator Pack";
         }
 
         // Row 3 — asset loading status toggles
@@ -355,24 +422,18 @@ namespace BuildingThemes.GUI
 
             sizeFilterY.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 4);
 
-            // Source filter (DLC / Workshop / All)
-            UILabel sourceLabel = AddUIComponent<UILabel>();
-            sourceLabel.textScale = 0.8f;
-            sourceLabel.padding = new RectOffset(0, 0, 8, 0);
-            sourceLabel.text = "Source: ";
-            sourceLabel.relativePosition = new Vector3(sizeFilterY.relativePosition.x + sizeFilterY.width + 10, 40);
+            // DLC filter — no label, positioned right after the size filters.
+            // sizeFilterX is at ~390; allow 120px for both sizeFilterX+Y (45+10+45) + gap.
+            dlcFilter = UIUtils.CreateDropDown(this);
+            dlcFilter.width = 120;
+            dlcFilter.tooltip = "Filter by DLC / Content Creator Pack.\nOnly DLCs installed and present in this theme are listed.";
+            dlcFilter.relativePosition = new Vector3(sizeFilterX.relativePosition.x + 115 + 10, 40);
 
-            sourceFilter = UIUtils.CreateDropDown(this);
-            sourceFilter.width = 130;
-            sourceFilter.tooltip = "Filter buildings by origin: All, Workshop (Steam), a specific DLC, or Vanilla";
-            sourceFilter.relativePosition = new Vector3(sourceLabel.relativePosition.x + sourceLabel.width + 5, 40);
+            m_dlcEntries.Add(new DlcEntry()); // index 0 = "All DLC"
+            dlcFilter.AddItem("All DLC");
+            dlcFilter.selectedIndex = 0;
 
-            // Populate with just "All" initially; SetSourceOptions() fills it once a theme is selected.
-            m_sourceKeys.Add(null);
-            sourceFilter.AddItem("All");
-            sourceFilter.selectedIndex = 0;
-
-            sourceFilter.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 8);
+            dlcFilter.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 8);
 
             // Name filter
             UILabel nameLabel = AddUIComponent<UILabel>();
