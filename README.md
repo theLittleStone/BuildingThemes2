@@ -304,6 +304,25 @@ Output: `BuildingThemes/bin/Debug/BuildingThemes.dll`
 
 `deploy.sh` also tails the last 60 lines of `output_log.txt` after deploying.
 
+### Releasing a new version
+
+Releases are managed by [Release Please](https://github.com/googleapis/release-please).
+Write commits using [Conventional Commits](https://www.conventionalcommits.org/):
+
+| Prefix | Semver bump | Example |
+| --- | --- | --- |
+| `fix:` | patch (2.0.0 → 2.0.1) | `fix: DLC filter overlap with Display row` |
+| `feat:` | minor (2.0.0 → 2.1.0) | `feat: add Subscribe Missing button` |
+| `feat!:` or `BREAKING CHANGE:` | major | `feat!: change save format` |
+| `chore:`, `docs:`, `refactor:` | no bump | housekeeping |
+
+**Release flow:**
+
+1. Commit your changes using the prefixes above — Release Please opens a Release PR
+   automatically and keeps it up to date.
+2. Run `./deploy.sh --release` locally and commit `dist/` to `master`.
+3. Merge the Release PR → tag `vX.Y.Z` is created → Workshop deploy fires automatically.
+
 ### Publish to Steam Workshop
 
 ```bash

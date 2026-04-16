@@ -1,20 +1,24 @@
 name: Deploy to Steam Workshop
 
 # Triggers:
-#   1. Push a version tag (e.g. git tag v2.1.0 && git push --tags)
-#   2. Manual trigger from the GitHub Actions UI (Actions → Deploy to Steam Workshop → Run workflow)
+#   1. Automatically — when Release Please creates a tag (v*) after merging a release PR
+#   2. Manually     — Actions → "Deploy to Steam Workshop" → Run workflow
 #
-# The workflow does NOT build the mod — it publishes the pre-staged dist/ folder
-# that was committed when the tag was pushed.
+# The workflow does NOT build the mod — it publishes the pre-staged dist/ folder.
+# Before merging a Release PR, run ./deploy.sh --release locally and commit dist/.
+#
+# The change note sent to Steam Workshop is extracted automatically from CHANGELOG.md
+# for the current version, with a link to the full GitHub Release appended.
 #
 # One-time setup (do this once, then forget):
-#   1. Install steamcmd locally: sudo apt-get install steamcmd
+#   1. sudo apt-get install steamcmd
 #   2. steamcmd +login YOUR_USERNAME +quit   (complete the Steam Guard prompt)
 #   3. base64 ~/.steam/steamcmd/config/config.vdf   → copy the output
-#   4. Add GitHub secret STEAM_CONFIG_VDF with that base64 string
-#   5. Add GitHub secret STEAM_USERNAME with your Steam username
+#   4. Add GitHub secret  STEAM_CONFIG_VDF  with that base64 string
+#   5. Add GitHub secret  STEAM_USERNAME    with your Steam username
 #
-# If publishing fails with an auth error, repeat steps 2-4 to refresh the session.
+# If publishing fails with an auth error, repeat steps 2–4 to refresh the session
+# (Steam sessions expire after ~1 year or when you log in from a new device).
 
 on:
   push:
@@ -23,9 +27,9 @@ on:
   workflow_dispatch:
     inputs:
       changeNote:
-        description: 'Change note shown on the Workshop update'
+        description: 'Override change note (leave blank to extract from CHANGELOG.md)'
         required: false
-        default: 'Update'
+        default: ''
 
 jobs:
   deploy:
@@ -39,11 +43,65 @@ jobs:
         run: |
           if [[ ! -f "dist/BuildingThemes2/BuildingThemes2.dll" ]]; then
             echo "ERROR: dist/BuildingThemes2/BuildingThemes2.dll not found."
-            echo "Build locally with ./deploy.sh --release, commit dist/, then push the tag."
+            echo "Run ./deploy.sh --release locally, commit dist/, then push."
             exit 1
           fi
           echo "dist/ contents:"
           ls -lh dist/BuildingThemes2/
+
+      - name: Build change note from CHANGELOG.md
+        id: note
+        run: |
+          # Use manual override if provided
+          MANUAL_NOTE="${{ github.event.inputs.changeNote }}"
+          if [[ -n "$MANUAL_NOTE" ]]; then
+            echo "value=$MANUAL_NOTE" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Derive version from the tag (strip leading 'v')
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+
+          # Fall back to the version in the manifest when triggered manually without a tag
+          if [[ -z "$VERSION" || "$VERSION" == "$TAG" ]]; then
+            VERSION=$(python3 -c "import json,sys; print(json.load(open('.release-please-manifest.json'))['.'])")
+          fi
+
+          # Extract the section for this version from CHANGELOG.md.
+          # Collects everything between "## [VERSION]" and the next "## [" heading.
+          SECTION=$(awk \
+            "/^## \[$VERSION\]/{found=1; next} \
+             found && /^## \[/{exit} \
+             found{print}" \
+            CHANGELOG.md \
+            | sed '/^[[:space:]]*$/d')  # strip blank lines at start/end
+
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/v${VERSION}"
+
+          if [[ -n "$SECTION" ]]; then
+            NOTE="${SECTION}
+
+Full release notes: ${RELEASE_URL}"
+          else
+            NOTE="Release ${VERSION} — ${RELEASE_URL}"
+          fi
+
+          # Steam Workshop change notes are capped at ~8 000 chars
+          NOTE="${NOTE:0:8000}"
+
+          # Write multiline value to GITHUB_OUTPUT
+          {
+            echo "value<<__EOF__"
+            echo "$NOTE"
+            echo "__EOF__"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Show change note
+        run: |
+          echo "──── Change note to be sent to Steam ────"
+          echo "${{ steps.note.outputs.value }}"
+          echo "─────────────────────────────────────────"
 
       - name: Deploy to Steam Workshop
         uses: m00nl1ght-dev/steam-workshop-deploy@v4
@@ -53,4 +111,4 @@ jobs:
           appId: 255710
           publishedFileId: 3708105182
           path: dist/BuildingThemes2
-          changeNote: ${{ github.event.inputs.changeNote || github.ref_name }}
+          changeNote: ${{ steps.note.outputs.value }}
