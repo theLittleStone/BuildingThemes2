@@ -487,6 +487,7 @@ namespace BuildingThemes.GUI
                 Configuration.Theme theme = m_themeSelection.selectedItem as Configuration.Theme;
                 Debugger.LogFormat("ThemeManager: theme selected '{0}'.", theme != null ? theme.name : "null");
                 m_buildingSelection.selectedIndex = -1;
+                UpdateSourceFilter(m_themes[theme]);
                 m_buildingSelection.rowsData = Filter(m_themes[theme]);
 
                 if (m_filter.buildingStatus == Status.All && m_buildingSelection.rowsData.m_size == listCount)
@@ -949,6 +950,19 @@ namespace BuildingThemes.GUI
             {
                 BuildingItem item = (BuildingItem)list[i];
 
+                // Source (Workshop / DLC / Vanilla)
+                string sourceKey = m_filter.buildingSourceKey;
+                if (sourceKey != null)
+                {
+                    if (sourceKey == "workshop" && item.steamID == null) continue;
+                    else if (sourceKey == "vanilla" && (item.steamID != null || (item.building != null && item.building.dlc != null))) continue;
+                    else if (sourceKey != "workshop" && sourceKey != "vanilla")
+                    {
+                        // Specific DLC: only show items whose building.dlc matches
+                        if (item.building == null || item.building.dlc != sourceKey) continue;
+                    }
+                }
+
                 // Origin
                 if (m_filter.buildingOrigin == Origin.Default && item.isCustomAsset) continue;
                 if (m_filter.buildingOrigin == Origin.Custom && !item.isCustomAsset) continue;
@@ -1003,6 +1017,35 @@ namespace BuildingThemes.GUI
             fastList.m_size = filtered.Count;
 
             return fastList;
+        }
+
+        /// <summary>
+        /// Rebuilds the source-filter dropdown options based on what origins are actually
+        /// present in the given building list (Workshop / DLC IDs / Vanilla).
+        /// </summary>
+        private void UpdateSourceFilter(List<BuildingItem> buildings)
+        {
+            if (m_filter == null) return;
+
+            var dlcIds = new List<string>();
+            bool hasVanilla = false;
+
+            foreach (BuildingItem item in buildings)
+            {
+                if (item.steamID != null) continue; // workshop — always shown under "Workshop"
+
+                string dlc = item.building != null ? item.building.dlc : null;
+                if (dlc != null)
+                {
+                    if (!dlcIds.Contains(dlc)) dlcIds.Add(dlc);
+                }
+                else
+                {
+                    hasVanilla = true;
+                }
+            }
+
+            m_filter.SetSourceOptions(dlcIds, hasVanilla);
         }
 
         private void UpdateCounterLabel(List<BuildingItem> filtered)

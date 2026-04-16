@@ -60,7 +60,7 @@ namespace BuildingThemes.GUI
             canFocus = true;
             isInteractive = true;
             clipChildren = true;
-            width = 520;
+            width = 640;
             height = 450;
             relativePosition = new Vector3(
                 Mathf.Floor((GetUIView().fixedWidth - width) / 2),
@@ -157,7 +157,7 @@ namespace BuildingThemes.GUI
             if (PlatformService.IsOverlayEnabled())
             {
                 m_subscribeMissing = UIUtils.CreateButton(this);
-                m_subscribeMissing.width = 130;
+                m_subscribeMissing.width = 150;
                 m_subscribeMissing.text = "Subscribe Missing";
                 m_subscribeMissing.tooltip = "Subscribe to all missing workshop assets on Steam\nThe game must be restarted to load the newly subscribed assets";
                 m_subscribeMissing.relativePosition = new Vector3(10 + 150 + 5 + 130 + 5, height - 40);

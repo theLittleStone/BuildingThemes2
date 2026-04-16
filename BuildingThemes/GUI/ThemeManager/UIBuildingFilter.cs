@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ColossalFramework.PlatformServices;
 using UnityEngine;
 using ColossalFramework.UI;
@@ -16,7 +17,88 @@ namespace BuildingThemes.GUI
         public UIDropDown levelFilter;
         public UIDropDown sizeFilterX;
         public UIDropDown sizeFilterY;
+        public UIDropDown sourceFilter;
         public UITextField nameFilter;
+
+        // Sentinel values used as source filter keys (parallel to sourceFilter.items).
+        // null = "All", "workshop" = Workshop only, "vanilla" = no DLC/workshop.
+        // Any other string = a DLC app-ID string (matches building.dlc).
+        private readonly List<string> m_sourceKeys = new List<string>();
+
+        /// <summary>
+        /// Returns the current source filter key: null = All, "workshop" = Workshop,
+        /// "vanilla" = Vanilla/no-DLC, or a DLC app-ID string for a specific DLC.
+        /// </summary>
+        public string buildingSourceKey
+        {
+            get
+            {
+                if (sourceFilter == null || m_sourceKeys.Count == 0) return null;
+                int idx = sourceFilter.selectedIndex;
+                return (idx >= 0 && idx < m_sourceKeys.Count) ? m_sourceKeys[idx] : null;
+            }
+        }
+
+        /// <summary>
+        /// Rebuild the "Source" dropdown based on which DLC IDs are actually present
+        /// in the currently selected theme.  Call this whenever the theme changes.
+        /// <paramref name="dlcIds"/> is the set of distinct non-null building.dlc values
+        /// found in the theme. Pass an empty list if the theme has no DLC buildings.
+        /// <paramref name="hasVanilla"/> is true when the theme contains at least one
+        /// building with no steamID and no dlc requirement.
+        /// </summary>
+        public void SetSourceOptions(IList<string> dlcIds, bool hasVanilla)
+        {
+            if (sourceFilter == null) return;
+
+            // Preserve the current selection if the key still exists after rebuild.
+            string prevKey = buildingSourceKey;
+
+            m_sourceKeys.Clear();
+            m_sourceKeys.Add(null);           // "All"
+            m_sourceKeys.Add("workshop");     // "Workshop (Steam)"
+            foreach (string id in dlcIds)
+                m_sourceKeys.Add(id);
+            if (hasVanilla)
+                m_sourceKeys.Add("vanilla");
+
+            // Build display names.
+            string[] items = new string[m_sourceKeys.Count];
+            items[0] = "All";
+            items[1] = "Workshop (Steam)";
+            for (int i = 2; i < m_sourceKeys.Count; i++)
+            {
+                string key = m_sourceKeys[i];
+                if (key == "vanilla") { items[i] = "Vanilla"; continue; }
+                uint appId;
+                items[i] = uint.TryParse(key, out appId) ? GetDlcName(appId) : "DLC " + key;
+            }
+
+            sourceFilter.items = items;
+
+            // Restore previous selection if it still exists; else reset to "All".
+            int restored = m_sourceKeys.IndexOf(prevKey);
+            sourceFilter.selectedIndex = restored >= 0 ? restored : 0;
+        }
+
+        private static string GetDlcName(uint appId)
+        {
+            if (appId == SteamHelper.kAfterDLCAppID)               return "After Dark";
+            if (appId == SteamHelper.kWinterDLCAppID)              return "Snowfall";
+            if (appId == SteamHelper.kNaturalDisastersDLCAppID)    return "Natural Disasters";
+            if (appId == SteamHelper.kMotionDLCAppID)              return "Mass Transit";
+            if (appId == SteamHelper.kGreenDLCAppID)               return "Green Cities";
+            if (appId == SteamHelper.kParksDLCAppID)               return "Parklife";
+            if (appId == SteamHelper.kIndustryDLCAppID)            return "Industries";
+            if (appId == SteamHelper.kCampusDLCAppID)              return "Campus";
+            if (appId == SteamHelper.kUrbanDLCAppID)               return "Sunset Harbor";
+            if (appId == SteamHelper.kAirportDLCAppID)             return "Airports";
+            if (appId == SteamHelper.kPlazasAndPromenadesDLCAppID) return "Plazas & Promenades";
+            if (appId == SteamHelper.kFinancialDistrictsDLCAppID)  return "Financial Districts";
+            if (appId == SteamHelper.kHotelsAppID)                 return "Hotels & Retreats";
+            if (appId == SteamHelper.kRacesAndParadesDLCAppID)     return "Hubs & Transport";
+            return "DLC " + appId;
+        }
 
         // Row 3 — asset loading status toggles
         public bool showLoaded = true;
@@ -272,6 +354,25 @@ namespace BuildingThemes.GUI
             };
 
             sizeFilterY.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 4);
+
+            // Source filter (DLC / Workshop / All)
+            UILabel sourceLabel = AddUIComponent<UILabel>();
+            sourceLabel.textScale = 0.8f;
+            sourceLabel.padding = new RectOffset(0, 0, 8, 0);
+            sourceLabel.text = "Source: ";
+            sourceLabel.relativePosition = new Vector3(sizeFilterY.relativePosition.x + sizeFilterY.width + 10, 40);
+
+            sourceFilter = UIUtils.CreateDropDown(this);
+            sourceFilter.width = 130;
+            sourceFilter.tooltip = "Filter buildings by origin: All, Workshop (Steam), a specific DLC, or Vanilla";
+            sourceFilter.relativePosition = new Vector3(sourceLabel.relativePosition.x + sourceLabel.width + 5, 40);
+
+            // Populate with just "All" initially; SetSourceOptions() fills it once a theme is selected.
+            m_sourceKeys.Add(null);
+            sourceFilter.AddItem("All");
+            sourceFilter.selectedIndex = 0;
+
+            sourceFilter.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 8);
 
             // Name filter
             UILabel nameLabel = AddUIComponent<UILabel>();
