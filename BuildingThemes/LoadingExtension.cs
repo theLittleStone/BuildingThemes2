@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using BuildingThemes.GUI;
 using BuildingThemes.HarmonyPatches.BuildingInfoPatch;
 using ColossalFramework;
+using ColossalFramework.UI;
 using ICities;
 
 namespace BuildingThemes
@@ -55,8 +57,63 @@ namespace BuildingThemes
                 BuildingThemesManager.instance.ImportThemes();
                 UnityEngine.Debug.Log("Building Themes 2: ImportThemes done.");
 
+                // Mod compatibility check — logs warnings and shows in-game panel for critical conflicts
+                var conflicts = ModCompatibilityChecker.Check();
+                foreach (var c in conflicts)
+                {
+                    string msg = "Building Themes 2 [" + c.Level + "] Mod conflict — "
+                                 + c.ModName + ": " + c.Reason;
+                    if (c.Level == ModCompatibilityChecker.Severity.Critical)
+                        UnityEngine.Debug.LogError(msg);
+                    else
+                        UnityEngine.Debug.LogWarning(msg);
+                }
+                if (conflicts.Count > 0 && conflicts.Exists(c => c.Level == ModCompatibilityChecker.Severity.Critical))
+                {
+                    var criticals = conflicts.FindAll(c => c.Level == ModCompatibilityChecker.Severity.Critical);
+                    // Queue to main thread so Unity UI is ready (level may still be loading)
+                    SimulationManager.instance.m_ThreadingWrapper.QueueMainThread(() =>
+                    {
+                        try
+                        {
+                            string text = "Building Themes 2 detected a critical mod conflict:\n\n" +
+                                string.Join("\n\n", criticals.ConvertAll(c => "• " + c.ModName + ": " + c.Reason).ToArray());
+                            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                            if (panel != null)
+                                panel.SetMessage("Building Themes 2 — Mod Conflict", text, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            UnityEngine.Debug.LogException(ex);
+                        }
+                    });
+                }
+
                 if (Debugger.Enabled)
                     BuildingThemesManager.instance.ValidateAllThemes();
+
+                // Warn if themes have missing assets and Skyve is installed (Skyve may have disabled them)
+                if (SkyveDetector.IsInstalled)
+                {
+                    var themes = BuildingThemesManager.instance.GetAllThemes();
+                    int missingCount = 0;
+                    foreach (var theme in themes)
+                    {
+                        foreach (var building in theme.buildings)
+                        {
+                            if (building.include && PrefabCollection<BuildingInfo>.FindLoaded(building.name) == null)
+                                missingCount++;
+                        }
+                    }
+                    if (missingCount > 0)
+                    {
+                        UnityEngine.Debug.LogWarning(string.Format(
+                            "Building Themes 2: {0} theme building(s) are missing. " +
+                            "Skyve is installed — some assets may be disabled. " +
+                            "Use 'Workshop Dependencies' in the Theme Manager to identify missing assets.",
+                            missingCount));
+                    }
+                }
 
                 PolicyPanelEnabler.UnlockPolicyToolbarButton();
                 UnityEngine.Debug.Log("Building Themes 2: PolicyPanelEnabler done.");

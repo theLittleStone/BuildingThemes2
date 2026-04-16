@@ -43,7 +43,8 @@ namespace BuildingThemes.GUI
         {
             base.OnSizeChanged();
 
-            background.width = width;
+            if (m_background != null) m_background.width = width;
+            if (m_name != null) m_name.width = Mathf.Max(10f, width - 10f);
         }
 
         #region IUIFastListRow implementation
@@ -53,12 +54,20 @@ namespace BuildingThemes.GUI
             {
                 m_name = AddUIComponent<UILabel>();
                 m_name.textScale = 0.8f;
+                m_name.autoSize = false;
+                m_name.height = 20f;
                 m_name.relativePosition = new Vector3(5, 13);
             }
 
+            // Keep label width in sync with row width (row width may still be 0 before Start(), use parent as fallback)
+            float rowWidth = width > 0 ? width : (parent != null ? parent.width : 0f);
+            m_name.width = Mathf.Max(10f, rowWidth - 10f);
+
             m_theme = data as Configuration.Theme;
 
-            string validityError = UIThemeManager.instance.ThemeValidityError(m_theme);
+            string validityError = UIThemeManager.instance != null
+                ? UIThemeManager.instance.ThemeValidityError(m_theme)
+                : null;
             UIThemeManager.ThemeStats stats = default(UIThemeManager.ThemeStats);
 
             if (validityError != null)
@@ -72,7 +81,6 @@ namespace BuildingThemes.GUI
             {
                 m_name.text = m_theme.displayName;
             }
-            UIUtils.TruncateLabel(m_name, parent.width - 30);
 
             m_name.textColor = (validityError == null) ? new Color32(255, 255, 255, 255) : new Color32(255, 255, 0, 255);
             tooltip = validityError;

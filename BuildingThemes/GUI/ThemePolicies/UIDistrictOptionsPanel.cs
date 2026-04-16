@@ -173,6 +173,9 @@ namespace BuildingThemes.GUI
             };
             y += BTN_H + 10f;
 
+            // Pre-create diagnostics modal so its Start() runs before the first user click
+            UIThemeDiagnosticsModal.instance.Hide();
+
             m_missingDropdown.eventSelectedIndexChanged += (c, val) =>
             {
                 if (_updating) return;

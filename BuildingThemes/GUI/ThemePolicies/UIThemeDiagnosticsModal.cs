@@ -100,6 +100,14 @@ namespace BuildingThemes.GUI
             if (m_text == null) return;
 
             string report = ThemeDiagnostics.FormatReport(districtId);
+
+            // Append Skyve note if there are missing assets and Skyve is installed
+            if (SkyveDetector.IsInstalled && report.Contains("Missing"))
+            {
+                report += "\n\nSkyve is installed — use 'Workshop Dependencies' in the Theme Manager\n" +
+                          "to copy missing asset IDs and manage activation in Skyve.";
+            }
+
             m_text.text = report;
             m_scroll.scrollPosition = Vector2.zero;
 

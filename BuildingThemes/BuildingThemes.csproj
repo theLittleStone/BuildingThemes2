@@ -109,6 +109,8 @@
         <Compile Include="HarmonyPatches\BuildingInfoPatch\InitializePrefabPatch.cs" />
         <Compile Include="HarmonyPatches\PatchUtil.cs" />
         <Compile Include="LoadingExtension.cs" />
+        <Compile Include="ModCompatibilityChecker.cs" />
+        <Compile Include="SkyveDetector.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
         <Compile Include="RandomBuildings.cs" />
         <Compile Include="SerializableDataExtension.cs" />
