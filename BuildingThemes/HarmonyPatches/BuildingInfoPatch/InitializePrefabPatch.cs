@@ -98,7 +98,7 @@ namespace BuildingThemes.HarmonyPatches.BuildingInfoPatch
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogException(e);
+                Debugger.LogException(e);
             }
         }
     }

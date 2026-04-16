@@ -170,7 +170,7 @@ namespace BuildingThemes.GUI
             diagnosticsBtn.eventClick += (c, p) =>
             {
                 try { UIThemeDiagnosticsModal.instance.ShowForDistrict(GetDistrictId()); }
-                catch (Exception e) { UnityEngine.Debug.LogException(e); }
+                catch (Exception e) { Debugger.LogException(e); }
             };
             y += BTN_H + 10f;
 

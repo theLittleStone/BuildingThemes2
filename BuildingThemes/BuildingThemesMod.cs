@@ -117,7 +117,7 @@ namespace BuildingThemes
             if (HarmonyHelper.IsHarmonyInstalled)
             {
                 try { HarmonyPatches.Patcher.UnpatchAll(); }
-                catch (Exception e) { UnityEngine.Debug.LogException(e); }
+                catch (Exception e) { Debugger.LogException(e); }
             }
         }
     }
