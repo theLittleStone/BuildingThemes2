@@ -37,6 +37,7 @@ namespace BuildingThemes.GUI
                 Hide();
             else
             {
+                Debugger.LogFormat("DistrictOptionsPanel opened.");
                 Show(true);
                 BringToFront();
             }

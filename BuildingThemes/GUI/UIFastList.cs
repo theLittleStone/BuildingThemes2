@@ -412,6 +412,9 @@ namespace BuildingThemes.GUI
             m_scrollbar.AlignTo(this, UIAlignAnchor.TopRight);
 
             CheckRows();
+            // Repopulate rows after resize — CheckRows creates new slots but doesn't fill them.
+            // Without this, expanding the panel leaves newly visible rows blank until scrolling.
+            if (m_rows != null && m_rowsData != null) DisplayAt(m_pos);
         }
 
         protected override void OnMouseWheel(UIMouseEventParameter p)

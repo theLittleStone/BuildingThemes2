@@ -80,6 +80,7 @@ namespace BuildingThemes.GUI
             {
                 if (m_building != null)
                 {
+                    Debugger.LogFormat("Building include toggled: '{0}' → {1}.", m_building.displayName, state);
                     UIThemeManager.instance.ChangeBuildingStatus(m_building, state);
                 }
             };

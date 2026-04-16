@@ -80,10 +80,12 @@ namespace BuildingThemes.GUI
 
                     if (isChecked)
                     {
+                        Debugger.LogFormat("ThemePolicyItem: district {0} — enabled theme '{1}'.", districtId, m_theme != null ? m_theme.name : "null");
                         BuildingThemesManager.instance.EnableTheme(districtId, m_theme);
                     }
                     else
                     {
+                        Debugger.LogFormat("ThemePolicyItem: district {0} — disabled theme '{1}'.", districtId, m_theme != null ? m_theme.name : "null");
                         BuildingThemesManager.instance.DisableTheme(districtId, m_theme);
                     }
                 }

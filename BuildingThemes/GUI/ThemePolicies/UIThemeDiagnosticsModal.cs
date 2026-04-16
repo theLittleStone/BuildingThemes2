@@ -99,6 +99,7 @@ namespace BuildingThemes.GUI
         {
             if (m_text == null) return;
 
+            Debugger.LogFormat("DiagnosticsModal opened for district {0}.", districtId);
             string report = ThemeDiagnostics.FormatReport(districtId);
 
             // Append Skyve note if there are missing assets and Skyve is installed

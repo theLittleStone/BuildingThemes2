@@ -118,10 +118,12 @@ namespace BuildingThemes.GUI
         {
             if (isVisible)
             {
+                Debugger.LogFormat("ThemeManager closed.");
                 Hide();
             }
             else
             {
+                Debugger.LogFormat("ThemeManager opened.");
                 Show(true);
 
                 if (m_themeSelection.selectedIndex == -1) m_themeSelection.selectedIndex = 0;
@@ -483,6 +485,7 @@ namespace BuildingThemes.GUI
                 float pos = m_buildingSelection.listPosition;
 
                 Configuration.Theme theme = m_themeSelection.selectedItem as Configuration.Theme;
+                Debugger.LogFormat("ThemeManager: theme selected '{0}'.", theme != null ? theme.name : "null");
                 m_buildingSelection.selectedIndex = -1;
                 m_buildingSelection.rowsData = Filter(m_themes[theme]);
 

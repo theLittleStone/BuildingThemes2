@@ -80,6 +80,8 @@ namespace BuildingThemes.GUI
 
             m_ok.eventClick += (c, p) =>
             {
+                Debugger.LogFormat("CloneBuilding: source='{0}' → clone='{1}' level={2}.",
+                    m_item != null ? m_item.displayName : "null", m_cloneName, m_selectedLevel + 1);
                 UIThemeManager.instance.CloneBuilding(m_item, m_cloneName, m_selectedLevel);
                 UIView.PopModal();
                 Hide();

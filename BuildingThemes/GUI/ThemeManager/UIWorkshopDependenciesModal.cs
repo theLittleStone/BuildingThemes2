@@ -43,6 +43,7 @@ namespace BuildingThemes.GUI
         {
             m_theme = theme;
             PopulateList();
+            Debugger.LogFormat("WorkshopDependenciesModal opened for theme '{0}'.", theme != null ? theme.name : "null");
             Show(true);
             Focus();
             BringToFront();
