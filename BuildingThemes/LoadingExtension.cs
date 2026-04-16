@@ -17,8 +17,8 @@ namespace BuildingThemes
             Debugger.Initialize();
 
             Debugger.Log("ON_CREATED");
-            Debugger.Log("Building Themes: Initializing Mod...");
-            Debugger.LogFormat("Building Themes: Version={0} HarmonyId={1} ConfigPath={2}",
+            Debugger.Log("Initializing Mod...");
+            Debugger.LogFormat("Version={0} HarmonyId={1} ConfigPath={2}",
                 System.Reflection.Assembly.GetExecutingAssembly().GetName().Version,
                 BuildingThemesMod.HarmonyId,
                 System.IO.Path.GetFullPath("BuildingThemes.xml"));
@@ -32,11 +32,11 @@ namespace BuildingThemes
                 // Conditionally deploy the prefab-cloning patch based on saved config.
                 UpdateConfig();
 
-                Debugger.Log("Building Themes: Mod successfully initialized.");
+                Debugger.Log("Mod successfully initialized.");
             }
             catch (Exception e)
             {
-                Debugger.LogError("Building Themes: Exception in OnCreated.");
+                Debugger.LogError("Exception in OnCreated.");
                 Debugger.LogException(e);
             }
         }
@@ -49,7 +49,7 @@ namespace BuildingThemes
 
             try
             {
-                Debugger.LogFormat("Building Themes 2: OnLevelLoaded mode={0} ({1})", mode, (int)mode);
+                Debugger.LogFormat("OnLevelLoaded mode={0} ({1})", mode, (int)mode);
 
                 // Accept all in-game modes (not map/asset/scenario editors)
                 bool isGameMode = mode == LoadMode.NewGame
@@ -59,13 +59,13 @@ namespace BuildingThemes
                 if (!isGameMode) return;
 
                 BuildingThemesManager.instance.ImportThemes();
-                Debugger.Log("Building Themes 2: ImportThemes done.");
+                Debugger.Log("ImportThemes done.");
                 if (Debugger.Enabled)
                 {
                     var allThemes = BuildingThemesManager.instance.GetAllThemes();
                     int totalBuildings = 0;
                     foreach (var t in allThemes) totalBuildings += t.buildings.Count;
-                    Debugger.LogFormat("Building Themes 2: {0} theme(s) loaded, {1} building entries total.", allThemes.Count, totalBuildings);
+                    Debugger.LogFormat("{0} theme(s) loaded, {1} building entries total.", allThemes.Count, totalBuildings);
                 }
 
                 // Mod compatibility check — logs warnings and shows in-game panel for critical conflicts
@@ -127,16 +127,16 @@ namespace BuildingThemes
                 }
 
                 PolicyPanelEnabler.UnlockPolicyToolbarButton();
-                Debugger.Log("Building Themes 2: PolicyPanelEnabler done.");
+                Debugger.Log("PolicyPanelEnabler done.");
 
                 UIThemeManager.Initialize();
-                Debugger.LogFormat("Building Themes 2: UIThemeManager.Initialize done. instance={0}", UIThemeManager.instance != null ? "OK" : "NULL");
+                Debugger.LogFormat("UIThemeManager.Initialize done. instance={0}", UIThemeManager.instance != null ? "OK" : "NULL");
 
                 UIStyleButtonReplacer.ReplaceStyleButton();
             }
             catch (Exception e)
             {
-                Debugger.LogError("Building Themes 2: Exception in OnLevelLoaded.");
+                Debugger.LogError("Exception in OnLevelLoaded.");
                 Debugger.LogException(e);
             }
         }
@@ -152,7 +152,7 @@ namespace BuildingThemes
                 int themedDistricts = 0;
                 for (byte d = 0; d < 128; d++)
                     if (BuildingThemesManager.instance.IsThemeManagementEnabled(d)) themedDistricts++;
-                Debugger.LogFormat("Building Themes 2: OnLevelUnloading — {0} themed district(s) were active.", themedDistricts);
+                Debugger.LogFormat("OnLevelUnloading — {0} themed district(s) were active.", themedDistricts);
             }
             BuildingThemesManager.instance.Reset();
             UIThemeManager.Destroy();
@@ -180,7 +180,7 @@ namespace BuildingThemes
                 Debugger.LogException(e);
             }
 
-            Debugger.Log("Building Themes: OnReleased — patches reverted, managers reset.");
+            Debugger.Log("OnReleased — patches reverted, managers reset.");
             Debugger.Deinitialize();
         }
 

@@ -17,7 +17,7 @@ namespace BuildingThemes.HarmonyPatches.DistrictWorldInfoPanelPatch
                 postfix: new PatchUtil.MethodDefinition(typeof(OnPoliciesClickPatch), nameof(Postfix)));
 
             deployed = true;
-            Debugger.Log("Building Themes: DistrictWorldInfoPanel.OnPoliciesClick patched.");
+            Debugger.Log("DistrictWorldInfoPanel.OnPoliciesClick patched.");
         }
 
         public static void Revert()
@@ -28,7 +28,7 @@ namespace BuildingThemes.HarmonyPatches.DistrictWorldInfoPanelPatch
                 new PatchUtil.MethodDefinition(typeof(DistrictWorldInfoPanel), "OnPoliciesClick"));
 
             deployed = false;
-            Debugger.Log("Building Themes: DistrictWorldInfoPanel.OnPoliciesClick unpatched.");
+            Debugger.Log("DistrictWorldInfoPanel.OnPoliciesClick unpatched.");
         }
 
         // Postfix: select tab index 0 so the Themes policy tab is shown first.

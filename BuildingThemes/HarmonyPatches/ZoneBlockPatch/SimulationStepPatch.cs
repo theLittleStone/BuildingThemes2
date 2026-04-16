@@ -48,7 +48,7 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                 prefix: new PatchUtil.MethodDefinition(typeof(SimulationStepPatch), nameof(Prefix)));
 
             deployed = true;
-            Debugger.Log("Building Themes: ZoneBlock.SimulationStep patched.");
+            Debugger.Log("ZoneBlock.SimulationStep patched.");
         }
 
         public static void Revert()
@@ -60,7 +60,7 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
 
             deployed = false;
             debugCount = 0;
-            Debugger.Log("Building Themes: ZoneBlock.SimulationStep unpatched.");
+            Debugger.Log("ZoneBlock.SimulationStep unpatched.");
         }
 
         // Stubs replaced by Harmony ReversePatch with the original private implementations.
@@ -86,7 +86,7 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
             if (Debugger.Enabled && debugCount < 10)
             {
                 debugCount++;
-                Debugger.LogFormat("Building Themes: Patched ZoneBlock.SimulationStep called. blockID: {0}, position: {1}.",
+                Debugger.LogFormat("Patched ZoneBlock.SimulationStep called. blockID: {0}, position: {1}.",
                     blockID, __instance.m_position);
             }
 

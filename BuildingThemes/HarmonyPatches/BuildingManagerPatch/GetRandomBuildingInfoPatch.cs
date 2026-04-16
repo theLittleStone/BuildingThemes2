@@ -16,7 +16,7 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
                 prefix: new PatchUtil.MethodDefinition(typeof(GetRandomBuildingInfoPatch), nameof(Prefix)));
 
             deployed = true;
-            Debugger.Log("Building Themes: BuildingManager.GetRandomBuildingInfo patched.");
+            Debugger.Log("BuildingManager.GetRandomBuildingInfo patched.");
         }
 
         public static void Revert()
@@ -27,7 +27,7 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
                 new PatchUtil.MethodDefinition(typeof(BuildingManager), "GetRandomBuildingInfo"));
 
             deployed = false;
-            Debugger.Log("Building Themes: BuildingManager.GetRandomBuildingInfo unpatched.");
+            Debugger.Log("BuildingManager.GetRandomBuildingInfo unpatched.");
         }
 
         // Prefix: select a themed building. If none found, fall through to the original.

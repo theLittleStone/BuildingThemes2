@@ -17,7 +17,7 @@ namespace BuildingThemes.HarmonyPatches.ImmaterialResourceManagerPatch
 
             if (Util.IsModActive(BuildingThemesMod.EIGHTY_ONE_MOD))
             {
-                Debugger.Log("Building Themes: ImmaterialResourceManager.AddResource will NOT be patched — 81 Tiles detected.");
+                Debugger.Log("ImmaterialResourceManager.AddResource will NOT be patched — 81 Tiles detected.");
                 return;
             }
 
@@ -27,7 +27,7 @@ namespace BuildingThemes.HarmonyPatches.ImmaterialResourceManagerPatch
                 prefix: new PatchUtil.MethodDefinition(typeof(AddResourcePatch), nameof(Prefix)));
 
             deployed = true;
-            Debugger.Log("Building Themes: ImmaterialResourceManager.AddResource patched.");
+            Debugger.Log("ImmaterialResourceManager.AddResource patched.");
         }
 
         public static void Revert()
@@ -39,7 +39,7 @@ namespace BuildingThemes.HarmonyPatches.ImmaterialResourceManagerPatch
                     argumentTypes: new[] { typeof(ImmaterialResourceManager.Resource), typeof(int), typeof(Vector3), typeof(float) }));
 
             deployed = false;
-            Debugger.Log("Building Themes: ImmaterialResourceManager.AddResource unpatched.");
+            Debugger.Log("ImmaterialResourceManager.AddResource unpatched.");
         }
 
         // Prefix: capture the abandoned-building position, then let the original run.
@@ -48,7 +48,7 @@ namespace BuildingThemes.HarmonyPatches.ImmaterialResourceManagerPatch
             if (Debugger.Enabled && debugCounter < 10)
             {
                 debugCounter++;
-                Debugger.Log("Building Themes: ImmaterialResourceManager.AddResource prefix called.");
+                Debugger.Log("ImmaterialResourceManager.AddResource prefix called.");
             }
 
             if (resource == ImmaterialResourceManager.Resource.Abandonment)

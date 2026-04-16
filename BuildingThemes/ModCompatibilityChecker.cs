@@ -50,7 +50,7 @@ namespace BuildingThemes
         {
             var conflicts = new List<ConflictInfo>();
 
-            Debugger.LogFormat("Building Themes 2: ModCompatibilityChecker starting — {0} known-bad entry(s).", KnownBadMods.Length);
+            Debugger.LogFormat("ModCompatibilityChecker starting — {0} known-bad entry(s).", KnownBadMods.Length);
 
             // 1. Known-bad mod list
             foreach (var entry in KnownBadMods)
@@ -61,7 +61,7 @@ namespace BuildingThemes
                 // Also check by Workshop ID to catch renamed forks
                 if (!active && entry.WorkshopId != 0)
                     active = Util.IsModWorkshopIdActive(entry.WorkshopId);
-                Debugger.LogFormat("Building Themes 2: Checked '{0}' (workshopId={1}) — active={2}.", entry.DisplayName, entry.WorkshopId, active);
+                Debugger.LogFormat("Checked '{0}' (workshopId={1}) — active={2}.", entry.DisplayName, entry.WorkshopId, active);
                 if (active)
                     conflicts.Add(new ConflictInfo
                     {
@@ -83,10 +83,10 @@ namespace BuildingThemes
                     var info = Harmony.GetPatchInfo(method);
                     if (info != null)
                     {
-                        Debugger.LogFormat("Building Themes 2: ZoneBlock.SimulationStep has {0} prefix(es).", info.Prefixes.Count);
+                        Debugger.LogFormat("ZoneBlock.SimulationStep has {0} prefix(es).", info.Prefixes.Count);
                         foreach (var prefix in info.Prefixes)
                         {
-                            Debugger.LogFormat("Building Themes 2: Prefix owner='{0}' (ours={1}).", prefix.owner, prefix.owner == ourHarmonyId);
+                            Debugger.LogFormat("Prefix owner='{0}' (ours={1}).", prefix.owner, prefix.owner == ourHarmonyId);
                             if (prefix.owner == ourHarmonyId) continue;
                             conflicts.Add(new ConflictInfo
                             {
@@ -104,7 +104,7 @@ namespace BuildingThemes
                 Debugger.LogException(e);
             }
 
-            Debugger.LogFormat("Building Themes 2: ModCompatibilityChecker done — {0} conflict(s) found.", conflicts.Count);
+            Debugger.LogFormat("ModCompatibilityChecker done — {0} conflict(s) found.", conflicts.Count);
             return conflicts;
         }
     }

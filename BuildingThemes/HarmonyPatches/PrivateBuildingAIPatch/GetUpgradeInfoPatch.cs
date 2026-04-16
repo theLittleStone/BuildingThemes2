@@ -25,7 +25,7 @@ namespace BuildingThemes.HarmonyPatches.PrivateBuildingAIPatch
                 PatchUtil.Patch(
                     new PatchUtil.MethodDefinition(aiType, "GetUpgradeInfo"),
                     prefix: new PatchUtil.MethodDefinition(typeof(GetUpgradeInfoPatch), nameof(Prefix)));
-                Debugger.LogFormat("Building Themes: {0}.GetUpgradeInfo patched.", aiType.Name);
+                Debugger.LogFormat("{0}.GetUpgradeInfo patched.", aiType.Name);
             }
 
             deployed = true;
@@ -38,7 +38,7 @@ namespace BuildingThemes.HarmonyPatches.PrivateBuildingAIPatch
             foreach (var aiType in AiTypes)
             {
                 PatchUtil.Unpatch(new PatchUtil.MethodDefinition(aiType, "GetUpgradeInfo"));
-                Debugger.LogFormat("Building Themes: {0}.GetUpgradeInfo unpatched.", aiType.Name);
+                Debugger.LogFormat("{0}.GetUpgradeInfo unpatched.", aiType.Name);
             }
 
             deployed = false;

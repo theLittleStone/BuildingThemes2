@@ -118,7 +118,7 @@ namespace BuildingThemes
 
                         if (Debugger.Enabled)
                         {
-                            Debugger.Log("Building Themes: User Configuration loaded.");
+                            Debugger.Log("User Configuration loaded.");
                         }
 
                         if (_configuration == null)
@@ -409,7 +409,7 @@ namespace BuildingThemes
 
             if (Debugger.Enabled)
             {
-                Debugger.LogFormat("Building Themes: BuildingThemesManager. Enabling theme {0} for district {1}.", theme.name, districtId);
+                Debugger.LogFormat("BuildingThemesManager. Enabling theme {0} for district {1}.", theme.name, districtId);
             }
             var themes = GetDistrictThemes(districtId, true);
 
@@ -417,7 +417,7 @@ namespace BuildingThemes
             {
                 if (Debugger.Enabled)
                 {
-                    Debugger.LogFormat("Building Themes: BuildingThemesManager. Theme {0} was already enabled for district {1}.", theme.name, districtId);
+                    Debugger.LogFormat("BuildingThemesManager. Theme {0} was already enabled for district {1}.", theme.name, districtId);
                 }
                 return;
             }
@@ -431,14 +431,14 @@ namespace BuildingThemes
 
             if (Debugger.Enabled)
             {
-                Debugger.LogFormat("Building Themes: BuildingThemesManager. Disabling theme {0} for district {1}.", theme.name, districtId);
+                Debugger.LogFormat("BuildingThemesManager. Disabling theme {0} for district {1}.", theme.name, districtId);
             }
 
             if (!districtThemeInfos[districtId].themes.Remove(theme))
             {
                 if (Debugger.Enabled)
                 {
-                    Debugger.LogFormat("Building Themes: BuildingThemesManager. Theme {0} was already disabled for district {1}.", theme.name, districtId);
+                    Debugger.LogFormat("BuildingThemesManager. Theme {0} was already disabled for district {1}.", theme.name, districtId);
                 }
                 return;
             }
@@ -901,7 +901,7 @@ namespace BuildingThemes
 
                 if (Debugger.Enabled)
                 {
-                    Debugger.LogFormat("Building Themes: Environment is {0}. Selected default builtin theme.", env);
+                    Debugger.LogFormat("Environment is {0}. Selected default builtin theme.", env);
                 }
                 */
 
@@ -915,7 +915,7 @@ namespace BuildingThemes
 
                 if (Debugger.Enabled)
                 {
-                    Debugger.LogFormat("Building Themes: Deriving theme for district {0} from city-wide theme.", districtIdx);
+                    Debugger.LogFormat("Deriving theme for district {0} from city-wide theme.", districtIdx);
                 }
             }
 
@@ -947,7 +947,7 @@ namespace BuildingThemes
         {
             var themes = GetAllThemes();
             var sb = new StringBuilder();
-            sb.AppendLine("[BuildingThemes2] Theme validation summary:");
+            sb.AppendLine("Theme validation summary:");
 
             int prefabCount = PrefabCollection<BuildingInfo>.PrefabCount();
             var loadedNames = new HashSet<string>();

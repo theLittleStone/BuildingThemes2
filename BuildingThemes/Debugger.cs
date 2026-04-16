@@ -13,6 +13,9 @@ namespace BuildingThemes
 {
     public static class Debugger
     {
+        public const string ModTag = "Building Themes 2";
+        private const string Prefix = ModTag + ": ";
+
         private static bool initialized = false;
 
         // Persisted via the game's settings file system (survives game restarts)
@@ -63,9 +66,7 @@ namespace BuildingThemes
         public static void Log(string message)
         {
             if (initialized && Enabled)
-            {
-                Debug.Log(message);
-            }
+                Debug.Log(Prefix + message);
         }
 
         public static void LogFormat(string format, params object[] args)
@@ -83,7 +84,7 @@ namespace BuildingThemes
 
         public static void LogError(string error)
         {
-            Debug.LogError(error);
+            Debug.LogError(Prefix + error);
         }
 
         public static void LogException(Exception e)

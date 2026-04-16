@@ -38,7 +38,7 @@ namespace BuildingThemes
                 if (saveData != null)
                 {
                     if (Debugger.Enabled)
-                        Debugger.LogFormat("Building Themes: Loading Save Data — {0} bytes.", saveData.Length);
+                        Debugger.LogFormat("Loading Save Data — {0} bytes.", saveData.Length);
 
                     DistrictsConfiguration configuration = null;
 
@@ -49,7 +49,7 @@ namespace BuildingThemes
                     }
 
                     if (Debugger.Enabled && configuration != null)
-                        Debugger.LogFormat("Building Themes: Save data deserialized — {0} district(s).",
+                        Debugger.LogFormat("Save data deserialized — {0} district(s).",
                             configuration.Districts.Count);
 
                     ApplyConfiguration(configuration);
@@ -63,7 +63,7 @@ namespace BuildingThemes
                     {
                         if (Debugger.Enabled)
                         {
-                            Debugger.Log("Building Themes: Loading Legacy Save Data...");
+                            Debugger.Log("Loading Legacy Save Data...");
                         }
 
                         var UniqueId = 0u;
@@ -75,7 +75,7 @@ namespace BuildingThemes
 
                         var filepath = Path.Combine(Application.dataPath, String.Format("buildingThemesSave_{0}.xml", UniqueId));
 
-                        Debugger.LogFormat("Building Themes: Legacy save UniqueId={0}, filepath={1}", UniqueId, filepath);
+                        Debugger.LogFormat("Legacy save UniqueId={0}, filepath={1}", UniqueId, filepath);
 
                         if (!File.Exists(filepath))
                         {
@@ -114,7 +114,7 @@ namespace BuildingThemes
             }
             catch (Exception ex)
             {
-                Debugger.LogError("Building Themes: Error loading theme data");
+                Debugger.LogError("Error loading theme data");
                 Debugger.LogException(ex);
             }
         }
@@ -123,7 +123,7 @@ namespace BuildingThemes
         {
             if (Debugger.Enabled)
             {
-                Debugger.Log("Building Themes: Saving Data...");
+                Debugger.Log("Saving Data...");
             }
             
             try
@@ -157,7 +157,7 @@ namespace BuildingThemes
                     });
                     if (Debugger.Enabled)
                     {
-                        Debugger.LogFormat("Building Themes: Saving: {0} themes enabled for district {1}", themes.Count, i);
+                        Debugger.LogFormat("Saving: {0} themes enabled for district {1}", themes.Count, i);
                     }
                 }
 
@@ -173,7 +173,7 @@ namespace BuildingThemes
                 }
                 SerializableData.SaveData(XMLSaveDataId, configurationData);
                 if (Debugger.Enabled)
-                    Debugger.LogFormat("Building Themes: Save complete — {0} district(s), {1} bytes written.",
+                    Debugger.LogFormat("Save complete — {0} district(s), {1} bytes written.",
                         configuration.Districts.Count, configurationData.Length);
 
                 // output for debugging
@@ -186,14 +186,14 @@ namespace BuildingThemes
 
                 if (Debugger.Enabled)
                 {
-                    Debugger.LogFormat("Building Themes: Serialization done.");
+                    Debugger.LogFormat("Serialization done.");
                     Debugger.AppendThemeList();
                 }
             }
 
             catch (Exception ex)
             {
-                Debugger.LogError("Building Themes: Error saving theme data");
+                Debugger.LogError("Error saving theme data");
                 Debugger.LogException(ex);
             }
         }
@@ -225,7 +225,7 @@ namespace BuildingThemes
 
                 if (Debugger.Enabled)
                 {
-                    Debugger.LogFormat("Building Themes: Loading: {0} themes enabled for district {1}", themes.Count, district.id);
+                    Debugger.LogFormat("Loading: {0} themes enabled for district {1}", themes.Count, district.id);
                 }
 
                 buildingThemesManager.setThemeInfo(district.id, themes, district.blacklistMode);
@@ -237,7 +237,7 @@ namespace BuildingThemes
                 if (Debugger.Enabled)
                 {
                     var themeNames = string.Join(", ", System.Array.ConvertAll(district.themes ?? new string[0], t => t));
-                    Debugger.LogFormat("Building Themes: District {0} loaded — blacklist={1}, missingMode={2}, emptyMode={3}, themes=[{4}]",
+                    Debugger.LogFormat("District {0} loaded — blacklist={1}, missingMode={2}, emptyMode={3}, themes=[{4}]",
                         district.id, district.blacklistMode,
                         district.missingAssetMode, district.emptyLevelBehavior, themeNames);
                 }

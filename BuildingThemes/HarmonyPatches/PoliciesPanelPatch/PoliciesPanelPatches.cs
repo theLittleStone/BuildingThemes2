@@ -32,7 +32,7 @@ namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
                 postfix: new PatchUtil.MethodDefinition(typeof(PoliciesPanelPatches), nameof(SetParentButton_Postfix)));
 
             deployed = true;
-            Debugger.Log("Building Themes: PoliciesPanel methods patched.");
+            Debugger.Log("PoliciesPanel methods patched.");
         }
 
         public static void Revert()
@@ -45,7 +45,7 @@ namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
                 System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance));
 
             deployed = false;
-            Debugger.Log("Building Themes: PoliciesPanel methods unpatched.");
+            Debugger.Log("PoliciesPanel methods unpatched.");
         }
 
         // RefreshPanel validates every policy button — our fake buttons would fail that check,

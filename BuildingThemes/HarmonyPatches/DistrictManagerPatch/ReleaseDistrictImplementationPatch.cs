@@ -15,7 +15,7 @@ namespace BuildingThemes.HarmonyPatches.DistrictManagerPatch
                 prefix: new PatchUtil.MethodDefinition(typeof(ReleaseDistrictImplementationPatch), nameof(Prefix)));
 
             deployed = true;
-            Debugger.Log("Building Themes: DistrictManager.ReleaseDistrictImplementation patched.");
+            Debugger.Log("DistrictManager.ReleaseDistrictImplementation patched.");
         }
 
         public static void Revert()
@@ -26,7 +26,7 @@ namespace BuildingThemes.HarmonyPatches.DistrictManagerPatch
                 new PatchUtil.MethodDefinition(typeof(DistrictManager), "ReleaseDistrictImplementation"));
 
             deployed = false;
-            Debugger.Log("Building Themes: DistrictManager.ReleaseDistrictImplementation unpatched.");
+            Debugger.Log("DistrictManager.ReleaseDistrictImplementation unpatched.");
         }
 
         // Prefix: clear theme management before the district data is wiped by the original.
