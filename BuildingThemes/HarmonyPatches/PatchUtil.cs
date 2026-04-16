@@ -7,7 +7,7 @@ namespace BuildingThemes.HarmonyPatches
 {
     public static class PatchUtil
     {
-        private const string HarmonyId = "github.com/boformer/BuildingThemes";
+        private const string HarmonyId = BuildingThemesMod.HarmonyId;
         private static Harmony _harmonyInstance = null;
 
         private static Harmony HarmonyInstance =>

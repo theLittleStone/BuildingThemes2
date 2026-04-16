@@ -59,6 +59,7 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                 new PatchUtil.MethodDefinition(typeof(ZoneBlock), "SimulationStep"));
 
             deployed = false;
+            debugCount = 0;
             Debugger.Log("Building Themes: ZoneBlock.SimulationStep unpatched.");
         }
 

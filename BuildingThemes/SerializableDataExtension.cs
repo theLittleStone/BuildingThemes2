@@ -47,7 +47,7 @@ namespace BuildingThemes
                     var xmlSerializer = new XmlSerializer(typeof(DistrictsConfiguration));
                     using (var memoryStream = new MemoryStream(saveData))
                     {
-                        configuration = xmlSerializer.Deserialize(new MemoryStream(saveData)) as DistrictsConfiguration;
+                        configuration = xmlSerializer.Deserialize(memoryStream) as DistrictsConfiguration;
                     }
 
                     ApplyConfiguration(configuration);
@@ -204,6 +204,8 @@ namespace BuildingThemes
                 if (DistrictManager.instance.m_districts.m_buffer[district.id].m_flags == District.Flags.None) continue;
 
                 var themes = new HashSet<Configuration.Theme>();
+
+                if (district.themes == null) continue;
 
                 foreach (var themeName in district.themes)
                 {

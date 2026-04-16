@@ -67,7 +67,7 @@ namespace BuildingThemes
             //    that might block our own prefix from running.
             try
             {
-                const string ourHarmonyId = "BuildingThemes2";
+                const string ourHarmonyId = BuildingThemesMod.HarmonyId;
                 var method = typeof(ZoneBlock).GetMethod("SimulationStep",
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (method != null)

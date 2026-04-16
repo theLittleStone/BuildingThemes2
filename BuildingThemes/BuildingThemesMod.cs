@@ -11,6 +11,9 @@ namespace BuildingThemes
     {
         public static bool xmlCorrupt = false;
 
+        // Single canonical Harmony ID used by PatchUtil and ModCompatibilityChecker.
+        public const string HarmonyId = "com.github.roberto-naharro.BuildingThemes2";
+
 
         // we'll use this variable to pass the building position to GetRandomBuildingInfo method. It's here to make possible 81 Tiles compatibility
         public static Vector3 position;
@@ -103,7 +106,8 @@ namespace BuildingThemes
         {
             if (HarmonyHelper.IsHarmonyInstalled)
             {
-                HarmonyPatches.Patcher.UnpatchAll();
+                try { HarmonyPatches.Patcher.UnpatchAll(); }
+                catch (Exception e) { UnityEngine.Debug.LogException(e); }
             }
         }
     }
