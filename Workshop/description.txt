@@ -2,9 +2,13 @@
 
 Apply building themes to districts and cities. Only buildings in the selected themes will grow in a district. Subscribe to theme mods from the workshop, or create your own themes in-game.
 
-[b]Building Themes 2[/b] is a community-maintained fork of the original [b]Building Themes[/b] by [url=https://github.com/boformer]boformer (Sebastian Schöner)[/url], updated to run on modern Cities: Skylines with Harmony 2.x. All original game logic and design belong to him.
+[b]Building Themes 2[/b] is a community-maintained fork of the original [b]Building Themes[/b] by [url=https://github.com/boformer]boformer (Sebastian Schöner)[/url], updated to run on modern Cities: Skylines with Harmony 2.x.
 
-[h1]Required Dependency[/h1]
+[i]⚠️ Maintenance notice: This fork is maintained on a best-effort basis. Updates may be infrequent. Critical bugs will be fixed; new features will be added when time allows. Please check GitHub for known issues before reporting.[/i]
+
+[url=https://github.com/roberto-naharro/BuildingThemes2/issues]► Report a bug on GitHub[/url]
+
+[h1]Required[/h1]
 
 [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2040656402][b]► Harmony (Mod Dependency) — subscribe and enable this first[/b][/url]
 
@@ -12,73 +16,108 @@ The mod will silently do nothing if Harmony is not installed.
 
 [h1]Compatibility[/h1]
 
-[b]Compatible with Cities: Skylines 1.18.x[/b]
+Compatible with [b]Cities: Skylines 1.18.x[/b] (tested on 1.18.1-f3).
 
-Tested against game version 1.18.1-f3.
-
-This mod is [u]not[/u] compatible with:
+[b]Not compatible with:[/b]
 [list]
-[*][b]81 Tiles (original)[/b] — use the fixed version [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2862121823]81 Tiles 2[/url] if you need it
-[*][b]Building Themes (original)[/b] — unsubscribe the original before using this fork, they cannot run together
+[*][b]81 Tiles (original)[/b] — use [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2862121823]81 Tiles 2[/url] instead (fully supported)
+[*][b]Building Themes (original)[/b] — unsubscribe the original before enabling this fork
 [*][b]Building Simulation Overhaul[/b]
 [*][b]Runways and Taxiways[/b] — use [url=http://steamcommunity.com/sharedfiles/filedetails/?id=465127441]Airport Roads[/url] instead
 [/list]
 
-Save games made with the original Building Themes mod are [b]fully compatible[/b] — your theme assignments will load normally.
+Save games made with the original Building Themes are [b]fully compatible[/b] — district assignments load normally.
 
-[h1]What This Mod Does[/h1]
+[h1]Quick Start[/h1]
+
+[olist]
+[*]Open a [b]district policy panel[/b] → go to the [b]Themes[/b] tab
+[*]Click [b]Theme Manager[/b] → select a theme and include buildings in it (or import a style)
+[*]Back in the [b]Themes[/b] tab, check [b]Enable Theme Management for this district[/b]
+[*]Enable one or more themes using the checkboxes
+[*]Zone the area — only buildings in the active themes will grow
+[/olist]
+
+If no theme is active, any growable building can spawn (vanilla behavior).
+
+[h1]Buildings Are Not Spawning?[/h1]
+
+Work through this checklist in order:
+
+[b]1. Theme is empty or has no Level 1 buildings[/b]
+Open the Theme Manager → select your theme → set the filter to [b]Included[/b]. If the list is empty, no buildings are in your theme. Every theme [u]must[/u] include at least one Level 1 building for a zone type (e.g. a Level 1 Low-Density Residential building). Higher levels require a Level 1 first.
+
+[b]2. Workshop assets are not loaded[/b]
+Workshop buildings you subscribed to but are not active in your current playset will show as [b]missing[/b] in the Theme Manager (red text). The mod can handle this three ways — see [i]Missing Assets[/i] below. Use [b]Workshop Dependencies[/b] (button in Theme Manager) to see exactly which assets are missing and copy their IDs for resubscription.
+
+[b]3. Wrong zone type[/b]
+The building's zone type must match the zone you placed. A commercial building will never spawn in a residential zone regardless of theme settings.
+
+[b]4. Theme is not enabled for the district[/b]
+Open the district policy panel → Themes tab → confirm [b]Enable Theme Management[/b] is checked and your theme has a checkmark next to it.
+
+[b]5. Run Spawn Diagnostics[/b]
+Open the district policy panel → Themes tab → [b]District Options[/b] → [b]Spawn Diagnostics[/b]. This shows how many buildings were accepted or rejected during the last theme compile, and lists any missing assets by name.
+
+[h1]Missing Assets[/h1]
+
+When a workshop building in your theme is not loaded (e.g. you unsubscribed or disabled it in Skyve), the mod can respond in three ways. Set the default in [b]Mod Options → Building Themes[/b], or override it per district in [b]District Options[/b].
+
 [list]
-[*]Adds a [b]Themes[/b] tab to the district policies panel where you can select themes for a district or the whole city. The panel is unlocked from the start.
-[*]Adds the [b]Building Theme Manager[/b] (accessible from the Themes tab) where you can edit existing themes and create your own.
-[*]Provides two built-in themes: [b]European[/b] and [b]International[/b].
-[*]Improves building footprint selection so themes with only small buildings (e.g. 1×2) work correctly.
+[*][b]Skip[/b] — the missing building is quietly dropped. The theme still applies using only what is loaded. Areas may be sparse if many assets are missing.
+[*][b]Fill with vanilla[/b] (default) — missing slots are supplemented with vanilla buildings of the same zone type and size. Your loaded theme buildings still appear; vanilla fills the gaps.
+[*][b]Fall back to vanilla[/b] — if any building is missing in a size/level slot, that entire slot uses vanilla buildings only. The most conservative option: no sparse areas, but theme coverage is reduced.
 [/list]
 
-[h1]What This Mod Does Not Do[/h1]
+[h1]District Options[/h1]
+
+Open via the [b]District Options[/b] button in the Themes tab. Per-district controls:
+
 [list]
-[*]It will not corrupt save games if you disable it (cloned buildings will disappear, but the save is intact).
-[*]It does not unlock European growables for non-European biomes. Use [b]European Buildings Unlocker[/b] for that.
+[*][b]Allow buildings not in any theme[/b] — turns themes into a blacklist: anything not explicitly excluded can spawn. Useful when you want to allow most buildings but block specific ones.
+[*][b]Level behavior[/b] — what happens when a building tries to level up but your theme has no building for that level: vanilla fallback, cascade from lower level, or strict freeze.
+[*][b]Missing asset handling[/b] — override the global missing asset mode for this specific district.
+[*][b]Spawn Diagnostics[/b] — see accepted/rejected building counts and a list of missing assets for this district.
 [/list]
-
-[h1]How To Use Themes[/h1]
-
-Use the [b]Themes[/b] tab in the district policies panel to enable or disable themes for a district. You can select any number of active themes. If no theme is active, any growable building can spawn.
-
-By default no theme is activated. If you also use [b]European Buildings Unlocker[/b] (recommended), both International and European buildings will spawn by default.
-
-Districts inherit the city-wide theme setting. Check [b]Enable Theme Management for this district[/b] to control a district's themes separately.
-
-If you redraw district borders, buildings outside the theme will not disappear. When they upgrade, they will level up to a building that fits the theme.
-
-To allow custom workshop assets in a district, add them via the Theme Manager or check [b]Allow buildings which are not in any theme[/b].
 
 [h1]Theme Manager[/h1]
 
-Open the Theme Manager from the Themes tab.
+Open from the [b]Themes[/b] tab. The left panel shows all themes; the middle panel shows buildings.
 
-The left panel shows all themes. Select a theme to add or remove buildings. A live rotatable 3D preview appears on the right.
+[b]Filters:[/b] Filter by zone type, level, size, origin (vanilla / workshop), asset status (loaded / missing / DLC locked), or name/Steam ID. The counter above the building list shows how many are spawnable in the current view.
 
-Click a building in the list to select it. Two advanced options are available:
+[b]Quick actions:[/b]
 [list]
-[*][b]Spawn rate[/b] — controls how often a building appears relative to others with the same zone type, level, and footprint.
-[*][b]Upgrade building[/b] — forces a specific building when this one upgrades (e.g. same model with a pool and solar panels).
+[*][b]Include All / None / Valid[/b] — bulk-include or exclude buildings in the current filtered view
+[*][b]Exclude Missing[/b] — remove all unloaded assets from the current filtered view in one click
+[*][b]Workshop Dependencies[/b] — lists all workshop assets in the selected theme by status (loaded / missing), with a button to copy missing IDs to clipboard
 [/list]
 
-[b]How the simulation works:[/b] A new zone spawns a level 1 building first (include one in your theme). It upgrades when requirements are met. The level 2 building must have the same width and equal or smaller length. Example: an L1 2×3 low-density residential upgrades to L2 2×3, 2×2, or 2×1.
+[b]Per-building options:[/b]
+[list]
+[*][b]Spawn rate[/b] — controls how often a building appears relative to others with the same type, level, and footprint
+[*][b]Upgrade building[/b] — forces a specific building when this one levels up
+[/list]
 
-If there is enough space, the game expands a building's front- or backyard to a maximum of 4 cells. This mod refines that: if no props or trees exist in the expanded area, the plot is shrunk back to the building's actual footprint. This allows tightly packed 4-cell-wide block layouts (as used by the UK Terraced Housing theme).
+[b]How spawning works:[/b] A new zone always spawns a Level 1 building first — include one in your theme. It upgrades when the zone's requirements are met. The Level 2 building must have the same width and equal or smaller length than the Level 1. Example: a 2×3 L1 Low Residential can upgrade to a 2×3, 2×2, or 2×1 L2.
+
+If a building is shorter than the plot, this mod shrinks the plot to the building's actual footprint (unless props or trees occupy the extra space). This allows tightly packed layouts like the UK Terraced Housing theme.
 
 [h1]Asset Cloning[/h1]
 
-The Theme Manager lets you clone buildings and assign different wealth levels to them — useful when you don't have enough assets for every level, or to add variety.
+The Theme Manager lets you clone buildings and assign different wealth levels — useful when you don't have enough assets for every level, or to add variety.
 
-To clone: select a building, press [b]Clone Building[/b], enter a name, and choose the wealth level. The clone appears in the building list.
+To clone: select a building → [b]Clone Building[/b] → enter a name and choose the wealth level. The clone appears in the building list.
 
-[u]Important:[/u] Clones are generated during level loading. Return to the main menu and reload your save after creating clones.
+[u]Important:[/u] Clones are generated at level load time. Return to the main menu and reload after creating clones.
 
-[u]Important:[/u] Deleting a theme that contains clones, or disabling the mod, will cause those buildings to disappear on next load. The save file itself is not broken.
+[u]Important:[/u] If you delete a theme that contains clones, or disable the mod, those buildings disappear on next load. The save file itself is not broken.
 
-Cloning can be disabled completely in the mod options.
+Cloning can be disabled in mod options.
+
+[h1]Mod Compatibility Tools[/h1]
+
+For broader mod compatibility diagnostics — conflicts, disabled assets, missing dependencies — use [b]Skyve[/b]. If Skyve is installed, the [b]Spawn Diagnostics[/b] panel will note which missing assets may be disabled in your Skyve playset, and give you the IDs to re-enable them.
 
 [h1]Theme Mods[/h1]
 
@@ -113,7 +152,15 @@ You do not need to edit these files — everything is configurable in-game.
 
 [h1]Bug Reports[/h1]
 
-Please do [b]not[/b] paste full logs or exceptions into the comments. Use [url=https://pastebin.com]Pastebin[/url] or a similar service and link it in your comment, or open an issue on GitHub.
+Please do [b]not[/b] paste full logs into the comments. Use [url=https://pastebin.com]Pastebin[/url] and link it, or open an issue on GitHub.
+
+Always include:
+[list]
+[*]Your game version
+[*]A list of other active mods
+[*]The relevant section of [b]output_log.txt[/b] (search for [i]Building Themes[/i])
+[*]Output from [b]Spawn Diagnostics[/b] if buildings are not spawning
+[/list]
 
 [url=https://github.com/roberto-naharro/BuildingThemes2/issues]► Open a bug report on GitHub[/url]
 
@@ -128,6 +175,6 @@ Please do [b]not[/b] paste full logs or exceptions into the comments. Use [url=h
 
 [b]BloodyPenguin[/b] — prior compatibility fixes and contributions to the original mod.
 
-[b]roberto-naharro[/b] — Harmony 2.x migration and community maintenance of this fork.
+[b]roberto-naharro[/b] — Harmony 2.x migration, new features, and community maintenance of this fork.
 
 [i]Building Themes 2 is a community-maintained fork. All original work and concept belong to boformer.[/i]
