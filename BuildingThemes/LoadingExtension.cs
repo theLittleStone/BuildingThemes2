@@ -58,6 +58,7 @@ namespace BuildingThemes
                                || mode == LoadMode.LoadScenario;
                 if (!isGameMode) return;
 
+                RandomBuildings.ResetLogThrottle();
                 BuildingThemesManager.instance.ImportThemes();
                 Debugger.Log("ImportThemes done.");
                 if (Debugger.Enabled)
