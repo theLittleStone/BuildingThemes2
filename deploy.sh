@@ -32,6 +32,7 @@ fi
 
 MOD_NAME="BuildingThemes2"
 BUILD_OUT="$SCRIPT_DIR/BuildingThemes/bin/$CONFIGURATION"
+WORKSHOP_DIR="$SCRIPT_DIR/Workshop"
 PACKAGES="$SCRIPT_DIR/packages"
 DIST="$SCRIPT_DIR/dist/$MOD_NAME"
 
@@ -53,6 +54,7 @@ mkdir -p "$DIST"
 
 cp "$BUILD_OUT/BuildingThemes.dll" "$DIST/$MOD_NAME.dll"
 cp "$PACKAGES/CitiesHarmony.API.2.1.0/lib/net35/CitiesHarmony.API.dll" "$DIST/"
+cp "$WORKSHOP_DIR/"*.* "$DIST/"
 
 echo ""
 echo "Staged to: $DIST"
@@ -65,6 +67,8 @@ if mountpoint -q "$DATA_MOUNT"; then
     mkdir -p "$MODS_DIR"
     cp "$DIST/$MOD_NAME.dll"         "$MODS_DIR/"
     cp "$DIST/CitiesHarmony.API.dll" "$MODS_DIR/"
+    cp "$DIST/"*.txt                 "$MODS_DIR/" || true  # ignore if no XML files
+    cp "$DIST/"*.png                 "$MODS_DIR/" || true  # ignore if no PNG files
     echo "Done. Files in game Mods folder:"
     ls -lh "$MODS_DIR"
 else
