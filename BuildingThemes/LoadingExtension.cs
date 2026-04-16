@@ -18,6 +18,10 @@ namespace BuildingThemes
 
             Debugger.Log("ON_CREATED");
             Debugger.Log("Building Themes: Initializing Mod...");
+            Debugger.LogFormat("Building Themes: Version={0} HarmonyId={1} ConfigPath={2}",
+                System.Reflection.Assembly.GetExecutingAssembly().GetName().Version,
+                BuildingThemesMod.HarmonyId,
+                System.IO.Path.GetFullPath("BuildingThemes.xml"));
 
             try
             {
@@ -56,6 +60,13 @@ namespace BuildingThemes
 
                 BuildingThemesManager.instance.ImportThemes();
                 UnityEngine.Debug.Log("Building Themes 2: ImportThemes done.");
+                if (Debugger.Enabled)
+                {
+                    var allThemes = BuildingThemesManager.instance.GetAllThemes();
+                    int totalBuildings = 0;
+                    foreach (var t in allThemes) totalBuildings += t.buildings.Count;
+                    Debugger.LogFormat("Building Themes 2: {0} theme(s) loaded, {1} building entries total.", allThemes.Count, totalBuildings);
+                }
 
                 // Mod compatibility check — logs warnings and shows in-game panel for critical conflicts
                 var conflicts = ModCompatibilityChecker.Check();
@@ -136,6 +147,13 @@ namespace BuildingThemes
             Debugger.Log("ON_LEVEL_UNLOADING");
             Debugger.OnLevelUnloading();
 
+            if (Debugger.Enabled)
+            {
+                int themedDistricts = 0;
+                for (byte d = 0; d < 128; d++)
+                    if (BuildingThemesManager.instance.IsThemeManagementEnabled(d)) themedDistricts++;
+                Debugger.LogFormat("Building Themes 2: OnLevelUnloading — {0} themed district(s) were active.", themedDistricts);
+            }
             BuildingThemesManager.instance.Reset();
             UIThemeManager.Destroy();
             GUI.UIUtils.ClearAtlasCache();
@@ -147,7 +165,8 @@ namespace BuildingThemes
             Debugger.Log("ON_RELEASED");
 
             BuildingThemesManager.instance.Reset();
-            BuildingVariationManager.instance.Reset();
+            try { BuildingVariationManager.instance.Reset(); }
+            catch (Exception e) { Debugger.LogException(e); }
             PolicyPanelEnabler.Unregister();
 
             // Revert the prefab-cloning patch (the other patches are unloaded via
@@ -161,7 +180,7 @@ namespace BuildingThemes
                 Debugger.LogException(e);
             }
 
-            Debugger.Log("Building Themes: Done!");
+            Debugger.Log("Building Themes: OnReleased — patches reverted, managers reset.");
             Debugger.Deinitialize();
         }
 

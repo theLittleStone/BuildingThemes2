@@ -38,17 +38,19 @@ namespace BuildingThemes
                 if (saveData != null)
                 {
                     if (Debugger.Enabled)
-                    {
-                        Debugger.Log("Building Themes: Loading Save Data...");
-                    }
-                    
+                        Debugger.LogFormat("Building Themes: Loading Save Data — {0} bytes.", saveData.Length);
+
                     DistrictsConfiguration configuration = null;
-                    
+
                     var xmlSerializer = new XmlSerializer(typeof(DistrictsConfiguration));
                     using (var memoryStream = new MemoryStream(saveData))
                     {
                         configuration = xmlSerializer.Deserialize(memoryStream) as DistrictsConfiguration;
                     }
+
+                    if (Debugger.Enabled && configuration != null)
+                        Debugger.LogFormat("Building Themes: Save data deserialized — {0} district(s).",
+                            configuration.Districts.Count);
 
                     ApplyConfiguration(configuration);
                 }
@@ -170,6 +172,9 @@ namespace BuildingThemes
                     configurationData = memoryStream.ToArray();
                 }
                 SerializableData.SaveData(XMLSaveDataId, configurationData);
+                if (Debugger.Enabled)
+                    Debugger.LogFormat("Building Themes: Save complete — {0} district(s), {1} bytes written.",
+                        configuration.Districts.Count, configurationData.Length);
 
                 // output for debugging
                 /*
@@ -224,6 +229,13 @@ namespace BuildingThemes
                 }
 
                 buildingThemesManager.setThemeInfo(district.id, themes, district.blacklistMode);
+
+                if (Debugger.Enabled)
+                {
+                    var themeNames = string.Join(", ", System.Array.ConvertAll(district.themes ?? new string[0], t => t));
+                    Debugger.LogFormat("Building Themes: District {0} loaded — blacklist={1}, themes=[{2}]",
+                        district.id, district.blacklistMode, themeNames);
+                }
             }
         }
     }

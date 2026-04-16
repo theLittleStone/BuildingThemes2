@@ -48,12 +48,15 @@ namespace BuildingThemes
         {
             var conflicts = new List<ConflictInfo>();
 
+            Debugger.LogFormat("Building Themes 2: ModCompatibilityChecker starting — {0} known-bad entry(s).", KnownBadMods.Length);
+
             // 1. Known-bad mod list
             foreach (var entry in KnownBadMods)
             {
                 bool active = entry.IsAssembly
                     ? Util.IsModAssemblyActive(entry.Id)
                     : Util.IsModActive(entry.Id);
+                Debugger.LogFormat("Building Themes 2: Checked '{0}' — active={1}.", entry.DisplayName, active);
                 if (active)
                     conflicts.Add(new ConflictInfo
                     {
@@ -75,8 +78,10 @@ namespace BuildingThemes
                     var info = Harmony.GetPatchInfo(method);
                     if (info != null)
                     {
+                        Debugger.LogFormat("Building Themes 2: ZoneBlock.SimulationStep has {0} prefix(es).", info.Prefixes.Count);
                         foreach (var prefix in info.Prefixes)
                         {
+                            Debugger.LogFormat("Building Themes 2: Prefix owner='{0}' (ours={1}).", prefix.owner, prefix.owner == ourHarmonyId);
                             if (prefix.owner == ourHarmonyId) continue;
                             conflicts.Add(new ConflictInfo
                             {
@@ -94,6 +99,7 @@ namespace BuildingThemes
                 Debug.LogException(e);
             }
 
+            Debugger.LogFormat("Building Themes 2: ModCompatibilityChecker done — {0} conflict(s) found.", conflicts.Count);
             return conflicts;
         }
     }

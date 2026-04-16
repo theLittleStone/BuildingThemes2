@@ -68,9 +68,17 @@ namespace BuildingThemes
             }
         }
 
-        public static void LogFormat(string format, params object[] args) 
+        public static void LogFormat(string format, params object[] args)
         {
             Log(String.Format(format, args));
+        }
+
+        // Higher-verbosity tier for per-building / per-frame messages.
+        // Same gate as LogFormat but prefixed with [VERBOSE] for easy grepping.
+        public static void LogVerbose(string format, params object[] args)
+        {
+            if (initialized && Enabled)
+                Debug.Log("[BT2:VERBOSE] " + String.Format(format, args));
         }
 
         public static void LogError(string error)
