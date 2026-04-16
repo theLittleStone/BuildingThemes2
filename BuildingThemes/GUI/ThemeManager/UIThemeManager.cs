@@ -839,7 +839,7 @@ namespace BuildingThemes.GUI
             {
                 if (buildingDictionary.ContainsKey(buildings[i].name))
                 {
-                    // Associate building with prefab
+                    // Associate building with prefab by exact name
                     BuildingItem item = buildingDictionary[buildings[i].name];
                     item.building = buildings[i];
 
@@ -847,19 +847,49 @@ namespace BuildingThemes.GUI
                 }
                 else
                 {
-                    // Prefab not found, adding building without prefab
-
-                    if (buildings[i].dlc != null && !PlatformService.IsDlcInstalled(Convert.ToUInt32(buildings[i].dlc))) continue;
-                    if (buildings[i].environments != null
-                        && (buildings[i].environments.Contains("-" + SimulationManager.instance.m_metaData.m_environment)
-                        || !buildings[i].environments.Contains("+" + SimulationManager.instance.m_metaData.m_environment)))
+                    // Exact name not found — try Steam prefix fallback (handles renamed workshop assets)
+                    BuildingItem matched = null;
+                    int dotIdx = buildings[i].name != null ? buildings[i].name.IndexOf('.') : -1;
+                    if (dotIdx > 0)
                     {
-                        continue;
+                        string steamPrefix = buildings[i].name.Substring(0, dotIdx);
+                        bool allDigits = true;
+                        foreach (char ch in steamPrefix) if (!char.IsDigit(ch)) { allDigits = false; break; }
+                        if (allDigits)
+                        {
+                            foreach (var kv in buildingDictionary)
+                            {
+                                int kDot = kv.Key.IndexOf('.');
+                                if (kDot > 0 && kv.Key.Substring(0, kDot) == steamPrefix)
+                                {
+                                    matched = kv.Value;
+                                    break;
+                                }
+                            }
+                        }
                     }
 
-                    BuildingItem item = new BuildingItem();
-                    item.building = buildings[i];
-                    list.Add(item);
+                    if (matched != null)
+                    {
+                        matched.building = buildings[i];
+                        if (!list.Contains(matched)) list.Add(matched);
+                    }
+                    else
+                    {
+                        // Prefab not found at all — show as not loaded
+
+                        if (buildings[i].dlc != null && !PlatformService.IsDlcInstalled(Convert.ToUInt32(buildings[i].dlc))) continue;
+                        if (buildings[i].environments != null
+                            && (buildings[i].environments.Contains("-" + SimulationManager.instance.m_metaData.m_environment)
+                            || !buildings[i].environments.Contains("+" + SimulationManager.instance.m_metaData.m_environment)))
+                        {
+                            continue;
+                        }
+
+                        BuildingItem item = new BuildingItem();
+                        item.building = buildings[i];
+                        list.Add(item);
+                    }
                 }
             }
 

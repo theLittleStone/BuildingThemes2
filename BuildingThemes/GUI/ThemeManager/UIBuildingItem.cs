@@ -15,6 +15,7 @@ namespace BuildingThemes.GUI
         private UIPanel m_statusBadge;
 
         private BuildingItem m_building;
+        private bool _displaying;
 
         public UIPanel background
         {
@@ -78,7 +79,7 @@ namespace BuildingThemes.GUI
 
             m_name.eventCheckChanged += (c, state) =>
             {
-                if (m_building != null)
+                if (m_building != null && !_displaying)
                 {
                     Debugger.LogFormat("Building include toggled: '{0}' → {1}.", m_building.displayName, state);
                     UIThemeManager.instance.ChangeBuildingStatus(m_building, state);
@@ -134,7 +135,9 @@ namespace BuildingThemes.GUI
             if (m_building.prefab == null) m_name.text += " (Not Loaded)";
             m_name.label.textColor = m_building.GetStatusColor();
             m_name.label.isInteractive = false;
+            _displaying = true;
             m_name.isChecked = m_building.included;
+            _displaying = false;
 
             m_level.text = m_building.level == 0 ? null : "L" + m_building.level;
             m_size.text = m_building.sizeAsString;

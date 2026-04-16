@@ -551,8 +551,10 @@ namespace BuildingThemes
                 {
                     if (building.upgradeName == null) continue;
 
-                    var fromPrefab = PrefabCollection<BuildingInfo>.FindLoaded(building.name);
-                    var toPrefab = PrefabCollection<BuildingInfo>.FindLoaded(building.upgradeName);
+                    var fromPrefab = PrefabCollection<BuildingInfo>.FindLoaded(building.name)
+                        ?? FindLoadedBySteamPrefix(building.name);
+                    var toPrefab = PrefabCollection<BuildingInfo>.FindLoaded(building.upgradeName)
+                        ?? FindLoadedBySteamPrefix(building.upgradeName);
 
                     if (fromPrefab != null && toPrefab != null && !info.upgradeBuildings.ContainsKey((ushort)fromPrefab.m_prefabDataIndex))
                     {
@@ -669,7 +671,8 @@ namespace BuildingThemes
                             {
                                 foreach (var theme in enabledThemes)
                                 {
-                                    var building = theme.getBuilding(prefab.name);
+                                    var building = theme.getBuilding(prefab.name)
+                                        ?? theme.getBuildingBySteamPrefix(prefab.name);
 
                                     if (building != null && building.include)
                                     {
@@ -692,7 +695,8 @@ namespace BuildingThemes
 
                                 foreach (var theme in blacklistedThemes)
                                 {
-                                    var building = theme.getBuilding(prefab.name);
+                                    var building = theme.getBuilding(prefab.name)
+                                        ?? theme.getBuildingBySteamPrefix(prefab.name);
 
                                     if (building != null && building.include)
                                     {
@@ -988,6 +992,33 @@ namespace BuildingThemes
         private Configuration.Theme GetThemeByStylePackage(string stylePackage)
         {
             return Configuration.themes.FirstOrDefault(theme => (theme.stylePackage == stylePackage || (stylePackage == DistrictStyle.kEuropeanStyleName && theme.name == "European")));
+        }
+
+        /// <summary>
+        /// Fallback prefab lookup for renamed workshop assets.
+        /// Extracts the numeric Steam workshop ID prefix from <paramref name="buildingName"/>
+        /// (format "12345678.LocalName_Data") and returns the first loaded prefab whose name
+        /// shares that prefix.  Returns null if the name has no numeric prefix.
+        /// </summary>
+        private static BuildingInfo FindLoadedBySteamPrefix(string buildingName)
+        {
+            if (buildingName == null) return null;
+            int dotIdx = buildingName.IndexOf('.');
+            if (dotIdx <= 0) return null;
+
+            string prefix = buildingName.Substring(0, dotIdx);
+            foreach (char c in prefix) if (!char.IsDigit(c)) return null;
+
+            uint count = (uint)PrefabCollection<BuildingInfo>.PrefabCount();
+            for (uint i = 0; i < count; i++)
+            {
+                BuildingInfo prefab = PrefabCollection<BuildingInfo>.GetPrefab(i);
+                if (prefab == null) continue;
+                int pDot = prefab.name.IndexOf('.');
+                if (pDot > 0 && prefab.name.Substring(0, pDot) == prefix)
+                    return prefab;
+            }
+            return null;
         }
     }
 }

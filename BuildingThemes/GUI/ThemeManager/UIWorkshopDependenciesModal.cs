@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ColossalFramework;
 using ColossalFramework.PlatformServices;
@@ -20,6 +21,7 @@ namespace BuildingThemes.GUI
         private UIScrollablePanel m_scrollPanel;
         private UIButton m_copyMissing;
         private UIButton m_copyAll;
+        private UIButton m_subscribeMissing;
         private UIButton m_close;
 
         private Configuration.Theme m_theme;
@@ -150,6 +152,39 @@ namespace BuildingThemes.GUI
                 if (m_allWorkshopIDs.Count > 0)
                     GUIUtility.systemCopyBuffer = string.Join("\n", m_allWorkshopIDs.ToArray());
             };
+
+            // Subscribe Missing — only shown when the Steam overlay is available
+            if (PlatformService.IsOverlayEnabled())
+            {
+                m_subscribeMissing = UIUtils.CreateButton(this);
+                m_subscribeMissing.width = 130;
+                m_subscribeMissing.text = "Subscribe Missing";
+                m_subscribeMissing.tooltip = "Subscribe to all missing workshop assets on Steam\nThe game must be restarted to load the newly subscribed assets";
+                m_subscribeMissing.relativePosition = new Vector3(10 + 150 + 5 + 130 + 5, height - 40);
+                m_subscribeMissing.eventClick += (c, p) =>
+                {
+                    int count = 0;
+                    foreach (string idStr in m_missingIDs)
+                    {
+                        ulong id;
+                        if (!ulong.TryParse(idStr, out id)) continue;
+                        try
+                        {
+                            PlatformService.workshop.Subscribe(new PublishedFileId(id));
+                            count++;
+                        }
+                        catch (Exception e)
+                        {
+                            Debugger.LogException(e);
+                        }
+                    }
+                    Debugger.LogFormat("Subscribe Missing: requested {0} subscription(s).", count);
+                    m_subscribeMissing.text = count > 0
+                        ? string.Format("Requested ({0})", count)
+                        : "Subscribe Missing";
+                    m_subscribeMissing.isEnabled = false;
+                };
+            }
 
             m_close = UIUtils.CreateButton(this);
             m_close.width = 90;
@@ -306,6 +341,11 @@ namespace BuildingThemes.GUI
                 m_copyMissing.isEnabled = m_missingIDs.Count > 0;
             if (m_copyAll != null)
                 m_copyAll.isEnabled = m_allWorkshopIDs.Count > 0;
+            if (m_subscribeMissing != null)
+            {
+                m_subscribeMissing.isEnabled = m_missingIDs.Count > 0;
+                m_subscribeMissing.text = "Subscribe Missing";
+            }
         }
 
         protected override void OnKeyDown(UIKeyEventParameter p)
