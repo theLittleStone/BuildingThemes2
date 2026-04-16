@@ -1,93 +1,327 @@
 # Building Themes 2
 
-Building Themes 2 is a community-maintained fork of **Building Themes** by
-[boformer (Sebastian Schöner)](https://github.com/boformer).
-All original work and concept belong to him. Thank you, boformer.
+Apply building themes to districts — only buildings in the selected themes will grow in a
+zone. Subscribe to theme mods from the Workshop, or create and manage your own themes
+entirely in-game.
 
-Thanks also to **BloodyPenguin** for prior compatibility fixes.
+**Building Themes 2** is a community-maintained fork of the original
+[Building Themes](https://github.com/boformer/BuildingThemes) by
+[boformer (Sebastian Schöner)](https://github.com/boformer), updated to run on modern
+Cities: Skylines with Harmony 2.x.
 
-Harmony 2.x migration maintained by [roberto-naharro](https://github.com/roberto-naharro).
-
----
-
-Building Themes 2 is a Cities: Skylines 1 mod.
-It lets you create building themes and apply them to cities and districts,
-restricting which growable buildings can spawn in each area.
-
-**Steam Workshop dependency:** [CitiesHarmony (Harmony 2.2)](https://steamcommunity.com/sharedfiles/filedetails/?id=2040656402)
-must be subscribed and enabled.
+[Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3708105182) ·
+[Report a bug](https://github.com/roberto-naharro/BuildingThemes2/issues) ·
+[GitHub](https://github.com/roberto-naharro/BuildingThemes2)
 
 ---
 
-_Original detour system by Sebastian Schöner, MIT license:_
-_<https://github.com/sschoener/cities-skylines-detour> (removed in v2.0.0)_
+## Requirements
 
-## Linux Build Setup (Windows game files on SMB share)
+- **[Harmony (Mod Dependency)](https://steamcommunity.com/sharedfiles/filedetails/?id=2040656402)** —
+  subscribe and enable this first. The mod silently does nothing if Harmony is not installed.
 
-This project can be built on Linux by referencing the game assemblies from a Windows machine where Cities: Skylines is installed.
+---
 
-Current setup used in this repository:
+## Quick Start
 
-- Windows host: DESKTOP-GHGB72P
-- SMB share: //192.168.1.2/Cities_Skylines
-- Linux mount point: /mnt/cities_skylines
+1. Open a **district policy panel** → go to the **Themes** tab.
+2. Click **Theme Manager** → select a theme and include buildings (or import a style).
+3. Back in the **Themes** tab, check **Enable Theme Management for this district**.
+4. Enable one or more themes using the checkboxes.
+5. Zone the area — only buildings in the active themes will grow.
 
-The project file [BuildingThemes/BuildingThemes.csproj](BuildingThemes/BuildingThemes.csproj) is configured to reference managed game DLLs from /mnt/cities_skylines/Cities_Data/Managed.
+If no theme is active for a district, any growable building can spawn (vanilla behavior).
 
-## Prerequisites
+---
 
-- .NET SDK 8 installed
-- Mono/xbuild installed
-- cifs-utils installed
-- Access to the Windows shared folder with game files
+## Features
 
-## One-time Linux setup
+- **Per-district themes** — assign different building sets to each district.
+- **Theme Manager** — full UI to browse, filter, include/exclude individual buildings.
+- **DLC & CCP filter** — filter the building list by installed DLC or Content Creator Pack.
+- **Workshop Dependencies modal** — see exactly which assets are missing, copy their IDs,
+  or subscribe to them directly via the Steam overlay.
+- **Spawn Diagnostics** — see accepted/rejected building counts and missing-asset lists
+  per district.
+- **Asset Cloning** — duplicate a building and assign a different wealth level to it.
+- **Missing asset handling** — three modes for how to respond when a subscribed building
+  isn't loaded.
+- **Level behavior** — control what happens when a building tries to level up but your
+  theme has no building for that level.
+- **Blacklist mode** — invert the theme: everything spawns except what you explicitly
+  exclude.
+- **Spawn rate** — control how often a building appears relative to others with the same
+  type, level, and footprint.
 
-1. Install required tools:
- sudo apt-get update
- sudo apt-get install -y mono-complete mono-devel cifs-utils
+---
 
-2. Create mount point:
- sudo mkdir -p /mnt/cities_skylines
+## Theme Manager
 
-3. Mount the Windows share (recommended: authenticated account):
- sudo mount -t cifs //192.168.1.2/Cities_Skylines /mnt/cities_skylines -o username=YOUR_WINDOWS_USER,uid=$(id -u),gid=$(id -g),vers=3.0
+Open from the **Themes** tab in the district policy panel.
 
-4. Verify game DLLs are visible:
- ls /mnt/cities_skylines/Cities_Data/Managed/Assembly-CSharp.dll
+### Filters
 
-## Restore dependencies
+| Filter | Description |
+| --- | --- |
+| Zone toggles | Show/hide buildings by zone type |
+| Display (Origin) | All / Default (vanilla/DLC) / Custom (Workshop) / Cloned |
+| Display (Status) | All / Included / Excluded |
+| Level | Filter by building level (1–5) |
+| Size | Filter by footprint (width × depth) |
+| DLC / CCP | Filter by installed expansion or Content Creator Pack |
+| Name | Filter by name or Steam Workshop ID |
+| Show loaded / missing / DLC-locked | Toggle visibility of asset groups |
+| Spawnable only | Show only fully spawnable buildings |
 
-This project uses packages.config in [BuildingThemes/packages.config](BuildingThemes/packages.config).
+### Bulk Actions
 
-If NuGet CLI is not available in apt, use nuget.exe:
+- **Include All / None** — include or exclude everything in the current filtered view.
+- **Include Valid** — include all loaded, in-bounds-dimension buildings in the view.
+- **Exclude Missing** — remove all unloaded assets from the current filtered view.
+- **Workshop Dependencies** — lists all workshop assets in the selected theme (loaded /
+  missing), with copy-to-clipboard and one-click Steam subscribe buttons.
 
-1. Download NuGet CLI:
- mkdir -p ~/.local/tools
- wget -O ~/.local/tools/nuget.exe <https://dist.nuget.org/win-x86-commandline/latest/nuget.exe>
+### Per-Building Options
 
-2. Restore packages:
- mono ~/.local/tools/nuget.exe restore BuildingThemes.sln
+- **Spawn rate** — higher = appears more often relative to same type/level/size peers.
+- **Upgrade building** — forces a specific building when this one levels up.
+- **Clone Building** — creates a copy with a different wealth level.
 
-## Build
+### How Spawning Works
 
-Run from repository root:
+A new zone always spawns a Level 1 building first — include one in your theme. It upgrades
+when the zone's requirements are met. The Level 2 building must have the same width and
+equal or smaller length than the Level 1.
 
-xbuild BuildingThemes.sln
+Example: a 2×3 L1 Low Residential can upgrade to a 2×3, 2×2, or 2×1 L2.
 
-Output DLL:
+If a building is shorter than the plot, the mod shrinks the plot to the building's actual
+footprint (unless props or trees occupy the extra space). This enables tight layouts like
+the UK Terraced Housing theme.
 
-- BuildingThemes/bin/Debug/BuildingThemes.dll
+---
 
-## Notes about cross-platform adjustments
+## District Options
 
-To make Linux builds work reliably, [BuildingThemes/BuildingThemes.csproj](BuildingThemes/BuildingThemes.csproj) includes:
+Open via the **District Options** button in the Themes tab.
 
-- C# language version set to 7.2 (compatible with Mono compiler)
-- Windows-only PostBuildEvent guarded with OS condition
-- Game references pointing to /mnt/cities_skylines/Cities_Data/Managed
+| Option | Description |
+| --- | --- |
+| Allow buildings not in any theme | Blacklist mode — anything not explicitly excluded can spawn |
+| Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default), **Cascade** (reuse from lower level), or **Strict** (freeze upgrades) |
+| Missing asset handling | Per-district override of the global missing-asset mode |
+| Spawn Diagnostics | Accepted/rejected counts and missing-asset list for this district |
 
-## Repository safety
+---
 
-- Do not commit game DLLs from Cities: Skylines.
-- Build artifacts are local outputs; keep repository source-only.
+## Missing Assets
+
+When a workshop building in your theme is not loaded (unsubscribed, disabled in Skyve, or
+failed to load), the mod can respond in three ways. Set the default in
+**Mod Options → Building Themes**, or override per district in **District Options**.
+
+| Mode | Behaviour |
+| --- | --- |
+| **Skip** | The missing building is quietly dropped. Theme still applies using only loaded assets. Areas may be sparse if many assets are missing. |
+| **Fill with vanilla** *(default)* | Missing slots are supplemented with vanilla buildings of the same zone type and size. Your loaded theme buildings still appear; vanilla fills the gaps. |
+| **Fall back to vanilla** | If any building is missing in a size/level slot, that entire slot uses vanilla buildings only. No sparse areas, but theme coverage is reduced. |
+
+---
+
+## Asset Cloning
+
+Clone a building and assign a different wealth level — useful when you don't have enough
+assets for every level, or to add variety.
+
+To clone: select a building in the Theme Manager → **Clone Building** → enter a name and
+choose the wealth level. The clone appears in the building list.
+
+> **Important:** Clones are generated at level-load time. Return to the main menu and
+> reload after creating clones.
+>
+> **Important:** If you delete a theme that contains clones, or disable the mod, those
+> buildings disappear on next load. The save file itself is not broken.
+
+Cloning can be disabled in mod options.
+
+---
+
+## Compatibility
+
+**Compatible with Cities: Skylines 1.18.x** (tested on 1.18.1-f3).
+
+**Not compatible with:**
+
+- **81 Tiles (original)** — use [81 Tiles 2](https://steamcommunity.com/sharedfiles/filedetails/?id=2862121823) instead (fully supported)
+- **Building Themes (original)** — unsubscribe the original before enabling this fork
+- **Building Simulation Overhaul**
+- **Runways and Taxiways** — use [Airport Roads](http://steamcommunity.com/sharedfiles/filedetails/?id=465127441) instead
+
+Save games made with the original Building Themes are **fully compatible** — district
+assignments load normally.
+
+For broader mod-compatibility diagnostics (conflicts, disabled assets, missing
+dependencies) use [Skyve](https://steamcommunity.com/sharedfiles/filedetails/?id=2979559117).
+If Skyve is installed, Spawn Diagnostics will note which missing assets may be disabled in
+your playset and give you IDs to re-enable them.
+
+---
+
+## Troubleshooting — Buildings Not Spawning
+
+Work through this list in order:
+
+**1. Theme is empty or has no Level 1 buildings**
+Open Theme Manager → select your theme → set the Status filter to **Included**. If the
+list is empty, no buildings are in your theme. Every theme must include at least one
+Level 1 building for the target zone type.
+
+**2. Workshop assets are not loaded**
+Missing (red) buildings in the Theme Manager indicate assets that are not active in your
+playset. Use **Workshop Dependencies** to copy their IDs for resubscription or click
+**Subscribe Missing** to subscribe from within the game.
+
+**3. Wrong zone type**
+The building's zone type must match the zone you placed. A commercial building will never
+spawn in a residential zone.
+
+**4. Theme not enabled for the district**
+Open the district policy panel → Themes tab → confirm **Enable Theme Management** is
+checked and your theme has a checkmark.
+
+**5. Run Spawn Diagnostics**
+District policy panel → Themes tab → **District Options** → **Spawn Diagnostics**. Shows
+accepted/rejected counts and lists missing assets by name.
+
+---
+
+## Theme Mods
+
+These Workshop mods provide ready-made themes:
+
+| Theme | Links |
+| --- | --- |
+| **UK Terraced Housing** | [Buildings](https://steamcommunity.com/sharedfiles/filedetails/?id=452704398) · [Theme mod](https://steamcommunity.com/sharedfiles/filedetails/?id=470539837) |
+| **Neo-eclectic Homes** | [Buildings](https://steamcommunity.com/sharedfiles/filedetails/?id=464133310) · [Theme mod](https://steamcommunity.com/sharedfiles/filedetails/?id=471015559) |
+| **American Trailer Homes** | [Buildings](https://steamcommunity.com/sharedfiles/filedetails/?id=437051479) · [Theme mod](https://steamcommunity.com/sharedfiles/filedetails/?id=471183698) |
+
+---
+
+## How Data Is Saved
+
+- **Custom themes and options** are stored in `BuildingThemes.xml` in your Cities: Skylines
+  install folder.
+- **District theme assignments** are stored inside each save game
+  (key: `BuildingThemes-SaveData`).
+
+You do not need to edit these files — everything is configurable in-game.
+
+---
+
+## Bug Reports
+
+Please open an issue on GitHub with:
+
+- Your game version
+- A list of other active mods
+- The relevant section of `output_log.txt` (search for `Building Themes`)
+- Output from **Spawn Diagnostics** if buildings are not spawning
+
+[► Open a bug report on GitHub](https://github.com/roberto-naharro/BuildingThemes2/issues)
+
+---
+
+## Credits
+
+**boformer (Sebastian Schöner)** — original mod concept, architecture, and all game logic.
+Building Themes 2 would not exist without his work.
+
+**BloodyPenguin** — prior compatibility fixes and contributions to the original mod.
+
+**roberto-naharro** — Harmony 2.x migration, new features, and community maintenance of
+this fork.
+
+---
+
+## Development
+
+### Linux Build Setup (Windows game files on SMB share)
+
+This project is developed on Linux, referencing the game assemblies from a Windows machine
+where Cities: Skylines is installed via an SMB share.
+
+Current reference setup:
+
+- Windows host: `DESKTOP-GHGB72P`
+- SMB share: `//192.168.1.2/Cities_Skylines`
+- Linux mount point: `/mnt/cities_skylines`
+
+The project file references managed DLLs from `/mnt/cities_skylines/Cities_Data/Managed`.
+
+### Prerequisites
+
+- Mono / xbuild
+- `cifs-utils` (for SMB mounting)
+
+### One-time setup
+
+```bash
+sudo apt-get install -y mono-complete mono-devel cifs-utils
+sudo mkdir -p /mnt/cities_skylines
+
+# Mount the Windows share
+sudo mount -t cifs //192.168.1.2/Cities_Skylines /mnt/cities_skylines \
+  -o username=YOUR_WINDOWS_USER,uid=$(id -u),gid=$(id -g),vers=3.0
+
+# Verify
+ls /mnt/cities_skylines/Cities_Data/Managed/Assembly-CSharp.dll
+```
+
+Copy `.env.example` to `.env` and fill in your values.
+
+### Restore packages
+
+```bash
+mono ~/.local/tools/nuget.exe restore BuildingThemes.sln
+```
+
+### Build
+
+```bash
+xbuild BuildingThemes.sln                      # Debug (default)
+xbuild BuildingThemes.sln /p:Configuration=Release
+```
+
+Output: `BuildingThemes/bin/Debug/BuildingThemes.dll`
+
+### Deploy to game
+
+```bash
+./mount-cities.sh        # mount Windows SMB shares (first time / after reboot)
+./deploy.sh              # Debug build → stage to dist/ → copy to game Mods folder
+./deploy.sh --release    # Release build
+```
+
+`deploy.sh` also tails the last 60 lines of `output_log.txt` after deploying.
+
+### Publish to Steam Workshop
+
+```bash
+./deploy.sh --release    # build & stage
+./publish.sh             # upload dist/ to Steam Workshop via SteamCMD
+./publish.sh "Fix: DLC filter overlap"   # with a change note
+```
+
+`publish.sh` requires `steamcmd` to be installed and reads `STEAM_USERNAME` from `.env`.
+SteamCMD will prompt for your password and Steam Guard code interactively — no secrets
+are stored.
+
+For automated publishing via GitHub Actions, see
+[`.github/workflows/workshop-deploy.yml`](.github/workflows/workshop-deploy.yml).
+
+### Notes on cross-platform compatibility
+
+- C# language version set to 7.2 (Mono compiler compatible).
+- Windows-only `PostBuildEvent` is guarded with an OS condition in the `.csproj`.
+- Game DLL references point to `/mnt/cities_skylines/Cities_Data/Managed` — do not commit
+  these files (copyright).

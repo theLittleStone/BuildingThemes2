@@ -1,0 +1,56 @@
+name: Deploy to Steam Workshop
+
+# Triggers:
+#   1. Push a version tag (e.g. git tag v2.1.0 && git push --tags)
+#   2. Manual trigger from the GitHub Actions UI (Actions → Deploy to Steam Workshop → Run workflow)
+#
+# The workflow does NOT build the mod — it publishes the pre-staged dist/ folder
+# that was committed when the tag was pushed.
+#
+# One-time setup (do this once, then forget):
+#   1. Install steamcmd locally: sudo apt-get install steamcmd
+#   2. steamcmd +login YOUR_USERNAME +quit   (complete the Steam Guard prompt)
+#   3. base64 ~/.steam/steamcmd/config/config.vdf   → copy the output
+#   4. Add GitHub secret STEAM_CONFIG_VDF with that base64 string
+#   5. Add GitHub secret STEAM_USERNAME with your Steam username
+#
+# If publishing fails with an auth error, repeat steps 2-4 to refresh the session.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      changeNote:
+        description: 'Change note shown on the Workshop update'
+        required: false
+        default: 'Update'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify dist folder exists
+        run: |
+          if [[ ! -f "dist/BuildingThemes2/BuildingThemes2.dll" ]]; then
+            echo "ERROR: dist/BuildingThemes2/BuildingThemes2.dll not found."
+            echo "Build locally with ./deploy.sh --release, commit dist/, then push the tag."
+            exit 1
+          fi
+          echo "dist/ contents:"
+          ls -lh dist/BuildingThemes2/
+
+      - name: Deploy to Steam Workshop
+        uses: m00nl1ght-dev/steam-workshop-deploy@v4
+        with:
+          username: ${{ secrets.STEAM_USERNAME }}
+          configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
+          appId: 255710
+          publishedFileId: 3708105182
+          path: dist/BuildingThemes2
+          changeNote: ${{ github.event.inputs.changeNote || github.ref_name }}
