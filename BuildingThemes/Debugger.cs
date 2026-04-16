@@ -139,8 +139,10 @@ namespace BuildingThemes
 
         public static void AppendModList()
         {
+            if (!Enabled) return;
+
             string message = "Enabled Plugins:\n";
-                
+
             foreach (var pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo())
             {
                 if (pluginInfo.isEnabled)
@@ -156,6 +158,8 @@ namespace BuildingThemes
 
         public static void AppendThemeList()
         {
+            if (!Enabled) return;
+
             try
             {
                 string message = "Loaded Themes:\n";

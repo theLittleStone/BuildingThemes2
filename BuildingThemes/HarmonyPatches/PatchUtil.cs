@@ -27,7 +27,7 @@ namespace BuildingThemes.HarmonyPatches
 
             try
             {
-                Debug.Log($"Building Themes: Patching method {original.Type.FullName}.{original.MethodName}");
+                Debugger.LogFormat("Building Themes: Patching method {0}.{1}", original.Type.FullName, original.MethodName);
                 var methodInfo = GetOriginal(original);
                 HarmonyInstance.Patch(methodInfo,
                     prefix: prefix == null ? null : new HarmonyMethod(GetPatch(prefix)),
@@ -37,14 +37,14 @@ namespace BuildingThemes.HarmonyPatches
             }
             catch (Exception e)
             {
-                Debug.LogError($"Building Themes: Failed to patch method {original.Type.FullName}.{original.MethodName}");
-                Debug.LogException(e);
+                Debugger.LogError($"Building Themes: Failed to patch method {original.Type.FullName}.{original.MethodName}");
+                Debugger.LogException(e);
             }
         }
 
         public static void Unpatch(MethodDefinition original)
         {
-            Debug.Log($"Building Themes: Unpatching method {original.Type.FullName}.{original.MethodName}");
+            Debugger.LogFormat("Building Themes: Unpatching method {0}.{1}", original.Type.FullName, original.MethodName);
             HarmonyInstance.Unpatch(GetOriginal(original), HarmonyPatchType.All, HarmonyId);
         }
 

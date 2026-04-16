@@ -73,11 +73,9 @@ namespace BuildingThemes
                             UniqueId = BitConverter.ToUInt32(legacyData, i);
                         }
 
-                        Debug.Log(UniqueId);
-
                         var filepath = Path.Combine(Application.dataPath, String.Format("buildingThemesSave_{0}.xml", UniqueId));
 
-                        Debug.Log(filepath);
+                        Debugger.LogFormat("Building Themes: Legacy save UniqueId={0}, filepath={1}", UniqueId, filepath);
 
                         if (!File.Exists(filepath))
                         {

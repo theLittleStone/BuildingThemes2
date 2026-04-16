@@ -49,7 +49,7 @@ namespace BuildingThemes
 
             try
             {
-                UnityEngine.Debug.Log("Building Themes 2: OnLevelLoaded mode=" + mode + " (" + (int)mode + ")");
+                Debugger.LogFormat("Building Themes 2: OnLevelLoaded mode={0} ({1})", mode, (int)mode);
 
                 // Accept all in-game modes (not map/asset/scenario editors)
                 bool isGameMode = mode == LoadMode.NewGame
@@ -59,7 +59,7 @@ namespace BuildingThemes
                 if (!isGameMode) return;
 
                 BuildingThemesManager.instance.ImportThemes();
-                UnityEngine.Debug.Log("Building Themes 2: ImportThemes done.");
+                Debugger.Log("Building Themes 2: ImportThemes done.");
                 if (Debugger.Enabled)
                 {
                     var allThemes = BuildingThemesManager.instance.GetAllThemes();
@@ -127,10 +127,10 @@ namespace BuildingThemes
                 }
 
                 PolicyPanelEnabler.UnlockPolicyToolbarButton();
-                UnityEngine.Debug.Log("Building Themes 2: PolicyPanelEnabler done.");
+                Debugger.Log("Building Themes 2: PolicyPanelEnabler done.");
 
                 UIThemeManager.Initialize();
-                UnityEngine.Debug.Log("Building Themes 2: UIThemeManager.Initialize done. instance=" + (UIThemeManager.instance != null ? "OK" : "NULL"));
+                Debugger.LogFormat("Building Themes 2: UIThemeManager.Initialize done. instance={0}", UIThemeManager.instance != null ? "OK" : "NULL");
 
                 UIStyleButtonReplacer.ReplaceStyleButton();
             }
