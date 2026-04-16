@@ -31,9 +31,13 @@ namespace BuildingThemes
             {
                 var unlockCheck = group.AddCheckbox("Unlock Policies Panel From Start", PolicyPanelEnabler.Unlock,
                     delegate (bool c) { PolicyPanelEnabler.Unlock = c; }) as ColossalFramework.UI.UICheckBox;
-                var cloningCheck = group.AddCheckbox("Enable Prefab Cloning (experimental, not stable!)", BuildingVariationManager.Enabled,
+                var cloningCheck = group.AddCheckbox("Enable Prefab Cloning (experimental — read warning below)", BuildingVariationManager.Enabled,
                     delegate (bool c) { BuildingVariationManager.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
-                group.AddGroup("Warning: When you disable this option, spawned clones will disappear!");
+                group.AddGroup(
+                    "⚠ SAVE RISK: Cloned buildings are generated at load time and stored in your save. " +
+                    "If you disable this option or unsubscribe the mod, all cloned buildings will vanish from your city on next load. " +
+                    "The save file itself is not corrupted, but those buildings are gone permanently. " +
+                    "Only enable this if you understand and accept that risk.");
 
                 var warningCheck = group.AddCheckbox("Warning message when selecting an invalid theme", UIThemePolicyItem.showWarning,
                     delegate (bool c) { UIThemePolicyItem.showWarning = c; }) as ColossalFramework.UI.UICheckBox;
