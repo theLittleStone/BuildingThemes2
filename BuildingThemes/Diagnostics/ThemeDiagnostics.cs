@@ -77,7 +77,7 @@ namespace BuildingThemes.Diagnostics
             if (report == null) return;
 
             var sb = new StringBuilder();
-            sb.AppendFormat("[BuildingThemes2] District {0} theme compile:\n", districtId);
+            sb.AppendFormat("District {0} theme compile:\n", districtId);
             sb.AppendFormat("  Candidates: {0} | Accepted: {1} | Rejected: {2}\n",
                 report.TotalCandidates, report.Accepted,
                 report.TotalCandidates - report.Accepted);

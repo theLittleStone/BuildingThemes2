@@ -67,7 +67,7 @@ namespace BuildingThemes.GUI
         {
             if(Unlock) 
             {
-                Debugger.Log("unlockPolicyToolbarButton");
+                Debugger.Log("PolicyPanelEnabler: unlockPolicyToolbarButton");
                 
                 var uITabstrip = ToolsModifierControl.mainToolbar.component as UITabstrip;
 
@@ -75,7 +75,7 @@ namespace BuildingThemes.GUI
 
                 if (policiesButtonTransform == null) return;
 
-                Debugger.Log("unlocking");
+                Debugger.Log("PolicyPanelEnabler: unlocking");
 
                 policiesButtonTransform.gameObject.GetComponent<UIButton>().isEnabled = true;
                 
