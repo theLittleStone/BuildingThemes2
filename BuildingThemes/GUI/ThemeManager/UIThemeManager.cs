@@ -430,7 +430,7 @@ namespace BuildingThemes.GUI
             // Filter
             m_filter = AddUIComponent<UIBuildingFilter>();
             m_filter.width = width - SPACING * 2;
-            m_filter.height = 119;
+            m_filter.height = 133;
             m_filter.relativePosition = new Vector3(SPACING, TITLE_HEIGHT);
 
             m_filter.eventFilteringChanged += (c, i) =>

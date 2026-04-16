@@ -136,7 +136,43 @@ namespace BuildingThemes.GUI
             return "Expansion DLC";
         }
 
-        // Maps ModderPackBitMask → locale key (mirrors BuildingThemesManager.s_styleLocaleKeys).
+        // Hardcoded CCP names for all 29 packs (extracted from game DLL strings).
+        // For packs that also have locale keys we try locale first for localization support.
+        private static readonly Dictionary<SteamHelper.ModderPackBitMask, string> s_packNames =
+            new Dictionary<SteamHelper.ModderPackBitMask, string>
+        {
+            { SteamHelper.ModderPackBitMask.Pack1,  "Art Deco"               },
+            { SteamHelper.ModderPackBitMask.Pack2,  "High-Tech Buildings"    },
+            { SteamHelper.ModderPackBitMask.Pack3,  "European Suburbia"      },
+            { SteamHelper.ModderPackBitMask.Pack4,  "University City"        },
+            { SteamHelper.ModderPackBitMask.Pack5,  "Modern City Center"     },
+            { SteamHelper.ModderPackBitMask.Pack6,  "Modern Japan"           },
+            { SteamHelper.ModderPackBitMask.Pack7,  "Train Stations"         },
+            { SteamHelper.ModderPackBitMask.Pack8,  "Bridges & Piers"        },
+            { SteamHelper.ModderPackBitMask.Pack9,  "Maps"                   },
+            { SteamHelper.ModderPackBitMask.Pack10, "Vehicles of the World"  },
+            { SteamHelper.ModderPackBitMask.Pack11, "Mid Century"            },
+            { SteamHelper.ModderPackBitMask.Pack12, "Seaside Resorts"        },
+            { SteamHelper.ModderPackBitMask.Pack13, "Skyscrapers"            },
+            { SteamHelper.ModderPackBitMask.Pack14, "Heart of Korea"         },
+            { SteamHelper.ModderPackBitMask.Pack15, "Maps 2"                 },
+            { SteamHelper.ModderPackBitMask.Pack16, "Shopping Malls"         },
+            { SteamHelper.ModderPackBitMask.Pack17, "Sports Venues"          },
+            { SteamHelper.ModderPackBitMask.Pack18, "Africa in Miniature"    },
+            { SteamHelper.ModderPackBitMask.Pack19, "Railroads of Japan"     },
+            { SteamHelper.ModderPackBitMask.Pack20, "Industrial Evolution"   },
+            { SteamHelper.ModderPackBitMask.Pack21, "Brooklyn and Queens"    },
+            { SteamHelper.ModderPackBitMask.Pack22, "Mountain Village"       },
+            { SteamHelper.ModderPackBitMask.Pack23, "Maps 3"                 },
+            { SteamHelper.ModderPackBitMask.Pack24, "Countryside"            },
+            { SteamHelper.ModderPackBitMask.Pack25, "Emerging Downtown"      },
+            { SteamHelper.ModderPackBitMask.Pack26, "Shops of Shibuya"       },
+            { SteamHelper.ModderPackBitMask.Pack27, "Maps 4"                 },
+            { SteamHelper.ModderPackBitMask.Pack28, "Iconic Brutalism"       },
+            { SteamHelper.ModderPackBitMask.Pack29, "Renewed History"        },
+        };
+
+        // Locale keys for packs that have them (allows in-game language override).
         private static readonly Dictionary<SteamHelper.ModderPackBitMask, string> s_packLocale =
             new Dictionary<SteamHelper.ModderPackBitMask, string>
         {
@@ -154,6 +190,7 @@ namespace BuildingThemes.GUI
 
         private static string GetModderPackName(SteamHelper.ModderPackBitMask mask)
         {
+            // Try locale key first for language support.
             string localeKey;
             if (s_packLocale.TryGetValue(mask, out localeKey))
             {
@@ -164,7 +201,11 @@ namespace BuildingThemes.GUI
                 }
                 catch { }
             }
-            return "Content Creator Pack";
+            // Fall back to hardcoded English name.
+            string hardcoded;
+            if (s_packNames.TryGetValue(mask, out hardcoded))
+                return hardcoded;
+            return "CCP";
         }
 
         // Row 3 — asset loading status toggles
@@ -427,7 +468,7 @@ namespace BuildingThemes.GUI
             dlcFilter = UIUtils.CreateDropDown(this);
             dlcFilter.width = width - 5;
             dlcFilter.tooltip = "Filter by DLC / Content Creator Pack.\nOnly DLCs that are installed and have buildings in this theme are shown.";
-            dlcFilter.relativePosition = new Vector3(0, 64);
+            dlcFilter.relativePosition = new Vector3(0, 74);
             dlcFilter.anchor = UIAnchorStyle.Left | UIAnchorStyle.Right;
 
             m_dlcEntries.Add(new DlcEntry()); // index 0 = "All DLC"
@@ -452,24 +493,24 @@ namespace BuildingThemes.GUI
             nameFilter.eventTextChanged += (c, s) => eventFilteringChanged(this, 5);
             nameFilter.eventTextSubmitted += (c, s) => eventFilteringChanged(this, 5);
 
-            // Row 4 (y=92): four checkboxes + counter label
+            // Row 4 (y=108): four checkboxes + counter label
             // "Show loaded" — hides buildings whose prefab is available
-            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 92, true);
+            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 108, true);
             m_showLoadedCb.tooltip = "Show buildings whose prefab is loaded and available";
             m_showLoadedCb.eventCheckChanged += (c, v) => { showLoaded = v; eventFilteringChanged(this, 6); };
 
             // "Show missing" — hides workshop/custom assets that failed to load
-            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 92, true);
+            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 108, true);
             m_showMissingCb.tooltip = "Show workshop/custom assets that are not currently loaded\n(not subscribed, disabled by Skyve, or load error)";
             m_showMissingCb.eventCheckChanged += (c, v) => { showMissing = v; eventFilteringChanged(this, 6); };
 
             // "Show DLC/Env" — hides assets gated by unowned DLC or wrong environment
-            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 92, true);
+            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 108, true);
             m_showDLCCb.tooltip = "Show vanilla/DLC assets not available\n(DLC not owned, or asset excluded for this map environment)";
             m_showDLCCb.eventCheckChanged += (c, v) => { showDLCLocked = v; eventFilteringChanged(this, 6); };
 
             // "Spawnable only" — show only loaded + included + valid-dimension buildings
-            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 92, false);
+            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 108, false);
             m_canSpawnCb.tooltip = "Show only buildings that are loaded, included in the theme,\nand have cell dimensions (1–4) valid for zone spawning";
             m_canSpawnCb.eventCheckChanged += (c, v) => { canSpawnOnly = v; eventFilteringChanged(this, 7); };
 
