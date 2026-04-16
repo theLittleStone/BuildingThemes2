@@ -107,6 +107,9 @@ namespace BuildingThemes.GUI
                 UIDistrictOptionsPanel.instance.Toggle();
             };
 
+            // Pre-create the district options panel so its Start() runs before the first user click
+            UIDistrictOptionsPanel.instance.Hide();
+
             // Theme list below the controls, with its own scrollbar (UITabContainer does not
             // scroll its tab page children — a UIScrollablePanel inside the tab page does).
             themePolicyButtons = UIFastList.Create<UIThemePolicyItem>(container);

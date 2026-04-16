@@ -78,5 +78,13 @@ namespace BuildingThemes.GUI
                 parent.Hide();
             };
         }
+
+        protected override void OnSizeChanged()
+        {
+            base.OnSizeChanged();
+            if (m_close == null) return;
+            m_close.relativePosition = new Vector3(width - 35, 2);
+            if (m_drag != null) m_drag.width = width - 50;
+        }
     }
 }

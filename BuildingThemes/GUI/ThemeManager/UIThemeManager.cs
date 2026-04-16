@@ -755,7 +755,8 @@ namespace BuildingThemes.GUI
             float currentMiddleWidth = width - LEFT_WIDTH - RIGHT_WIDTH - SPACING * 4;
             float panelHeight = height - TITLE_HEIGHT - m_filter.height - SPACING;
 
-            // Filter bar
+            // Title bar and filter bar
+            m_title.width = width;
             m_filter.width = width - SPACING * 2;
 
             // Left panel — width stays fixed, height grows

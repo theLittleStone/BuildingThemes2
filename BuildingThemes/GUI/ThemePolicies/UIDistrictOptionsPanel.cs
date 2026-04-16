@@ -47,15 +47,16 @@ namespace BuildingThemes.GUI
             base.Start();
 
             // Layout constants
-            const float W        = 390f;
-            const float TITLE_H  = 40f;
-            const float X        = 10f;
-            const float CW       = W - X * 2f; // 370 — full content width
-            const float ROW_GAP  = 8f;
-            const float LBL_H    = 30f; // initial height — replaced by PerformLayout() result
-            const float DROP_H   = 28f;
-            const float CHK_H    = 20f;
-            const float BTN_H    = 30f;
+            const float W = 390f;
+            const float TITLE_H = 40f;
+            const float X = 10f;
+            const float CW = W - X * 2f; // 370 — full content width
+            const float ROW_GAP = 12f;  // gap between a dropdown/control and the next section label
+            const float LBL_GAP = 5f;   // gap between a section label and its own dropdown
+            const float LBL_H = 36f;  // fixed label height (enough for 2 wrapped lines at scale 0.9)
+            const float DROP_H = 28f;
+            const float CHK_H = 20f;
+            const float BTN_H = 30f;
 
             float y = TITLE_H + 8f;
 
@@ -82,6 +83,11 @@ namespace BuildingThemes.GUI
             m_blacklistCheck.text = "Allow buildings not in any theme";
             y += CHK_H + ROW_GAP;
 
+            m_blacklistCheck.tooltip =
+                "When enabled, all vanilla/theme buildings can spawn — the themes become a blacklist\n" +
+                "(only explicitly excluded buildings are blocked).\n" +
+                "When disabled, only buildings included in an active theme for this district can spawn.";
+
             m_blacklistCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -90,16 +96,14 @@ namespace BuildingThemes.GUI
 
             // ── Level behavior label ──────────────────────────────────
             UILabel levelLabel = AddUIComponent<UILabel>();
-            levelLabel.autoSize = false;  // must be false before setting width, or PerformLayout overrides it
+            levelLabel.autoSize = false;
             levelLabel.width = CW;
             levelLabel.height = LBL_H;
-            levelLabel.textScale = 0.8f;
+            levelLabel.textScale = 0.9f;
             levelLabel.wordWrap = true;
             levelLabel.text = "If the current building is leveling up and there is no level asset candidate:";
-            levelLabel.PerformLayout();   // compute wrapped height using our width
-            levelLabel.width = CW;        // restore in case PerformLayout touched it
             levelLabel.relativePosition = new Vector3(X, y);
-            y += levelLabel.height + 2f;
+            y += LBL_H + LBL_GAP;
 
             // ── Level behavior dropdown ───────────────────────────────
             m_levelDropdown = UIUtils.CreateDropDown(this);
@@ -131,13 +135,11 @@ namespace BuildingThemes.GUI
             missingLabel.autoSize = false;
             missingLabel.width = CW;
             missingLabel.height = LBL_H;
-            missingLabel.textScale = 0.8f;
+            missingLabel.textScale = 0.9f;
             missingLabel.wordWrap = true;
             missingLabel.text = "If there is a building missing we should:";
-            missingLabel.PerformLayout();
-            missingLabel.width = CW;
             missingLabel.relativePosition = new Vector3(X, y);
-            y += missingLabel.height + 2f;
+            y += LBL_H + LBL_GAP - 1f;
 
             // ── Missing asset dropdown ────────────────────────────────
             m_missingDropdown = UIUtils.CreateDropDown(this);
