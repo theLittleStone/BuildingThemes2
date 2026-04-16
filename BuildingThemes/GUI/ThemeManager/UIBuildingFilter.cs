@@ -422,12 +422,13 @@ namespace BuildingThemes.GUI
 
             sizeFilterY.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 4);
 
-            // DLC filter — no label, positioned right after the size filters.
-            // sizeFilterX is at ~390; allow 120px for both sizeFilterX+Y (45+10+45) + gap.
+            // DLC filter — own row between the Display row and the status checkboxes.
+            // Width fills the panel so the selected name is always fully visible.
             dlcFilter = UIUtils.CreateDropDown(this);
-            dlcFilter.width = 120;
-            dlcFilter.tooltip = "Filter by DLC / Content Creator Pack.\nOnly DLCs installed and present in this theme are listed.";
-            dlcFilter.relativePosition = new Vector3(sizeFilterX.relativePosition.x + 115 + 10, 40);
+            dlcFilter.width = width - 5;
+            dlcFilter.tooltip = "Filter by DLC / Content Creator Pack.\nOnly DLCs that are installed and have buildings in this theme are shown.";
+            dlcFilter.relativePosition = new Vector3(0, 64);
+            dlcFilter.anchor = UIAnchorStyle.Left | UIAnchorStyle.Right;
 
             m_dlcEntries.Add(new DlcEntry()); // index 0 = "All DLC"
             dlcFilter.AddItem("All DLC");
@@ -451,24 +452,24 @@ namespace BuildingThemes.GUI
             nameFilter.eventTextChanged += (c, s) => eventFilteringChanged(this, 5);
             nameFilter.eventTextSubmitted += (c, s) => eventFilteringChanged(this, 5);
 
-            // Row 3 (y=78): four checkboxes + counter label
+            // Row 4 (y=92): four checkboxes + counter label
             // "Show loaded" — hides buildings whose prefab is available
-            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 78, true);
+            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 92, true);
             m_showLoadedCb.tooltip = "Show buildings whose prefab is loaded and available";
             m_showLoadedCb.eventCheckChanged += (c, v) => { showLoaded = v; eventFilteringChanged(this, 6); };
 
             // "Show missing" — hides workshop/custom assets that failed to load
-            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 78, true);
+            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 92, true);
             m_showMissingCb.tooltip = "Show workshop/custom assets that are not currently loaded\n(not subscribed, disabled by Skyve, or load error)";
             m_showMissingCb.eventCheckChanged += (c, v) => { showMissing = v; eventFilteringChanged(this, 6); };
 
             // "Show DLC/Env" — hides assets gated by unowned DLC or wrong environment
-            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 78, true);
+            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 92, true);
             m_showDLCCb.tooltip = "Show vanilla/DLC assets not available\n(DLC not owned, or asset excluded for this map environment)";
             m_showDLCCb.eventCheckChanged += (c, v) => { showDLCLocked = v; eventFilteringChanged(this, 6); };
 
             // "Spawnable only" — show only loaded + included + valid-dimension buildings
-            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 78, false);
+            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 92, false);
             m_canSpawnCb.tooltip = "Show only buildings that are loaded, included in the theme,\nand have cell dimensions (1–4) valid for zone spawning";
             m_canSpawnCb.eventCheckChanged += (c, v) => { canSpawnOnly = v; eventFilteringChanged(this, 7); };
 
