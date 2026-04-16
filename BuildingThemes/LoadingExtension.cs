@@ -36,8 +36,8 @@ namespace BuildingThemes
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError("Building Themes: Exception in OnCreated.");
-                UnityEngine.Debug.LogException(e);
+                Debugger.LogError("Building Themes: Exception in OnCreated.");
+                Debugger.LogException(e);
             }
         }
 
@@ -95,7 +95,7 @@ namespace BuildingThemes
                         }
                         catch (Exception ex)
                         {
-                            UnityEngine.Debug.LogException(ex);
+                            Debugger.LogException(ex);
                         }
                     });
                 }
@@ -136,8 +136,8 @@ namespace BuildingThemes
             }
             catch (Exception e)
             {
-                UnityEngine.Debug.LogError("Building Themes 2: Exception in OnLevelLoaded.");
-                UnityEngine.Debug.LogException(e);
+                Debugger.LogError("Building Themes 2: Exception in OnLevelLoaded.");
+                Debugger.LogException(e);
             }
         }
 

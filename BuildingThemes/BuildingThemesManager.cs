@@ -460,6 +460,29 @@ namespace BuildingThemes
             }
         }
 
+        /// <summary>
+        /// Restores saved per-district behavior overrides after setThemeInfo has been called.
+        /// Values of -1 are ignored (sentinel for "not saved / use global default").
+        /// Triggers one recompile only if a value actually changed.
+        /// </summary>
+        public void RestoreDistrictBehavior(byte districtId, int savedMissingMode, int savedEmptyMode)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null) return;
+            bool changed = false;
+            if (savedMissingMode >= 0 && (int)info.missingAssetMode != savedMissingMode)
+            {
+                info.missingAssetMode = (MissingAssetMode)savedMissingMode;
+                changed = true;
+            }
+            if (savedEmptyMode >= 0 && (int)info.emptyLevelBehavior != savedEmptyMode)
+            {
+                info.emptyLevelBehavior = (EmptyLevelBehavior)savedEmptyMode;
+                changed = true;
+            }
+            if (changed) CompileDistrictThemes(districtId);
+        }
+
         public void setThemeInfo(byte districtId, HashSet<Configuration.Theme> themes, bool blacklistMode)
         {
             var info = districtThemeInfos[districtId];

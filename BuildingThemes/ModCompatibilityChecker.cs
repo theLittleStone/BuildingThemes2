@@ -24,6 +24,7 @@ namespace BuildingThemes
         private struct KnownBadEntry
         {
             public string Id;
+            public ulong WorkshopId; // 0 = no Workshop ID check; match by name/assembly only
             public bool IsAssembly;
             public string DisplayName;
             public Severity Level;
@@ -35,6 +36,7 @@ namespace BuildingThemes
             new KnownBadEntry
             {
                 Id          = BuildingThemesMod.EIGHTY_ONE_MOD,
+                WorkshopId  = 576327847UL,
                 IsAssembly  = false,
                 DisplayName = "81 Tiles (original)",
                 Level       = Severity.Critical,
@@ -56,7 +58,10 @@ namespace BuildingThemes
                 bool active = entry.IsAssembly
                     ? Util.IsModAssemblyActive(entry.Id)
                     : Util.IsModActive(entry.Id);
-                Debugger.LogFormat("Building Themes 2: Checked '{0}' — active={1}.", entry.DisplayName, active);
+                // Also check by Workshop ID to catch renamed forks
+                if (!active && entry.WorkshopId != 0)
+                    active = Util.IsModWorkshopIdActive(entry.WorkshopId);
+                Debugger.LogFormat("Building Themes 2: Checked '{0}' (workshopId={1}) — active={2}.", entry.DisplayName, entry.WorkshopId, active);
                 if (active)
                     conflicts.Add(new ConflictInfo
                     {
@@ -96,7 +101,7 @@ namespace BuildingThemes
             }
             catch (Exception e)
             {
-                Debug.LogException(e);
+                Debugger.LogException(e);
             }
 
             Debugger.LogFormat("Building Themes 2: ModCompatibilityChecker done — {0} conflict(s) found.", conflicts.Count);

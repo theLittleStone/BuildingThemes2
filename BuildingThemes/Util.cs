@@ -22,6 +22,17 @@ namespace BuildingThemes
                     select name).Any();
         }
 
+        /// <summary>Returns true if an enabled mod has the given Steam Workshop ID.</summary>
+        public static bool IsModWorkshopIdActive(ulong workshopId)
+        {
+            foreach (var plugin in PluginManager.instance.GetPluginsInfo())
+            {
+                if (plugin.isEnabled && plugin.publishedFileID.AsUInt64 == workshopId)
+                    return true;
+            }
+            return false;
+        }
+
         public static bool IsModAssemblyActive(string assemblyName)
         {
             foreach (PluginManager.PluginInfo plugin in PluginManager.instance.GetPluginsInfo())

@@ -153,7 +153,9 @@ namespace BuildingThemes
                     {
                         id = i,
                         blacklistMode = themesManager.IsBlacklistModeEnabled(i),
-                        themes = themesNames
+                        themes = themesNames,
+                        missingAssetMode  = (int)themesManager.GetDistrictMissingAssetMode(i),
+                        emptyLevelBehavior = (int)themesManager.GetDistrictEmptyLevelBehavior(i)
                     });
                     if (Debugger.Enabled)
                     {
@@ -230,11 +232,16 @@ namespace BuildingThemes
 
                 buildingThemesManager.setThemeInfo(district.id, themes, district.blacklistMode);
 
+                // Restore per-district behavior overrides (persisted since save version 2).
+                if (configuration.version >= 2)
+                    buildingThemesManager.RestoreDistrictBehavior(district.id, district.missingAssetMode, district.emptyLevelBehavior);
+
                 if (Debugger.Enabled)
                 {
                     var themeNames = string.Join(", ", System.Array.ConvertAll(district.themes ?? new string[0], t => t));
-                    Debugger.LogFormat("Building Themes: District {0} loaded — blacklist={1}, themes=[{2}]",
-                        district.id, district.blacklistMode, themeNames);
+                    Debugger.LogFormat("Building Themes: District {0} loaded — blacklist={1}, missingMode={2}, emptyMode={3}, themes=[{4}]",
+                        district.id, district.blacklistMode,
+                        district.missingAssetMode, district.emptyLevelBehavior, themeNames);
                 }
             }
         }
@@ -242,12 +249,19 @@ namespace BuildingThemes
 
     public class DistrictsConfiguration
     {
+        // version 2 adds missingAssetMode + emptyLevelBehavior per district.
+        // Old saves deserialise version as 0 — those fields are ignored on load.
+        [System.Xml.Serialization.XmlAttribute("version")]
+        public int version = 2;
 
         public class District
         {
             public byte id;
             public bool blacklistMode = false;
             public string[] themes;
+            // -1 = not saved (old save / version < 2); >= 0 = enum ordinal.
+            public int missingAssetMode = -1;
+            public int emptyLevelBehavior = -1;
         }
 
         public List<District> Districts = new List<District>();

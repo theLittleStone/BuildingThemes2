@@ -29,27 +29,15 @@ namespace BuildingThemes
 
         public void OnSettingsUI(UIHelperBase helper)
         {
-            UIHelperBase group = helper.AddGroup("Building Themes");
+            UIHelperBase root = helper.AddGroup("Building Themes");
             try
             {
-                var unlockCheck = group.AddCheckbox("Unlock Policies Panel From Start", PolicyPanelEnabler.Unlock,
-                    delegate (bool c) { PolicyPanelEnabler.Unlock = c; }) as ColossalFramework.UI.UICheckBox;
-                var cloningCheck = group.AddCheckbox("Enable Prefab Cloning (experimental — read warning below)", BuildingVariationManager.Enabled,
-                    delegate (bool c) { BuildingVariationManager.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
-                group.AddGroup(
-                    "⚠ SAVE RISK: Cloned buildings are generated at load time and stored in your save. " +
-                    "If you disable this option or unsubscribe the mod, all cloned buildings will vanish from your city on next load. " +
-                    "The save file itself is not corrupted, but those buildings are gone permanently. " +
-                    "Only enable this if you understand and accept that risk.");
-
-                var warningCheck = group.AddCheckbox("Warning message when selecting an invalid theme", UIThemePolicyItem.showWarning,
-                    delegate (bool c) { UIThemePolicyItem.showWarning = c; }) as ColossalFramework.UI.UICheckBox;
-                var debugCheck = group.AddCheckbox("Generate Debug Output", Debugger.Enabled,
-                    delegate (bool c) { Debugger.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
-
-                // Global defaults — applied to new districts when theme management is first enabled.
+                // ── Behaviour ────────────────────────────────────────────────────────────
+                // Global defaults applied when theme management is first enabled for a district.
                 // Each district can override these in its own Themes tab (district policies panel).
-                var missingModeDropdown = group.AddDropdown(
+                UIHelperBase behaviourGroup = root.AddGroup("Behaviour");
+
+                var missingModeDropdown = behaviourGroup.AddDropdown(
                     "Default: missing workshop buildings",
                     new string[] {
                         "Skip (sparse slots, theme-only)",
@@ -60,7 +48,7 @@ namespace BuildingThemes
                     delegate (int idx) { BuildingThemesManager.MissingAssetBehavior = (MissingAssetMode)idx; }
                 ) as ColossalFramework.UI.UIDropDown;
 
-                var emptyLevelDropdown = group.AddDropdown(
+                var emptyLevelDropdown = behaviourGroup.AddDropdown(
                     "Default: when theme has no buildings for a level",
                     new string[] {
                         "Vanilla fallback (spawn vanilla for uncovered levels)",
@@ -71,7 +59,29 @@ namespace BuildingThemes
                     delegate (int idx) { BuildingThemesManager.EmptyLevelBehavior = (EmptyLevelBehavior)idx; }
                 ) as ColossalFramework.UI.UIDropDown;
 
-                group.AddButton("Reset to Defaults", () =>
+                var warningCheck = behaviourGroup.AddCheckbox("Warning message when selecting an invalid theme", UIThemePolicyItem.showWarning,
+                    delegate (bool c) { UIThemePolicyItem.showWarning = c; }) as ColossalFramework.UI.UICheckBox;
+
+                // ── Debugging ─────────────────────────────────────────────────────────────
+                UIHelperBase debugGroup = root.AddGroup("Debugging");
+
+                var debugCheck = debugGroup.AddCheckbox("Generate Debug Output", Debugger.Enabled,
+                    delegate (bool c) { Debugger.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
+
+                // ── Maintenance ───────────────────────────────────────────────────────────
+                UIHelperBase maintenanceGroup = root.AddGroup("Maintenance");
+
+                var unlockCheck = maintenanceGroup.AddCheckbox("Unlock Policies Panel From Start", PolicyPanelEnabler.Unlock,
+                    delegate (bool c) { PolicyPanelEnabler.Unlock = c; }) as ColossalFramework.UI.UICheckBox;
+                var cloningCheck = maintenanceGroup.AddCheckbox("Enable Prefab Cloning (experimental — read warning below)", BuildingVariationManager.Enabled,
+                    delegate (bool c) { BuildingVariationManager.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
+                maintenanceGroup.AddGroup(
+                    "⚠ SAVE RISK: Cloned buildings are generated at load time and stored in your save. " +
+                    "If you disable this option or unsubscribe the mod, all cloned buildings will vanish from your city on next load. " +
+                    "The save file itself is not corrupted, but those buildings are gone permanently. " +
+                    "Only enable this if you understand and accept that risk.");
+
+                maintenanceGroup.AddButton("Reset to Defaults", () =>
                 {
                     PolicyPanelEnabler.Unlock = true;
                     BuildingVariationManager.Enabled = false;
@@ -90,7 +100,7 @@ namespace BuildingThemes
             }
             catch
             {
-                group.AddGroup("BuildingThemes is unable to read the BuildingThemes.xml file\n" +
+                root.AddGroup("BuildingThemes is unable to read the BuildingThemes.xml file\n" +
                                "that stores your settings and themes!\n" +
                                "To fix it, delete this file and restart the game:\n" +
                                "{Steam folder}\\steamapps\\common\\Cities_Skylines\\BuildingThemes.xml");
