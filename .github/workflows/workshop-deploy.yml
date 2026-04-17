@@ -149,6 +149,7 @@ jobs:
               '\t"appid"\t\t\t"255710"\n'
               '\t"publishedfileid"\t"3708105182"\n'
               f'\t"contentfolder"\t\t"{workspace}/dist/BuildingThemes2"\n'
+              f'\t"previewfile"\t\t"{workspace}/Workshop/PreviewImage.png"\n'
               f'\t"changenote"\t\t"{vdf_escape(note)[:7900]}"\n'
               '}\n'
           )

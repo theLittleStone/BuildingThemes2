@@ -54,7 +54,6 @@ mkdir -p "$DIST"
 
 cp "$BUILD_OUT/BuildingThemes.dll" "$DIST/$MOD_NAME.dll"
 cp "$PACKAGES/CitiesHarmony.API.2.1.0/lib/net35/CitiesHarmony.API.dll" "$DIST/"
-cp "$WORKSHOP_DIR/"*.* "$DIST/"
 
 echo ""
 echo "Staged to: $DIST"
