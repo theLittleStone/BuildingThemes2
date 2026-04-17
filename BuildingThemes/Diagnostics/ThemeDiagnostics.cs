@@ -1,3 +1,4 @@
+using ColossalFramework;
 using System.Collections.Generic;
 using System.Text;
 
@@ -99,39 +100,110 @@ namespace BuildingThemes.Diagnostics
         /// </summary>
         public static string FormatReport(byte districtId)
         {
+            var sb = new StringBuilder();
+
+            // ── Spawn-candidate compile report ────────────────────────────────────
             var report = GetReport(districtId);
             if (report == null)
             {
                 if (!Debugger.Enabled)
-                    return "Debug output is disabled.\n\nEnable 'Generate Debug Output' in the mod settings (main menu → Options → Building Themes 2), then re-enable theme management for this district to collect data.";
+                    sb.AppendLine("Debug output is disabled.\n\nEnable 'Generate Debug Output' in the mod settings (main menu → Options → Building Themes 2), then re-enable theme management for this district to collect data.");
                 else
-                    return "No data for this district yet.\n\nDebug output is enabled — re-enable theme management for this district (uncheck and re-check 'Enable Theme Management') to trigger a fresh compile and collect diagnostics.";
-            }
-
-            var sb = new StringBuilder();
-            sb.AppendFormat("District {0} — Last theme compile\n", districtId);
-            sb.AppendLine(new string('-', 40));
-            sb.AppendFormat("Total prefab candidates : {0}\n", report.TotalCandidates);
-            sb.AppendFormat("Accepted (will spawn)   : {0}\n", report.Accepted);
-            sb.AppendLine();
-            sb.AppendLine("Rejected:");
-            sb.AppendFormat("  Not in theme          : {0}\n", report.RejectedNotInTheme);
-            sb.AppendFormat("  Variation (filtered)  : {0}\n", report.RejectedVariation);
-            sb.AppendFormat("  Zero spawn rate       : {0}\n", report.RejectedZeroSpawnRate);
-
-            if (report.RejectedMissingAsset > 0)
-            {
-                sb.AppendLine();
-                sb.AppendFormat("Missing assets ({0}):\n", report.RejectedMissingAsset);
-                foreach (var name in report.MissingAssetNames)
-                    sb.AppendFormat("  {0}\n", name);
+                    sb.AppendLine("No data for this district yet.\n\nDebug output is enabled — re-enable theme management for this district (uncheck and re-check 'Enable Theme Management') to trigger a fresh compile and collect diagnostics.");
             }
             else
             {
+                sb.AppendFormat("District {0} — Last theme compile\n", districtId);
+                sb.AppendLine(new string('-', 40));
+                sb.AppendFormat("Total prefab candidates : {0}\n", report.TotalCandidates);
+                sb.AppendFormat("Accepted (will spawn)   : {0}\n", report.Accepted);
                 sb.AppendLine();
-                sb.AppendLine("No missing assets.");
+                sb.AppendLine("Rejected:");
+                sb.AppendFormat("  Not in theme          : {0}\n", report.RejectedNotInTheme);
+                sb.AppendFormat("  Variation (filtered)  : {0}\n", report.RejectedVariation);
+                sb.AppendFormat("  Zero spawn rate       : {0}\n", report.RejectedZeroSpawnRate);
+
+                if (report.RejectedMissingAsset > 0)
+                {
+                    sb.AppendLine();
+                    sb.AppendFormat("Missing assets ({0}):\n", report.RejectedMissingAsset);
+                    foreach (var name in report.MissingAssetNames)
+                        sb.AppendFormat("  {0}\n", name);
+                }
+                else
+                {
+                    sb.AppendLine();
+                    sb.AppendLine("No missing assets.");
+                }
             }
 
+            // ── Non-theme buildings currently in district ─────────────────────────
+            string nonTheme = FormatNonThemeBuildings(districtId);
+            if (nonTheme != null)
+            {
+                sb.AppendLine();
+                sb.AppendLine(new string('-', 40));
+                sb.Append(nonTheme);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Scans the building manager and returns a formatted list of growable buildings
+        /// currently placed in <paramref name="districtId"/> that are not valid for the
+        /// district's active themes.  Returns null when theme management is off or in
+        /// blacklist mode (where the concept of "non-theme" doesn't apply).
+        /// </summary>
+        public static string FormatNonThemeBuildings(byte districtId)
+        {
+            var mgr = BuildingThemesManager.instance;
+            if (mgr == null) return null;
+            if (!mgr.IsThemeManagementEnabled(districtId)) return null;
+            if (mgr.IsBlacklistModeEnabled(districtId)) return null;
+
+            var bm = Singleton<BuildingManager>.instance;
+            var dm = Singleton<DistrictManager>.instance;
+            if (bm == null || dm == null) return null;
+
+            // building name → count
+            var counts = new SortedDictionary<string, int>();
+            int total = 0;
+            int size = (int)bm.m_buildings.m_size;
+
+            for (ushort i = 1; i < size; i++)
+            {
+                var b = bm.m_buildings.m_buffer[i];
+                if ((b.m_flags & Building.Flags.Created) == 0) continue;
+
+                var info = b.Info;
+                if (info == null) continue;
+                if (info.m_placementStyle != ItemClass.Placement.Automatic) continue;
+                if (ItemClass.GetPrivateServiceIndex(info.m_class.m_service) == -1) continue;
+
+                if (dm.GetDistrict(b.m_position) != districtId) continue;
+
+                if (!mgr.IsBuildingValidForDistrict(i, districtId))
+                {
+                    int c;
+                    counts.TryGetValue(info.name, out c);
+                    counts[info.name] = c + 1;
+                    total++;
+                }
+            }
+
+            var sb = new StringBuilder();
+            if (total == 0)
+            {
+                sb.AppendLine("Non-theme buildings in district: none");
+            }
+            else
+            {
+                sb.AppendFormat("Non-theme buildings in district ({0} buildings, {1} types):\n",
+                    total, counts.Count);
+                foreach (var kv in counts)
+                    sb.AppendFormat("  {0} \u00d7 {1}\n", kv.Key, kv.Value);  // × sign
+            }
             return sb.ToString();
         }
     }

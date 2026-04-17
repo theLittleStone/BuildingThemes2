@@ -220,6 +220,11 @@ namespace BuildingThemes.GUI
             CreateBuilding(item);
             item.building.include = include;
 
+            Debugger.LogFormat("[ThemeChange] Building \"{0}\" in theme \"{1}\": include={2}",
+                item.name,
+                selectedTheme != null ? selectedTheme.name : "?",
+                include);
+
             m_isDistrictThemesDirty = true;
 
             m_themeSelection.Refresh();

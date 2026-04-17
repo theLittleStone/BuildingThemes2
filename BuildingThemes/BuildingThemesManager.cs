@@ -586,6 +586,10 @@ namespace BuildingThemes
                 Debugger.LogFormat("Upgrade Mappings in district {0}: {1}", districtId, info.upgradeBuildings.Count);
                 ThemeDiagnostics.LogReport(districtId);
             }
+
+            // Reset the auto-bulldoze cursor so newly-invalid buildings are caught in the
+            // next scan cycle rather than waiting for the cursor to loop around naturally.
+            AutoBulldozeService.ResetCursor();
         }
 
         public void ToggleThemeManagement(byte districtId, bool enabled)
@@ -887,6 +891,27 @@ namespace BuildingThemes
                 info.m_cellWidth, info.m_cellLength, info.m_zoningMode);
 
             var valid = GetAreaBuildings(districtId, areaIndex);
+
+            if (Debugger.Enabled)
+            {
+                var names = new System.Text.StringBuilder();
+                if (valid == null || valid.m_size == 0)
+                {
+                    names.Append("(empty)");
+                }
+                else
+                {
+                    for (int i = 0; i < valid.m_size; i++)
+                    {
+                        var pi = PrefabCollection<BuildingInfo>.GetPrefab(valid.m_buffer[i]);
+                        if (i > 0) names.Append(", ");
+                        names.Append(pi != null ? pi.name : valid.m_buffer[i].ToString());
+                    }
+                }
+                Debugger.LogVerbose("[ValidCheck] district={0} building=\"{1}\" areaIndex={2} validList=[{3}]",
+                    districtId, info.name, areaIndex, names);
+            }
+
             if (valid == null || valid.m_size == 0) return false;
 
             ushort prefab = (ushort)info.m_prefabDataIndex;
