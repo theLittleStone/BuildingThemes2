@@ -80,11 +80,9 @@ jobs:
           RELEASE_URL="https://github.com/${{ github.repository }}/releases/tag/v${VERSION}"
 
           if [[ -n "$SECTION" ]]; then
-            NOTE="${SECTION}
-
-Full release notes: ${RELEASE_URL}"
+            NOTE=$(printf '%s\n\nFull release notes: %s' "$SECTION" "$RELEASE_URL")
           else
-            NOTE="Release ${VERSION} — ${RELEASE_URL}"
+            NOTE="Release ${VERSION} - ${RELEASE_URL}"
           fi
 
           # Steam Workshop change notes are capped at ~8 000 chars
