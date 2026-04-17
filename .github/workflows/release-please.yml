@@ -39,6 +39,9 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # Use a PAT instead of GITHUB_TOKEN so the tag push triggers
+          # the workshop-deploy workflow. Tags pushed by GITHUB_TOKEN are
+          # intentionally blocked from triggering other workflows by GitHub.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: .release-please-config.json
           manifest-file: .release-please-manifest.json
