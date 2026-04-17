@@ -35,6 +35,7 @@ If no theme is active, any growable building can spawn (vanilla behavior).
 [*][b]Missing asset handling[/b] — Skip / Fill with vanilla / Fall back to vanilla (global + per-district)
 [*][b]Level behavior[/b] — Vanilla fallback / Cascade / Strict freeze when a level has no buildings
 [*][b]Asset Cloning[/b] — duplicate a building and assign a different wealth level
+[*][b]Auto-bulldoze[/b] — per-district option to gradually replace non-theme buildings with themed ones
 [*][b]Spawn rate[/b] — control how often a building appears relative to same-type peers
 [/list]
 

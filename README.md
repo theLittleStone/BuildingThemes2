@@ -41,8 +41,10 @@ If no theme is active for a district, any growable building can spawn (vanilla b
 - **DLC & CCP filter** — filter the building list by installed DLC or Content Creator Pack.
 - **Workshop Dependencies modal** — see exactly which assets are missing, copy their IDs,
   or subscribe to them directly via the Steam overlay.
-- **Spawn Diagnostics** — see accepted/rejected building counts and missing-asset lists
-  per district.
+- **Spawn Diagnostics** — see accepted/rejected building counts, missing-asset lists,
+  and a live count of non-theme buildings currently placed in the district.
+- **Auto-bulldoze** — gradually demolish growable buildings that don't belong to the
+  district's active themes, replacing them with themed buildings over time.
 - **Asset Cloning** — duplicate a building and assign a different wealth level to it.
 - **Missing asset handling** — three modes for how to respond when a subscribed building
   isn't loaded.
@@ -108,9 +110,28 @@ Open via the **District Options** button in the Themes tab.
 | Option | Description |
 | --- | --- |
 | Allow buildings not in any theme | Blacklist mode — anything not explicitly excluded can spawn |
+| Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
 | Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default), **Cascade** (reuse from lower level), or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
-| Spawn Diagnostics | Accepted/rejected counts and missing-asset list for this district |
+| Spawn Diagnostics | Accepted/rejected counts, missing-asset list, and a live list of non-theme buildings currently placed in the district |
+
+---
+
+## Auto-Bulldoze
+
+Enable **Auto-bulldoze non-theme buildings** in District Options to have the mod
+gradually demolish any growable zone building in that district that is not part of the
+active themes. Replacements spawn according to the normal themed-spawn rules.
+
+- The scan runs in the background — buildings are removed a batch at a time so performance
+  impact is minimal. Expect full turnover within a few seconds of game time.
+- Only active in districts where **Theme Management** is enabled and **Blacklist mode** is
+  off (blacklist mode has no concept of "non-theme").
+- After changing which buildings are included in a theme, the scan resets so newly-invalid
+  buildings are caught quickly rather than waiting for the cursor to cycle through the
+  whole city.
+- Use **Spawn Diagnostics** (District Options) to see which non-theme buildings are
+  currently present in the district before and after enabling auto-bulldoze.
 
 ---
 
