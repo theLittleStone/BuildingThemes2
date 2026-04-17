@@ -76,67 +76,86 @@ namespace BuildingThemes
             return result;
         }
 
-        // Called every frame on building upgrade
+        // Called every frame on building upgrade.
+        //
+        // Two settings govern upgrades, applied in order:
+        //
+        //   1. Theme has buildings at the target level (loaded or partially missing):
+        //      The compiled spawn pool is used. Missing-asset mode has already been applied
+        //      to that pool during CompileDistrictThemes, so fill/fallback works as configured.
+        //
+        //   2. Theme has NO buildings configured for the target level:
+        //      The Level Behavior setting determines what happens:
+        //        - Vanilla fallback → vanilla upgrade building
+        //        - Strict           → block the upgrade entirely
         public static BuildingInfo GetRandomBuildingInfo_Upgrade(Vector3 position, ushort prefabIndex, ref Randomizer r, ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, int width, int length, BuildingInfo.ZoningMode zoningMode, int style)
         {
-            // This method is called very frequently — keep allocations minimal.
             s_intentionalNull = false;
 
             var mgr = BuildingThemesManager.instance;
             var districtId = Singleton<DistrictManager>.instance.GetDistrict(position);
 
-            // See if there is a special upgraded building
+            // Step 1 — explicit per-building "Upgrade to" mapping set in the Theme Manager UI.
             var buildingInfo = mgr.GetUpgradeBuildingInfo(prefabIndex, districtId);
             if (buildingInfo != null)
             {
                 if (Debugger.Enabled && s_upgradeLogCount < LogThrottle)
                 {
                     s_upgradeLogCount++;
-                    Debugger.LogFormat("[Themes] Upgrade HIT explicit ({0}/{1}) dist={2} L{3} → '{4}'",
+                    Debugger.LogFormat("[Themes] Upgrade explicit ({0}/{1}) dist={2} L{3} → '{4}'",
                         s_upgradeLogCount, LogThrottle, districtId, (int)level + 1, buildingInfo.name);
                 }
                 return buildingInfo;
             }
 
+            // Step 2 — if district has no active theme, let vanilla handle the upgrade.
+            if (!mgr.IsEffectivelyThemed(districtId))
+                return null;
+
+            // Step 3 — compiled spawn pool for the target level.
+            //   Non-null: theme has buildings here (missing-asset mode already applied) → use them.
+            //   Null: theme has no buildings configured for this level → go to Level Behavior.
             var areaIndex = BuildingThemesManager.GetAreaIndex(service, subService, level, width, length, zoningMode);
             var fastList = mgr.GetAreaBuildings(districtId, areaIndex);
 
-            if (fastList == null || fastList.m_size == 0)
+            if (fastList != null && fastList.m_size > 0)
             {
-                // Strict mode: block vanilla upgrade fallback for themed districts
-                if (fastList == null
-                    && mgr.GetDistrictEmptyLevelBehavior(districtId) == EmptyLevelBehavior.StrictThemeOnly
-                    && mgr.IsEffectivelyThemed(districtId))
-                {
-                    s_intentionalNull = true;
-                }
-
+                int index = r.Int32((uint)fastList.m_size);
+                BuildingInfo result = PrefabCollection<BuildingInfo>.GetPrefab((uint)fastList.m_buffer[index]);
                 if (Debugger.Enabled && s_upgradeLogCount < LogThrottle)
                 {
                     s_upgradeLogCount++;
-                    Debugger.LogFormat("[Themes] Upgrade MISS ({0}/{1}) dist={2} {3}/{4} L{5} | themed={6} levelMode={7} intentional={8}",
+                    Debugger.LogFormat("[Themes] Upgrade HIT ({0}/{1}) dist={2} {3}/{4} L{5} | {6}/{7} → '{8}'",
                         s_upgradeLogCount, LogThrottle,
                         districtId, service, subService, (int)level + 1,
-                        mgr.IsEffectivelyThemed(districtId),
-                        mgr.GetDistrictEmptyLevelBehavior(districtId),
-                        s_intentionalNull);
+                        index + 1, fastList.m_size,
+                        result != null ? result.name : "null");
                 }
-                return null;
+                return result;
             }
 
-            int index = r.Int32((uint)fastList.m_size);
-            BuildingInfo result = PrefabCollection<BuildingInfo>.GetPrefab((uint)fastList.m_buffer[index]);
+            // Step 4 — no theme buildings at this level → apply Level Behavior.
+            var levelBehavior = mgr.GetDistrictEmptyLevelBehavior(districtId);
 
             if (Debugger.Enabled && s_upgradeLogCount < LogThrottle)
             {
                 s_upgradeLogCount++;
-                Debugger.LogFormat("[Themes] Upgrade HIT ({0}/{1}) dist={2} {3}/{4} L{5} | {6}/{7} → '{8}'",
+                Debugger.LogFormat("[Themes] Upgrade MISS ({0}/{1}) dist={2} {3}/{4} L{5} | levelMode={6}",
                     s_upgradeLogCount, LogThrottle,
-                    districtId, service, subService, (int)level + 1,
-                    index + 1, fastList.m_size,
-                    result != null ? result.name : "null");
+                    districtId, service, subService, (int)level + 1, levelBehavior);
             }
-            return result;
+
+            switch (levelBehavior)
+            {
+                case EmptyLevelBehavior.StrictThemeOnly:
+                    // No theme buildings at target level and strict mode → freeze upgrade.
+                    s_intentionalNull = true;
+                    return null;
+
+                default: // EmptyLevelBehavior.VanillaFallback (also handles any obsolete/unknown value)
+                    // Allow vanilla to pick the upgrade building.
+                    return null;
+            }
         }
     }
 }

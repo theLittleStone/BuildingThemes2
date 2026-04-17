@@ -29,11 +29,13 @@ namespace BuildingThemes.HarmonyPatches.DistrictManagerPatch
             Debugger.Log("DistrictManager.ReleaseDistrictImplementation unpatched.");
         }
 
-        // Prefix: clear theme management before the district data is wiped by the original.
+        // Prefix: permanently clear theme data when a district is deleted.
+        // Unlike ToggleThemeManagement(false), ClearDistrictData nulls the entry so that
+        // a new district created in the same slot starts completely fresh.
         public static void Prefix(byte district, ref District data)
         {
             if (data.m_flags == District.Flags.None) return;
-            BuildingThemesManager.instance.ToggleThemeManagement(district, false);
+            BuildingThemesManager.instance.ClearDistrictData(district);
         }
     }
 }

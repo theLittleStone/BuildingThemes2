@@ -16,7 +16,8 @@ namespace BuildingThemes
     {
         /// <summary>Vanilla buildings spawn for levels not covered by the theme (current behavior).</summary>
         VanillaFallback = 0,
-        /// <summary>Buildings from the nearest lower level that IS in the theme are reused for empty higher levels.</summary>
+        /// <summary>Removed: caused infinite rebuild loops (L1 prefab returned for L2 slot → building never advances). Migrated to VanillaFallback on load.</summary>
+        [System.Obsolete("Cascade mode removed — migrated to VanillaFallback on load.")]
         CascadeFromTheme = 1,
         /// <summary>Levels with no theme buildings stay empty — no vanilla fallback, no upgrades past the included levels.</summary>
         StrictThemeOnly = 2

@@ -103,7 +103,7 @@ namespace BuildingThemes.GUI
             levelLabel.height = LBL_H;
             levelLabel.textScale = 0.9f;
             levelLabel.wordWrap = true;
-            levelLabel.text = "If the current building is leveling up and there is no level asset candidate:";
+            levelLabel.text = "When a building levels up and the theme has no buildings for that level:";
             levelLabel.relativePosition = new Vector3(X, y);
             y += LBL_H + LBL_GAP;
 
@@ -113,14 +113,16 @@ namespace BuildingThemes.GUI
             m_levelDropdown.size = new Vector2(CW, DROP_H);
             m_levelDropdown.relativePosition = new Vector3(X, y);
             m_levelDropdown.items = new string[] {
-                "Vanilla fallback — vanilla buildings spawn",
-                "Cascade — reuse buildings from lower level",
-                "Strict — freeze levels, block upgrades"
+                "Vanilla fallback — game picks a vanilla building",
+                "Strict — freeze the upgrade; building stays at current level"
             };
             m_levelDropdown.tooltip =
-                "Vanilla fallback: levels not in your theme spawn vanilla buildings (game default)\n" +
-                "Cascade: empty levels reuse buildings from the nearest lower level that IS in your theme\n" +
-                "Strict: only theme levels spawn; existing buildings will NOT upgrade past the highest level in your theme";
+                "Vanilla fallback: the game picks a vanilla building for the higher level.\n" +
+                "The building changes appearance on upgrade (game default).\n\n" +
+                "Strict: upgrades are blocked when the theme has no buildings at the target level.\n" +
+                "The building stays at its current level indefinitely.\n\n" +
+                "To control exactly which building a level-up produces, use the 'Upgrade to' field\n" +
+                "in the Theme Manager options panel for that building.";
             y += DROP_H + ROW_GAP;
 
             m_levelDropdown.eventSelectedIndexChanged += (c, val) =>
@@ -128,8 +130,9 @@ namespace BuildingThemes.GUI
                 if (_updating) return;
                 byte districtId = GetDistrictId();
                 if (!BuildingThemesManager.instance.IsThemeManagementEnabled(districtId)) return;
-                if ((int)BuildingThemesManager.instance.GetDistrictEmptyLevelBehavior(districtId) == val) return;
-                BuildingThemesManager.instance.SetDistrictEmptyLevelBehavior(districtId, (EmptyLevelBehavior)val);
+                var behavior = IndexToLevelBehavior(val);
+                if (BuildingThemesManager.instance.GetDistrictEmptyLevelBehavior(districtId) == behavior) return;
+                BuildingThemesManager.instance.SetDistrictEmptyLevelBehavior(districtId, behavior);
             };
 
             // ── Missing asset label ───────────────────────────────────
@@ -139,7 +142,7 @@ namespace BuildingThemes.GUI
             missingLabel.height = LBL_H;
             missingLabel.textScale = 0.9f;
             missingLabel.wordWrap = true;
-            missingLabel.text = "If there is a building missing we should:";
+            missingLabel.text = "When a subscribed building is not loaded (unsubscribed or disabled):";
             missingLabel.relativePosition = new Vector3(X, y);
             y += LBL_H + LBL_GAP - 1f;
 
@@ -155,9 +158,12 @@ namespace BuildingThemes.GUI
                 "Fall back to vanilla — use vanilla if sparse"
             };
             m_missingDropdown.tooltip =
-                "Skip: only loaded buildings appear; size/level slots without loaded buildings may be empty\n" +
-                "Fill with vanilla: missing building slots are supplemented with vanilla buildings of the same type\n" +
-                "Fall back to vanilla: if a slot is sparser than vanilla, that entire slot uses vanilla buildings";
+                "Skip: missing buildings are quietly dropped. The theme still applies using\n" +
+                "only loaded assets — slots may be sparse if many are missing.\n\n" +
+                "Fill with vanilla: vanilla buildings supplement each missing slot.\n" +
+                "Your loaded theme buildings still appear; vanilla fills the gaps.\n\n" +
+                "Fall back to vanilla: if any building in a slot is missing, that entire\n" +
+                "slot falls back to vanilla only. No sparse areas, but less theme coverage.";
             y += DROP_H + ROW_GAP;
 
             // ── Auto-bulldoze ─────────────────────────────────────────
@@ -231,9 +237,9 @@ namespace BuildingThemes.GUI
                     m_levelDropdown.opacity = managed ? 1f : 0.5f;
                     if (managed)
                     {
-                        int val = (int)BuildingThemesManager.instance.GetDistrictEmptyLevelBehavior(districtId);
-                        if (m_levelDropdown.selectedIndex != val)
-                            m_levelDropdown.selectedIndex = val;
+                        int idx = LevelBehaviorToIndex(BuildingThemesManager.instance.GetDistrictEmptyLevelBehavior(districtId));
+                        if (m_levelDropdown.selectedIndex != idx)
+                            m_levelDropdown.selectedIndex = idx;
                     }
                 }
 
@@ -279,5 +285,13 @@ namespace BuildingThemes.GUI
                 ? ToolsModifierControl.policiesPanel.targetDistrict
                 : (byte)0;
         }
+
+        // Maps between 2-item dropdown index (0,1) and the non-contiguous enum values
+        // (VanillaFallback=0, StrictThemeOnly=2 — CascadeFromTheme=1 is removed).
+        private static int LevelBehaviorToIndex(EmptyLevelBehavior b)
+            => b == EmptyLevelBehavior.StrictThemeOnly ? 1 : 0;
+
+        private static EmptyLevelBehavior IndexToLevelBehavior(int idx)
+            => idx == 1 ? EmptyLevelBehavior.StrictThemeOnly : EmptyLevelBehavior.VanillaFallback;
     }
 }

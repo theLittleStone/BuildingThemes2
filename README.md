@@ -161,7 +161,7 @@ Open via the **District Options** button in the Themes tab.
 | --- | --- |
 | Allow buildings not in any theme | Blacklist mode — anything not explicitly excluded can spawn |
 | Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
-| Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default), **Cascade** (reuse from lower level), or **Strict** (freeze upgrades) |
+| Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default) or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
 | Spawn Diagnostics | Accepted/rejected counts, missing-asset list, and a live list of non-theme buildings currently placed in the district |
 
@@ -187,15 +187,42 @@ active themes. Replacements spawn according to the normal themed-spawn rules.
 
 ## Missing Assets
 
-When a workshop building in your theme is not loaded (unsubscribed, disabled in Skyve, or
-failed to load), the mod can respond in three ways. Set the default in
-**Mod Options → Building Themes**, or override per district in **District Options**.
+**Missing asset handling** controls what happens when a workshop building in your theme is
+not loaded (unsubscribed, disabled in Skyve, or failed to load). This setting applies to
+**initial spawning only** — it has no effect on how existing buildings level up.
+
+Set the default in **Mod Options → Building Themes**, or override per district in
+**District Options**.
 
 | Mode | Behaviour |
 | --- | --- |
 | **Skip** | The missing building is quietly dropped. Theme still applies using only loaded assets. Areas may be sparse if many assets are missing. |
-| **Fill with vanilla** *(default)* | Missing slots are supplemented with vanilla buildings of the same zone type and size. Your loaded theme buildings still appear; vanilla fills the gaps. |
-| **Fall back to vanilla** | If any building is missing in a size/level slot, that entire slot uses vanilla buildings only. No sparse areas, but theme coverage is reduced. |
+| **Fill with vanilla** *(default)* | For each missing asset, vanilla buildings of the same zone type and size supplement the pool. Your loaded theme buildings still appear; vanilla fills the gaps. |
+| **Fall back to vanilla** | If any building is missing in a size/level slot, that entire slot falls back to vanilla buildings only. No sparse areas, but theme coverage is reduced. |
+
+---
+
+## Level Behavior
+
+**Level behavior** controls what happens when a building tries to level up but your theme
+has **no buildings at all** for the target level. This setting applies to **upgrades only**
+— it does not affect which buildings spawn on new zones.
+
+Set the default in **Mod Options → Building Themes**, or override per district in
+**District Options**.
+
+| Mode | Behaviour |
+| --- | --- |
+| **Vanilla fallback** *(default)* | The game picks a vanilla building of the upgraded level. The building changes appearance on upgrade. |
+| **Strict** | Upgrades are blocked entirely. The building stays at its current level indefinitely. |
+
+> **Note:** These two settings are independent. "Fill with vanilla" (missing asset mode)
+> fills gaps at spawn time; it does not affect upgrades. "Vanilla fallback" (level behavior)
+> applies at upgrade time; it does not affect which buildings spawn on new zones.
+>
+> To control which specific building a level-up produces, use the **Upgrade building** field
+> in the Theme Manager options panel for that building. That explicit mapping takes priority
+> over the Level behavior setting.
 
 ---
 

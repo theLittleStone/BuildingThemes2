@@ -51,12 +51,14 @@ namespace BuildingThemes
                 var emptyLevelDropdown = behaviourGroup.AddDropdown(
                     "Default: when theme has no buildings for a level",
                     new string[] {
-                        "Vanilla fallback (spawn vanilla for uncovered levels)",
-                        "Cascade from theme (reuse lower level buildings)",
-                        "Strict (freeze levels, block upgrades past theme)"
+                        "Vanilla fallback (game picks a vanilla building for that level)",
+                        "Strict (freeze upgrades; building stays at current level)"
                     },
-                    (int)BuildingThemesManager.EmptyLevelBehavior,
-                    delegate (int idx) { BuildingThemesManager.EmptyLevelBehavior = (EmptyLevelBehavior)idx; }
+                    BuildingThemesManager.EmptyLevelBehavior == EmptyLevelBehavior.StrictThemeOnly ? 1 : 0,
+                    delegate (int idx) {
+                        BuildingThemesManager.EmptyLevelBehavior =
+                            idx == 1 ? EmptyLevelBehavior.StrictThemeOnly : EmptyLevelBehavior.VanillaFallback;
+                    }
                 ) as ColossalFramework.UI.UIDropDown;
 
                 var warningCheck = behaviourGroup.AddCheckbox("Warning message when selecting an invalid theme", UIThemePolicyItem.showWarning,

@@ -39,8 +39,8 @@ namespace BuildingThemes.GUI
             canFocus = true;
             isInteractive = true;
             clipChildren = true;
-            width = 480;
-            height = 400;
+            width = 600;
+            height = 560;
             relativePosition = new Vector3(
                 Mathf.Floor((GetUIView().fixedWidth - width) / 2),
                 Mathf.Floor((GetUIView().fixedHeight - height) / 2));

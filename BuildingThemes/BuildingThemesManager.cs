@@ -38,7 +38,12 @@ namespace BuildingThemes
 
         public static EmptyLevelBehavior EmptyLevelBehavior
         {
-            get { return (EmptyLevelBehavior)(int)s_emptyLevelMode; }
+            get {
+                var v = (EmptyLevelBehavior)(int)s_emptyLevelMode;
+#pragma warning disable CS0618
+                return v == EmptyLevelBehavior.CascadeFromTheme ? EmptyLevelBehavior.VanillaFallback : v;
+#pragma warning restore CS0618
+            }
             set { s_emptyLevelMode.value = (int)value; }
         }
 
@@ -48,8 +53,9 @@ namespace BuildingThemes
         /// </summary>
         public bool IsEffectivelyThemed(byte districtId)
         {
-            if (districtThemeInfos[districtId] != null) return true;
-            if (districtId != 0 && districtThemeInfos[0] != null) return true;
+            var info = districtThemeInfos[districtId];
+            if (info != null && info.isEnabled) return true;
+            if (districtId != 0) { var c = districtThemeInfos[0]; if (c != null && c.isEnabled) return true; }
             return false;
         }
 
@@ -68,7 +74,7 @@ namespace BuildingThemes
             var info = districtThemeInfos[districtId];
             if (info == null || info.missingAssetMode == mode) return;
             info.missingAssetMode = mode;
-            CompileDistrictThemes(districtId);
+            if (info.isEnabled) CompileDistrictThemes(districtId);
         }
 
         public EmptyLevelBehavior GetDistrictEmptyLevelBehavior(byte districtId)
@@ -84,7 +90,7 @@ namespace BuildingThemes
             var info = districtThemeInfos[districtId];
             if (info == null || info.emptyLevelBehavior == behavior) return;
             info.emptyLevelBehavior = behavior;
-            CompileDistrictThemes(districtId);
+            if (info.isEnabled) CompileDistrictThemes(districtId);
         }
 
         public bool GetDistrictAutoBulldoze(byte districtId)
@@ -104,6 +110,13 @@ namespace BuildingThemes
 
         private class DistrictThemeInfo
         {
+            /// <summary>
+            /// False when theme management has been toggled off for this district in-session.
+            /// The info object is kept so themes and options survive a disable/re-enable cycle.
+            /// Set to null via ClearDistrictData() only when the district is actually deleted.
+            /// </summary>
+            public bool isEnabled = true;
+
             public bool blacklistMode = false;
 
             // Per-district behavior settings (default to global at creation time)
@@ -469,7 +482,7 @@ namespace BuildingThemes
             for (byte d = 0; d < districtThemeInfos.Length; d++)
             {
                 var info = districtThemeInfos[d];
-                if (info == null) continue;
+                if (info == null || !info.isEnabled) continue;
 
                 // Remove themes which are no longer listed in the configuration
                 info.themes.RemoveWhere(theme => !Configuration.themes.Contains(theme));
@@ -495,6 +508,10 @@ namespace BuildingThemes
             }
             if (savedEmptyMode >= 0 && (int)info.emptyLevelBehavior != savedEmptyMode)
             {
+#pragma warning disable CS0618
+                if (savedEmptyMode == (int)EmptyLevelBehavior.CascadeFromTheme)
+                    savedEmptyMode = (int)EmptyLevelBehavior.VanillaFallback;
+#pragma warning restore CS0618
                 info.emptyLevelBehavior = (EmptyLevelBehavior)savedEmptyMode;
                 changed = true;
             }
@@ -532,7 +549,7 @@ namespace BuildingThemes
         {
             var info = districtThemeInfos[districtId];
 
-            if (info == null) return;
+            if (info == null || !info.isEnabled) return;
 
             HashSet<Configuration.Theme> enabledThemes = info.themes;
             HashSet<Configuration.Theme> blacklistedThemes = null;
@@ -598,17 +615,40 @@ namespace BuildingThemes
 
             if (enabled)
             {
-                setThemeInfo(districtId, getDefaultThemes(districtId), IsBlacklistModeEnabled(0));
+                var info = districtThemeInfos[districtId];
+                if (info != null)
+                {
+                    // Restore from preserved state — themes and options are still intact
+                    info.isEnabled = true;
+                    CompileDistrictThemes(districtId);
+                }
+                else
+                {
+                    // First time enabling — create info with defaults
+                    setThemeInfo(districtId, getDefaultThemes(districtId), IsBlacklistModeEnabled(0));
+                }
             }
             else
             {
-                districtThemeInfos[districtId] = null;
+                var info = districtThemeInfos[districtId];
+                if (info != null) info.isEnabled = false;
             }
         }
 
         public bool IsThemeManagementEnabled(byte districtId)
         {
-            return districtThemeInfos[districtId] != null;
+            var info = districtThemeInfos[districtId];
+            return info != null && info.isEnabled;
+        }
+
+        /// <summary>
+        /// Permanently wipes all theme data for a district.
+        /// Called only when the district is deleted by the player.
+        /// Use ToggleThemeManagement(id, false) to disable while preserving data for re-enable.
+        /// </summary>
+        public void ClearDistrictData(byte districtId)
+        {
+            districtThemeInfos[districtId] = null;
         }
 
         public void ToggleBlacklistMode(byte districtId, bool enabled)
@@ -830,33 +870,7 @@ namespace BuildingThemes
             {
                 // Resolve per-district settings; fall back to global defaults.
                 var distInfo = (diagnosticsDistrictId != 255) ? districtThemeInfos[diagnosticsDistrictId] : null;
-                EmptyLevelBehavior levelMode   = distInfo != null ? distInfo.emptyLevelBehavior  : EmptyLevelBehavior;
-                MissingAssetMode   missingMode = distInfo != null ? distInfo.missingAssetMode    : MissingAssetBehavior;
-
-                // Phase 3 — empty-level cascade.
-                // When CascadeFromTheme: propagate non-null lower-level buckets into empty higher-level buckets
-                // within the same service/subService/size column.
-                // Index layout: ((serviceIdx * 5 + level) * 4 + width-1) * 4 + length-1) * 2 + zoningMode
-                // → each level step = 4 * 4 * 2 = 32 index units.
-                if (levelMode == EmptyLevelBehavior.CascadeFromTheme)
-                {
-                    const int levelStep = 32;
-                    for (int i = 0; i < areaBuildingsLength; i++)
-                    {
-                        if (m_areaBuildings[i] != null) continue;
-                        int levelInColumn = (i / levelStep) % 5;
-                        if (levelInColumn == 0) continue;
-                        for (int lvl = levelInColumn - 1; lvl >= 0; lvl--)
-                        {
-                            int sourceIdx = i - (levelInColumn - lvl) * levelStep;
-                            if (m_areaBuildings[sourceIdx] != null)
-                            {
-                                m_areaBuildings[i] = m_areaBuildings[sourceIdx];
-                                break;
-                            }
-                        }
-                    }
-                }
+                MissingAssetMode missingMode = distInfo != null ? distInfo.missingAssetMode : MissingAssetBehavior;
 
                 // Phase 3 — missing-asset fill/fallback.
                 // Uses this.m_areaBuildings (vanilla field, not the parameter) as reference.
@@ -951,7 +965,7 @@ namespace BuildingThemes
             var info = districtThemeInfos[districtId];
 
             // Theme management enabled in district? return custom fastlist for district
-            if (info != null)
+            if (info != null && info.isEnabled)
             {
                 return info.areaBuildings[areaIndex];
             }
