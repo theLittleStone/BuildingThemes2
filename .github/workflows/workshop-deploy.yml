@@ -101,6 +101,11 @@ jobs:
           echo "${{ steps.note.outputs.value }}"
           echo "─────────────────────────────────────────"
 
+      - name: Prepare Steam home directories
+        run: |
+          mkdir -p "$HOME/.steam/steamcmd"
+          mkdir -p "$HOME/.local/share/Steam"
+
       - name: Deploy to Steam Workshop
         uses: m00nl1ght-dev/steam-workshop-deploy@v4
         with:
