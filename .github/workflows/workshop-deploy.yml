@@ -104,19 +104,25 @@ jobs:
 
       - name: Install steamcmd
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y steamcmd 2>/dev/null
-          # Initialize directory structure
-          steamcmd +quit || true
+          mkdir -p "$HOME/steamcmd"
+          curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" \
+            | tar -xz -C "$HOME/steamcmd"
+          # Initialize and self-update
+          "$HOME/steamcmd/steamcmd.sh" +quit || true
+          echo "$HOME/steamcmd" >> "$GITHUB_PATH"
 
       - name: Install Steam session
         env:
           STEAM_CONFIG_VDF: ${{ secrets.STEAM_CONFIG_VDF }}
         run: |
-          # steamcmd on Ubuntu uses ~/.local/share/Steam as its root
-          STEAMROOT="${XDG_DATA_HOME:-$HOME/.local/share}/Steam"
+          # steamcmd stores its data in ~/Steam when run from a custom directory
+          STEAMROOT="$HOME/Steam"
           mkdir -p "$STEAMROOT/config"
           echo "$STEAM_CONFIG_VDF" | base64 -d > "$STEAMROOT/config/config.vdf"
+          # Also place it where steamcmd looks via the .steam symlink
+          mkdir -p "$HOME/.steam"
+          ln -sfn "$STEAMROOT" "$HOME/.steam/steam"
+          ln -sfn "$STEAMROOT" "$HOME/.steam/root"
 
       - name: Deploy to Steam Workshop
         env:
@@ -151,7 +157,7 @@ jobs:
           print(vdf)
           PYEOF
 
-          steamcmd \
+          steamcmd.sh \
             +login "$STEAM_USERNAME" \
             +workshop_build_item /tmp/item.vdf \
             +quit
