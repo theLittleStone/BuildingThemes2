@@ -36,8 +36,10 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v4.4.1
         with:
           # Use a PAT instead of GITHUB_TOKEN so the tag push triggers
           # the workshop-deploy workflow. Tags pushed by GITHUB_TOKEN are
