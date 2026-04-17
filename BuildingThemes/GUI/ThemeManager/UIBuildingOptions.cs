@@ -96,11 +96,10 @@ namespace BuildingThemes.GUI
 
             m_spawnRate.eventTextSubmitted += (c, s) =>
             {
+                if (m_item == null) return;
                 int spawnRate;
-                if(int.TryParse(m_spawnRate.text, out spawnRate))
-                {
-                    UIThemeManager.instance.ChangeSpawnRate(spawnRate);
-                }
+                int.TryParse(m_spawnRate.text, out spawnRate); // 0 on empty/invalid → clamped to 1
+                UIThemeManager.instance.ChangeSpawnRate(spawnRate); // also calls CreateBuilding
                 m_spawnRate.text = m_item.building.spawnRate.ToString();
             };
 
