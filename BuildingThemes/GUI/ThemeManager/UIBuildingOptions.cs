@@ -85,7 +85,6 @@ namespace BuildingThemes.GUI
             m_spawnRate = UIUtils.CreateTextField(spawnRatePanel);
             m_spawnRate.size = new Vector2(60, 25);
             m_spawnRate.padding = new RectOffset(6, 6, 6, 0);
-            m_spawnRate.numericalOnly = true;
             m_spawnRate.tooltip =
                 "Relative spawn weight compared to other buildings of the same zone, level, and size.\n\n" +
                 "Example: two buildings at weight 10 each spawn 50 % of the time.\n" +
