@@ -712,6 +712,18 @@ namespace BuildingThemes
                                             break; // spawnRate stays -1 → treated as excluded
                                         }
 
+                                        // Migrate legacy 1–1000 scale: original mod used max=1000,
+                                        // new scale is max=100. Values 1–100 are valid as-is;
+                                        // values >100 are divided by 10 (1000→100, 500→50, etc.).
+                                        if (building.spawnRate > 100)
+                                        {
+                                            int oldRate = building.spawnRate;
+                                            building.spawnRate = Mathf.Max(1, building.spawnRate / 10);
+                                            Debugger.LogFormat(
+                                                "[Migration] Building '{0}' in theme '{1}' had spawnRate={2} (old 1\u20131000 scale) \u2014 remapped to {3}.",
+                                                prefab.name, theme.name, oldRate, building.spawnRate);
+                                        }
+
                                         spawnRate = Mathf.Clamp(building.spawnRate, 1, 100);
                                         break;
                                     }
