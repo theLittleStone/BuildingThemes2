@@ -2,7 +2,7 @@
 
 Apply building themes to districts — only buildings in the selected themes will grow in a zone. Subscribe to theme mods from the Workshop, or create and manage your own themes entirely in-game.
 
-[b]Building Themes 2[/b] is a community-maintained fork of the original [b]Building Themes[/b] by [url=https://github.com/boformer]boformer[/url], updated for Cities: Skylines 1.18.x with Harmony 2.x.
+[b]Building Themes 2[/b] is a community-maintained fork of the original [b]Building Themes[/b] by [url=https://github.com/boformer]boformer[/url], updated for Cities: Skylines 1.21.1-f9 with Harmony 2.x.
 
 [b]► Full documentation, troubleshooting & changelog:[/b]
 [url=https://github.com/roberto-naharro/BuildingThemes2]github.com/roberto-naharro/BuildingThemes2[/url]
@@ -13,55 +13,32 @@ Apply building themes to districts — only buildings in the selected themes wil
 
 The mod silently does nothing if Harmony is not installed.
 
-[h1]Quick Start[/h1]
-
-[olist]
-[*]Open a [b]district policy panel[/b] → go to the [b]Themes[/b] tab
-[*]Click [b]Theme Manager[/b] → select a theme and include buildings (or import a style)
-[*]Back in the [b]Themes[/b] tab, check [b]Enable Theme Management for this district[/b]
-[*]Enable one or more themes using the checkboxes
-[*]Zone the area — only buildings in the active themes will grow
-[/olist]
-
-If no theme is active, any growable building can spawn (vanilla behavior).
-
 [h1]Key Features[/h1]
 
 [list]
 [*][b]Per-district themes[/b] — assign different building sets to each district
 [*][b]Theme Manager[/b] — filter by zone, level, size, origin, DLC/CCP, asset status, or name
 [*][b]Workshop Dependencies[/b] — see missing assets, copy their IDs, or subscribe in one click
-[*][b]Spawn Diagnostics[/b] — see accepted/rejected counts and missing-asset lists per district
-[*][b]Missing asset handling[/b] — Skip / Fill with vanilla / Fall back to vanilla (global + per-district)
+[*][b]Spawn Diagnostics[/b] — accepted/rejected counts, missing-asset lists, and live non-theme building count per district
+[*][b]Missing asset handling[/b] — Skip / Fill with vanilla / Fall back to vanilla (global + per-district override)
 [*][b]Level behavior[/b] — Vanilla fallback / Cascade / Strict freeze when a level has no buildings
+[*][b]Auto-bulldoze[/b] — gradually replace non-theme buildings in a district with themed ones
 [*][b]Asset Cloning[/b] — duplicate a building and assign a different wealth level
-[*][b]Auto-bulldoze[/b] — per-district option to gradually replace non-theme buildings with themed ones
-[*][b]Spawn rate[/b] — control how often a building appears relative to same-type peers
-[/list]
-
-[h1]Missing Assets[/h1]
-
-When a workshop building is not loaded, set the response in [b]Mod Options[/b] or override per district in [b]District Options[/b]:
-
-[list]
-[*][b]Skip[/b] — drop missing buildings silently; theme applies with only what is loaded
-[*][b]Fill with vanilla[/b] (default) — supplement missing slots with vanilla buildings of the same zone type
-[*][b]Fall back to vanilla[/b] — if any slot is missing, that entire slot uses vanilla buildings only
+[*][b]Spawn weight[/b] — control how often a building appears relative to same-type peers
+[*][b]Blacklist mode[/b] — invert the theme: everything spawns except what you explicitly exclude
 [/list]
 
 [h1]Compatibility[/h1]
 
-Compatible with [b]Cities: Skylines 1.18.x[/b].
+Compatible with [b]Cities: Skylines 1.21.1-f9[/b] (and later 1.x releases). Save games from the original Building Themes are [b]fully compatible[/b].
 
 [b]Not compatible with:[/b]
 [list]
-[*][b]81 Tiles (original)[/b] — use [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2862121823]81 Tiles 2[/url] instead (fully supported)
+[*][b]81 Tiles (original)[/b] — use [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2862121823]81 Tiles 2[/url] instead
 [*][b]Building Themes (original)[/b] — unsubscribe the original before enabling this fork
 [*][b]Building Simulation Overhaul[/b]
 [*][b]Runways and Taxiways[/b] — use [url=http://steamcommunity.com/sharedfiles/filedetails/?id=465127441]Airport Roads[/url] instead
 [/list]
-
-Save games made with the original Building Themes are [b]fully compatible[/b].
 
 [h1]Theme Mods[/h1]
 

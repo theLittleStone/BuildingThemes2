@@ -13,6 +13,12 @@ Cities: Skylines with Harmony 2.x.
 [Report a bug](https://github.com/roberto-naharro/BuildingThemes2/issues) ·
 [GitHub](https://github.com/roberto-naharro/BuildingThemes2)
 
+> **Maintenance notice:** This mod is maintained by a single volunteer in their spare time.
+> Bug reports and feature requests are read and appreciated, but fixes may take weeks or
+> months depending on availability. If you hit a problem, please
+> [open an issue](https://github.com/roberto-naharro/BuildingThemes2/issues) so it is
+> tracked — nothing gets forgotten, just worked on when time allows.
+
 ---
 
 ## Requirements
@@ -88,6 +94,18 @@ Open from the **Themes** tab in the district policy panel.
 - **Spawn weight** (1–100, default 10) — see [Spawn Weight](#spawn-weight) below.
 - **Upgrade building** — forces a specific building when this one levels up.
 - **Clone Building** — creates a copy with a different wealth level.
+- **Asset name** — the internal prefab name (read-only, click to select and copy). For Workshop assets the Steam ID is shown in the label.
+- **Plop** — immediately places one instance of the building anywhere in the city (useful for testing).
+- **Bulldoze All** — removes every placed instance of this building from the entire city at once.
+
+### Building List Indicators
+
+Each row in the building list shows a small colored badge on the right edge when attention is needed:
+
+| Badge color | Meaning |
+| --- | --- |
+| Red | Workshop asset is not loaded (unsubscribed, disabled, or failed to load) |
+| Grey | Asset is unavailable — DLC not owned or wrong map environment |
 
 ### Spawn Weight
 
@@ -201,7 +219,7 @@ Cloning can be disabled in mod options.
 
 ## Compatibility
 
-**Compatible with Cities: Skylines 1.18.x** (tested on 1.18.1-f3).
+**Compatible with Cities: Skylines 1.21.1-f9** (and later 1.x releases).
 
 **Not compatible with:**
 
@@ -303,10 +321,10 @@ this fork.
 This project is developed on Linux, referencing the game assemblies from a Windows machine
 where Cities: Skylines is installed via an SMB share.
 
-Current reference setup:
+Example setup (replace with your own values):
 
-- Windows host: `DESKTOP-GHGB72P`
-- SMB share: `//192.168.1.2/Cities_Skylines`
+- Windows host: `YOUR-WINDOWS-PC`
+- SMB share: `//192.168.x.x/Cities_Skylines`
 - Linux mount point: `/mnt/cities_skylines`
 
 The project file references managed DLLs from `/mnt/cities_skylines/Cities_Data/Managed`.
@@ -323,7 +341,7 @@ sudo apt-get install -y mono-complete mono-devel cifs-utils
 sudo mkdir -p /mnt/cities_skylines
 
 # Mount the Windows share
-sudo mount -t cifs //192.168.1.2/Cities_Skylines /mnt/cities_skylines \
+sudo mount -t cifs //192.168.x.x/Cities_Skylines /mnt/cities_skylines \
   -o username=YOUR_WINDOWS_USER,uid=$(id -u),gid=$(id -g),vers=3.0
 
 # Verify
