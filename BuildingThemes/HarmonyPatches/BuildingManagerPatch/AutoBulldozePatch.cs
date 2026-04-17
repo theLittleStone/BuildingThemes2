@@ -1,10 +1,13 @@
 using CitiesHarmony.API;
+using HarmonyLib;
 using System;
 
 namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
 {
     /// <summary>
     /// Hooks into BuildingManager.SimulationStep to run the auto-bulldoze scan once per tick.
+    /// SimulationStep is declared on SimulationManagerBase&lt;&gt;, not BuildingManager directly,
+    /// so we use AccessTools.Method (which walks the inheritance chain) instead of PatchUtil.
     /// </summary>
     public static class AutoBulldozePatch
     {
@@ -14,10 +17,18 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
         {
             if (!HarmonyHelper.IsHarmonyInstalled || deployed) return;
 
-            PatchUtil.Patch(
-                new PatchUtil.MethodDefinition(typeof(BuildingManager), "SimulationStep",
-                    argumentTypes: new[] { typeof(int) }),
-                postfix: new PatchUtil.MethodDefinition(typeof(AutoBulldozePatch), nameof(Postfix)));
+            var original = AccessTools.Method(typeof(BuildingManager), "SimulationStep",
+                new[] { typeof(int) });
+
+            if (original == null)
+            {
+                Debugger.LogError("AutoBulldozePatch: could not find BuildingManager.SimulationStep(int).");
+                return;
+            }
+
+            var harmony = new Harmony(BuildingThemesMod.HarmonyId);
+            harmony.Patch(original,
+                postfix: new HarmonyMethod(typeof(AutoBulldozePatch), nameof(Postfix)));
 
             deployed = true;
             Debugger.Log("BuildingManager.SimulationStep patched (AutoBulldoze).");
@@ -27,9 +38,14 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
         {
             if (!HarmonyHelper.IsHarmonyInstalled || !deployed) return;
 
-            PatchUtil.Unpatch(
-                new PatchUtil.MethodDefinition(typeof(BuildingManager), "SimulationStep",
-                    argumentTypes: new[] { typeof(int) }));
+            var original = AccessTools.Method(typeof(BuildingManager), "SimulationStep",
+                new[] { typeof(int) });
+
+            if (original != null)
+            {
+                var harmony = new Harmony(BuildingThemesMod.HarmonyId);
+                harmony.Unpatch(original, HarmonyPatchType.Postfix, BuildingThemesMod.HarmonyId);
+            }
 
             deployed = false;
             Debugger.Log("BuildingManager.SimulationStep unpatched (AutoBulldoze).");

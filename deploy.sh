@@ -66,8 +66,6 @@ if mountpoint -q "$DATA_MOUNT"; then
     mkdir -p "$MODS_DIR"
     cp "$DIST/$MOD_NAME.dll"         "$MODS_DIR/"
     cp "$DIST/CitiesHarmony.API.dll" "$MODS_DIR/"
-    cp "$DIST/"*.txt                 "$MODS_DIR/" || true  # ignore if no XML files
-    cp "$DIST/"*.png                 "$MODS_DIR/" || true  # ignore if no PNG files
     echo "Done. Files in game Mods folder:"
     ls -lh "$MODS_DIR"
 else
