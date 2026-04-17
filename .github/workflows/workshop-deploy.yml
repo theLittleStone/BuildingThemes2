@@ -102,18 +102,56 @@ jobs:
           echo "${{ steps.note.outputs.value }}"
           echo "─────────────────────────────────────────"
 
-      - name: Prepare Steam home directories
+      - name: Install steamcmd
         run: |
-          mkdir -p "$HOME/.steam/steamcmd"
-          mkdir -p "$HOME/.local/share/Steam"
+          sudo apt-get update -qq
+          sudo apt-get install -y steamcmd 2>/dev/null
+          # Initialize directory structure
+          steamcmd +quit || true
+
+      - name: Install Steam session
+        env:
+          STEAM_CONFIG_VDF: ${{ secrets.STEAM_CONFIG_VDF }}
+        run: |
+          # steamcmd on Ubuntu uses ~/.local/share/Steam as its root
+          STEAMROOT="${XDG_DATA_HOME:-$HOME/.local/share}/Steam"
+          mkdir -p "$STEAMROOT/config"
+          echo "$STEAM_CONFIG_VDF" | base64 -d > "$STEAMROOT/config/config.vdf"
 
       - name: Deploy to Steam Workshop
-        uses: m00nl1ght-dev/steam-workshop-deploy@v4
-        with:
-          username: ${{ secrets.STEAM_USERNAME }}
-          configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
-          totp: ${{ secrets.STEAM_TOTP }}
-          appId: 255710
-          publishedFileId: 3708105182
-          path: dist/BuildingThemes2
-          changeNote: ${{ steps.note.outputs.value }}
+        env:
+          STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+          CHANGE_NOTE: ${{ steps.note.outputs.value }}
+        run: |
+          # Generate item VDF (Python handles escaping and multiline change notes)
+          python3 - <<'PYEOF'
+          import os
+
+          workspace = os.environ['GITHUB_WORKSPACE']
+          note     = os.environ.get('CHANGE_NOTE', 'Update')
+
+          # Escape for VDF string values
+          note_vdf = note.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
+          note_vdf = note_vdf[:7900]  # Steam cap
+
+          vdf = (
+              '"workshopitem"\n'
+              '{\n'
+              '\t"appid"\t\t\t"255710"\n'
+              '\t"publishedfileid"\t"3708105182"\n'
+              f'\t"contentfolder"\t\t"{workspace}/dist/BuildingThemes2"\n'
+              f'\t"changenote"\t\t"{note_vdf}"\n'
+              '}\n'
+          )
+
+          with open('/tmp/item.vdf', 'w') as f:
+              f.write(vdf)
+
+          print("Generated /tmp/item.vdf:")
+          print(vdf)
+          PYEOF
+
+          steamcmd \
+            +login "$STEAM_USERNAME" \
+            +workshop_build_item /tmp/item.vdf \
+            +quit
