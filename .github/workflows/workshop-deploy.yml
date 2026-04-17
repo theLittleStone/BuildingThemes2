@@ -136,9 +136,12 @@ jobs:
           workspace = os.environ['GITHUB_WORKSPACE']
           note     = os.environ.get('CHANGE_NOTE', 'Update')
 
-          # Escape for VDF string values
-          note_vdf = note.replace('\\', '\\\\').replace('"', '\\"').replace('\n', '\\n')
-          note_vdf = note_vdf[:7900]  # Steam cap
+          desc_path = os.path.join(workspace, 'Workshop', 'description.txt')
+          with open(desc_path, 'r') as f:
+              description = f.read()
+
+          def vdf_escape(s):
+              return s.replace('\\', '\\\\').replace('"', '\\"')
 
           vdf = (
               '"workshopitem"\n'
@@ -146,7 +149,7 @@ jobs:
               '\t"appid"\t\t\t"255710"\n'
               '\t"publishedfileid"\t"3708105182"\n'
               f'\t"contentfolder"\t\t"{workspace}/dist/BuildingThemes2"\n'
-              f'\t"changenote"\t\t"{note_vdf}"\n'
+              f'\t"changenote"\t\t"{vdf_escape(note)[:7900]}"\n'
               '}\n'
           )
 
