@@ -79,14 +79,19 @@ namespace BuildingThemes.GUI
 
             UILabel spawnRateLabel = spawnRatePanel.AddUIComponent<UILabel>();
             spawnRateLabel.textScale = 0.8f;
-            spawnRateLabel.text = "Spawn rate:";
+            spawnRateLabel.text = "Spawn weight (1\u2013100):";
             spawnRateLabel.relativePosition = new Vector3(0, 5);
 
             m_spawnRate = UIUtils.CreateTextField(spawnRatePanel);
             m_spawnRate.size = new Vector2(60, 25);
             m_spawnRate.padding = new RectOffset(6, 6, 6, 0);
             m_spawnRate.numericalOnly = true;
-            m_spawnRate.tooltip = "The higher the number, the more the building is likely to spawn.\nDefault value is 10. Maximum value is 100.";
+            m_spawnRate.tooltip =
+                "Relative spawn weight compared to other buildings of the same zone, level, and size.\n\n" +
+                "Example: two buildings at weight 10 each spawn 50 % of the time.\n" +
+                "A building at weight 20 is twice as likely as one at weight 10 in the same slot.\n\n" +
+                "A building alone in its slot always spawns (100 %), regardless of its weight.\n\n" +
+                "Min: 1  |  Default: 10  |  Max: 100";
             m_spawnRate.relativePosition = new Vector3(width - 70, 0);
 
             m_spawnRate.eventTextSubmitted += (c, s) =>

@@ -246,7 +246,7 @@ namespace BuildingThemes.GUI
         {
             CreateBuilding(selectedBuilding);
 
-            spawnRate = Mathf.Clamp(spawnRate, 0, 100);
+            spawnRate = Mathf.Clamp(spawnRate, 1, 100);
             if (selectedBuilding.building.spawnRate != spawnRate)
             {
                 selectedBuilding.building.spawnRate = spawnRate;

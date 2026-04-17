@@ -52,8 +52,8 @@ If no theme is active for a district, any growable building can spawn (vanilla b
   theme has no building for that level.
 - **Blacklist mode** — invert the theme: everything spawns except what you explicitly
   exclude.
-- **Spawn rate** — control how often a building appears relative to others with the same
-  type, level, and footprint.
+- **Spawn weight** — control how often a building appears relative to others in the same
+  zone, level, and footprint slot.
 
 ---
 
@@ -85,9 +85,41 @@ Open from the **Themes** tab in the district policy panel.
 
 ### Per-Building Options
 
-- **Spawn rate** — higher = appears more often relative to same type/level/size peers.
+- **Spawn weight** (1–100, default 10) — see [Spawn Weight](#spawn-weight) below.
 - **Upgrade building** — forces a specific building when this one levels up.
 - **Clone Building** — creates a copy with a different wealth level.
+
+### Spawn Weight
+
+Spawn weight controls how often a building is chosen relative to the other buildings
+competing for the same **slot** — same zone type, level, and footprint size.
+
+**How the selection works:**
+
+The game picks a random building from a weighted pool. Each building is entered into
+that pool once per unit of weight, so a building at weight 20 has twice as many entries
+as one at weight 10 and is picked roughly twice as often.
+
+| Weight | Effect |
+| --- | --- |
+| 1 | Appears very rarely relative to buildings with higher weight |
+| 10 *(default)* | Baseline — all buildings at the default weight spawn with equal frequency |
+| 20 | Appears roughly twice as often as a weight-10 building |
+| 100 | Maximum — appears ten times as often as the default |
+
+**Important:** weight is only meaningful when two or more buildings share the same slot.
+A building that is alone in its slot always spawns regardless of its weight value.
+
+**Example:** you have three 2×2 Level 1 Residential Low buildings in your theme:
+
+| Building | Weight | Share of spawns |
+| --- | --- | --- |
+| House A | 10 | 25 % |
+| House B | 10 | 25 % |
+| House C | 20 | 50 % |
+
+To make a building appear rarely, lower its weight toward 1. To effectively remove it
+from a theme without deleting it, uncheck **Include** instead of setting weight to 1.
 
 ### How Spawning Works
 

@@ -686,8 +686,10 @@ namespace BuildingThemes
                                 continue;
                             }
 
-                            int spawnRateSum = 0;
-                            int hits = 0;
+                            // Determine spawn weight from the first enabled theme that includes this building.
+                            // -1  = not found in any theme
+                            // 1–100 = accepted; building is added N times to the pool
+                            int spawnRate = -1;
 
                             if (enabledThemes != null && enabledThemes.Count > 0)
                             {
@@ -698,20 +700,30 @@ namespace BuildingThemes
 
                                     if (building != null && building.include)
                                     {
-                                        hits++;
-                                        // limit spawn rate to 100
-                                        spawnRateSum += Mathf.Clamp(building.spawnRate, 0, 100);
+                                        // Migrate legacy spawnRate=0: old behaviour silently excluded
+                                        // the building; now we make that explicit via include=false.
+                                        if (building.spawnRate == 0)
+                                        {
+                                            Debugger.LogFormat(
+                                                "[Migration] Building '{0}' in theme '{1}' had spawnRate=0 — disabling it (include=false, spawnRate reset to 10).",
+                                                prefab.name, theme.name);
+                                            building.include = false;
+                                            building.spawnRate = 10;
+                                            break; // spawnRate stays -1 → treated as excluded
+                                        }
+
+                                        spawnRate = Mathf.Clamp(building.spawnRate, 1, 100);
                                         break;
                                     }
                                 }
                             }
                             else
                             {
-                                spawnRateSum = 1;
-                                hits = 1;
+                                // No themes configured — treat as weight 1 (vanilla behaviour)
+                                spawnRate = 1;
                             }
 
-                            if (hits == 0 && blacklistedThemes != null)
+                            if (spawnRate == -1 && blacklistedThemes != null)
                             {
                                 bool onBlacklist = false;
 
@@ -734,20 +746,14 @@ namespace BuildingThemes
                                 }
                                 else
                                 {
-                                    spawnRateSum = 10;
-                                    hits = 1;
+                                    // Not blacklisted — use default weight
+                                    spawnRate = 10;
                                 }
                             }
 
-                            if (hits == 0)
+                            if (spawnRate == -1)
                             {
                                 if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.NotInTheme);
-                                continue;
-                            }
-
-                            if (spawnRateSum == 0)
-                            {
-                                if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.ZeroSpawnRate);
                                 continue;
                             }
 
@@ -761,8 +767,7 @@ namespace BuildingThemes
                                 m_areaBuildings[areaIndex] = new FastList<ushort>();
                             }
 
-                            // mod begin
-                            int spawnRate = spawnRateSum / hits;
+                            // mod begin — add building N times so random selection reflects spawn weight
                             for (uint s = 0; s < spawnRate; s++)
                             {
                                 // mod end

@@ -46,9 +46,6 @@ namespace BuildingThemes.Diagnostics
                 case RejectionReason.Variation:
                     report.RejectedVariation++;
                     break;
-                case RejectionReason.ZeroSpawnRate:
-                    report.RejectedZeroSpawnRate++;
-                    break;
             }
         }
 
@@ -82,8 +79,8 @@ namespace BuildingThemes.Diagnostics
             sb.AppendFormat("  Candidates: {0} | Accepted: {1} | Rejected: {2}\n",
                 report.TotalCandidates, report.Accepted,
                 report.TotalCandidates - report.Accepted);
-            sb.AppendFormat("    Not in theme: {0} | Variation: {1} | Zero spawn rate: {2}\n",
-                report.RejectedNotInTheme, report.RejectedVariation, report.RejectedZeroSpawnRate);
+            sb.AppendFormat("    Not in theme: {0} | Variation: {1}\n",
+                report.RejectedNotInTheme, report.RejectedVariation);
 
             if (report.RejectedMissingAsset > 0)
             {
@@ -121,7 +118,6 @@ namespace BuildingThemes.Diagnostics
                 sb.AppendLine("Rejected:");
                 sb.AppendFormat("  Not in theme          : {0}\n", report.RejectedNotInTheme);
                 sb.AppendFormat("  Variation (filtered)  : {0}\n", report.RejectedVariation);
-                sb.AppendFormat("  Zero spawn rate       : {0}\n", report.RejectedZeroSpawnRate);
 
                 if (report.RejectedMissingAsset > 0)
                 {
@@ -216,7 +212,6 @@ namespace BuildingThemes.Diagnostics
         public int RejectedNotInTheme;
         public int RejectedMissingAsset;
         public int RejectedVariation;
-        public int RejectedZeroSpawnRate;
         public readonly List<string> MissingAssetNames = new List<string>();
     }
 
@@ -226,6 +221,5 @@ namespace BuildingThemes.Diagnostics
         NotInTheme,
         MissingAsset,
         Variation,
-        ZeroSpawnRate
     }
 }

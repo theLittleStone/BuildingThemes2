@@ -168,7 +168,7 @@ namespace BuildingThemes.GUI
                 m_name.label.relativePosition = new Vector3(22, 2);
             }
 
-            // Status badge
+            // Status badge — priority: missing (red) > DLC locked (grey) > zero weight (orange)
             switch (m_building.assetStatus)
             {
                 case AssetStatus.Missing:
