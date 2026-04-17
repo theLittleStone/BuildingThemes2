@@ -97,9 +97,11 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Show change note
+        env:
+          CHANGE_NOTE: ${{ steps.note.outputs.value }}
         run: |
           echo "──── Change note to be sent to Steam ────"
-          echo "${{ steps.note.outputs.value }}"
+          echo "$CHANGE_NOTE"
           echo "─────────────────────────────────────────"
 
       - name: Install steamcmd
