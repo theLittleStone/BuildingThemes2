@@ -111,6 +111,7 @@ jobs:
         with:
           username: ${{ secrets.STEAM_USERNAME }}
           configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
+          totp: ${{ secrets.STEAM_TOTP }}
           appId: 255710
           publishedFileId: 3708105182
           path: dist/BuildingThemes2
