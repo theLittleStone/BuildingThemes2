@@ -943,7 +943,19 @@ namespace BuildingThemes
                     districtId, info.name, areaIndex, names);
             }
 
-            if (valid == null || valid.m_size == 0) return false;
+            if (valid == null || valid.m_size == 0)
+            {
+                // Pool is null: this footprint is not configured in the theme at all.
+                // The spawn path allows vanilla to fill these slots in non-Strict mode —
+                // be consistent: treat the vanilla building as valid so auto-bulldoze
+                // doesn't create an infinite removal loop for unconfigured footprints.
+                if (valid == null
+                    && IsEffectivelyThemed(districtId)
+                    && GetDistrictEmptyLevelBehavior(districtId) != EmptyLevelBehavior.StrictThemeOnly)
+                    return true;
+
+                return false;
+            }
 
             ushort prefab = (ushort)info.m_prefabDataIndex;
             for (int i = 0; i < valid.m_size; i++)
