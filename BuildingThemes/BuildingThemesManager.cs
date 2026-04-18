@@ -108,6 +108,78 @@ namespace BuildingThemes
             info.autoBulldoze = enabled;
         }
 
+        public SizePreference GetDistrictSizePreference(byte districtId, ItemClass.Service service)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null) return SizePreference.Default;
+            switch (service)
+            {
+                case ItemClass.Service.Residential: return info.residentialSizePref;
+                case ItemClass.Service.Commercial:  return info.commercialSizePref;
+                case ItemClass.Service.Industrial:  return info.industrialSizePref;
+                case ItemClass.Service.Office:      return info.officeSizePref;
+                default: return SizePreference.Default;
+            }
+        }
+
+        public void SetDistrictSizePreference(byte districtId, ItemClass.Service service, SizePreference pref)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null) return;
+            switch (service)
+            {
+                case ItemClass.Service.Residential: info.residentialSizePref = pref; break;
+                case ItemClass.Service.Commercial:  info.commercialSizePref  = pref; break;
+                case ItemClass.Service.Industrial:  info.industrialSizePref  = pref; break;
+                case ItemClass.Service.Office:      info.officeSizePref      = pref; break;
+            }
+        }
+
+        public PreferenceStrength GetDistrictPreferenceStrength(byte districtId)
+        {
+            var info = districtThemeInfos[districtId];
+            return info != null ? info.strengthPref : PreferenceStrength.Moderate;
+        }
+
+        public void SetDistrictPreferenceStrength(byte districtId, PreferenceStrength s)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info != null) info.strengthPref = s;
+        }
+
+        public static float PreferenceStrengthToAlpha(PreferenceStrength s)
+        {
+            switch (s)
+            {
+                case PreferenceStrength.Gentle:  return 0.5f;
+                case PreferenceStrength.Strong:  return 2.0f;
+                default:                         return 1.0f;
+            }
+        }
+
+        /// <summary>
+        /// Returns the flat building entry list for a district (used by the size-preference path).
+        /// Null when the district has no theme management or no entries.
+        /// </summary>
+        internal FastList<DistrictBuildingEntry> GetDistrictBuildingEntries(byte districtId)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null || !info.isEnabled) return null;
+            return info.buildingEntries;
+        }
+
+        // Flat per-building entry used by the size-preference selection path.
+        internal struct DistrictBuildingEntry
+        {
+            public ushort prefabIndex;
+            public int    spawnWeight;
+            public int    cellWidth;
+            public int    cellLength;
+            public ItemClass.SubService subService;
+            public ItemClass.Level      level;
+            public BuildingInfo.ZoningMode zoningMode;
+        }
+
         private class DistrictThemeInfo
         {
             /// <summary>
@@ -126,10 +198,20 @@ namespace BuildingThemes
             /// <summary>When true, buildings not belonging to any active theme are gradually demolished.</summary>
             public bool autoBulldoze = false;
 
+            // Size preference per zone type
+            public SizePreference residentialSizePref = SizePreference.Default;
+            public SizePreference commercialSizePref  = SizePreference.Default;
+            public SizePreference industrialSizePref  = SizePreference.Default;
+            public SizePreference officeSizePref      = SizePreference.Default;
+            public PreferenceStrength strengthPref    = PreferenceStrength.Moderate;
+
             public readonly HashSet<Configuration.Theme> themes = new HashSet<Configuration.Theme>();
 
             // similar to BuildingManager.m_areaBuildings, but separate for every district
             public readonly FastList<ushort>[] areaBuildings = new FastList<ushort>[AreaBuildingsLength];
+
+            // Flat list for size-preference selection (rebuilt alongside areaBuildings)
+            public FastList<DistrictBuildingEntry> buildingEntries = new FastList<DistrictBuildingEntry>();
 
             // building upgrade mapping (prefabLevel1 --> prefabLevel2) for realistic building upgrades
             public readonly Dictionary<ushort, ushort> upgradeBuildings = new Dictionary<ushort, ushort>();
@@ -576,7 +658,7 @@ namespace BuildingThemes
             }
 
             // Create custom areaBuildings fastlist array for this district
-            RefreshAreaBuildings(info.areaBuildings, enabledThemes, blacklistedThemes, true, districtId);
+            RefreshAreaBuildings(info.areaBuildings, enabledThemes, blacklistedThemes, true, districtId, info.buildingEntries);
 
             // Create upgrade mapping
             info.upgradeBuildings.Clear();
@@ -695,9 +777,10 @@ namespace BuildingThemes
             return PrefabCollection<BuildingInfo>.GetPrefab(upgradePrefabIndex);
         }
 
-        private void RefreshAreaBuildings(FastList<ushort>[] m_areaBuildings, HashSet<Configuration.Theme> enabledThemes, HashSet<Configuration.Theme> blacklistedThemes, bool includeVariations, byte diagnosticsDistrictId = 255)
+        private void RefreshAreaBuildings(FastList<ushort>[] m_areaBuildings, HashSet<Configuration.Theme> enabledThemes, HashSet<Configuration.Theme> blacklistedThemes, bool includeVariations, byte diagnosticsDistrictId = 255, FastList<DistrictBuildingEntry> buildingEntries = null)
         {
             bool recordDiagnostics = Debugger.Enabled && diagnosticsDistrictId != 255;
+            if (buildingEntries != null) buildingEntries.Clear();
 
             int areaBuildingsLength = m_areaBuildings.Length;
             for (int i = 0; i < areaBuildingsLength; i++)
@@ -812,6 +895,21 @@ namespace BuildingThemes
                             if (recordDiagnostics) ThemeDiagnostics.RecordBuilding(diagnosticsDistrictId, prefab.name, RejectionReason.Accepted);
 
                             // mod end
+
+                            // Append to flat entry list for size-preference selection path
+                            if (buildingEntries != null)
+                            {
+                                buildingEntries.Add(new DistrictBuildingEntry
+                                {
+                                    prefabIndex = (ushort)j,
+                                    spawnWeight = spawnRate,
+                                    cellWidth   = prefab.m_cellWidth,
+                                    cellLength  = prefab.m_cellLength,
+                                    subService  = prefab.m_class.m_subService,
+                                    level       = prefab.m_class.m_level,
+                                    zoningMode  = prefab.m_zoningMode,
+                                });
+                            }
 
                             int areaIndex = GetAreaIndex(prefab.m_class.m_service, prefab.m_class.m_subService, prefab.m_class.m_level, prefab.m_cellWidth, prefab.m_cellLength, prefab.m_zoningMode);
                             if (m_areaBuildings[areaIndex] == null)
@@ -960,6 +1058,141 @@ namespace BuildingThemes
                 if (valid.m_buffer[i] == prefab) return true;
 
             return false;
+        }
+
+        /// <summary>
+        /// Size-preference building selection. Returns null when no theme building fits the lot.
+        /// Called from SimulationStepPatch when the district has a non-Default SizePreference.
+        /// </summary>
+        public BuildingInfo GetRandomBuildingInfoWithPreference(
+            byte districtId,
+            ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level,
+            int maxWidth, int maxDepth, BuildingInfo.ZoningMode zoningMode,
+            ref ColossalFramework.Math.Randomizer r)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null || !info.isEnabled || info.buildingEntries == null) return null;
+
+            SizePreference pref = GetDistrictSizePreference(districtId, service);
+
+            // 1 — filter candidates that fit the lot
+            var candidates = new System.Collections.Generic.List<DistrictBuildingEntry>();
+            for (int i = 0; i < info.buildingEntries.m_size; i++)
+            {
+                var e = info.buildingEntries.m_buffer[i];
+                if (e.subService != subService || e.level != level) continue;
+                if (!ZoningModeCompatible(e.zoningMode, zoningMode))            continue;
+                if (e.cellWidth > maxWidth || e.cellLength > maxDepth)          continue;
+                candidates.Add(e);
+            }
+            if (candidates.Count == 0) return null;
+
+            // 2 — sort by preference and assign ranks (ties share rank)
+            RankByPreference(candidates, pref);
+
+            // Absolute mode: keep only rank-1 candidates, then pick by spawn weight alone.
+            if (info.strengthPref == PreferenceStrength.Absolute)
+            {
+                var top = new System.Collections.Generic.List<DistrictBuildingEntry>();
+                for (int i = 0; i < candidates.Count; i++)
+                    if (GetCandidateRank(candidates, i, pref) == 1) top.Add(candidates[i]);
+                if (top.Count > 0) candidates = top;
+
+                int totalW = 0;
+                foreach (var c in candidates) totalW += Mathf.Max(c.spawnWeight, 1);
+                int roll2 = (int)r.Int32((uint)totalW);
+                int acc2 = 0;
+                foreach (var c in candidates)
+                {
+                    acc2 += Mathf.Max(c.spawnWeight, 1);
+                    if (roll2 < acc2)
+                        return PrefabCollection<BuildingInfo>.GetPrefab(c.prefabIndex);
+                }
+                return PrefabCollection<BuildingInfo>.GetPrefab(candidates[candidates.Count - 1].prefabIndex);
+            }
+
+            // 3 — weighted roll: score = spawnWeight / rank^alpha
+            float alpha = PreferenceStrengthToAlpha(info.strengthPref);
+            float total = 0f;
+            var scores = new float[candidates.Count];
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                float rank = (float)GetCandidateRank(candidates, i, pref);
+                scores[i] = Mathf.Max(candidates[i].spawnWeight, 1) / Mathf.Pow(rank, alpha);
+                total += scores[i];
+            }
+            if (total <= 0f) return null;
+
+            float roll = (r.Int32(100000) / 100000f) * total;
+            float acc  = 0f;
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                acc += scores[i];
+                if (roll <= acc)
+                    return PrefabCollection<BuildingInfo>.GetPrefab(candidates[i].prefabIndex);
+            }
+            return PrefabCollection<BuildingInfo>.GetPrefab(candidates[candidates.Count - 1].prefabIndex);
+        }
+
+        private static bool ZoningModeCompatible(BuildingInfo.ZoningMode buildingMode, BuildingInfo.ZoningMode lotMode)
+        {
+            if (lotMode == BuildingInfo.ZoningMode.Straight)
+                return buildingMode == BuildingInfo.ZoningMode.Straight;
+            // Corner lot — building must be a corner of the matching handedness
+            return buildingMode == lotMode;
+        }
+
+        private static void RankByPreference(System.Collections.Generic.List<DistrictBuildingEntry> list, SizePreference pref)
+        {
+            switch (pref)
+            {
+                case SizePreference.BiggestFirst:
+                    list.Sort((a, b) => (b.cellWidth * b.cellLength).CompareTo(a.cellWidth * a.cellLength));
+                    break;
+                case SizePreference.WidestFirst:
+                    list.Sort((a, b) => {
+                        int c = b.cellWidth.CompareTo(a.cellWidth);
+                        return c != 0 ? c : a.cellLength.CompareTo(b.cellLength);
+                    });
+                    break;
+                case SizePreference.DeepestFirst:
+                    list.Sort((a, b) => {
+                        int c = b.cellLength.CompareTo(a.cellLength);
+                        return c != 0 ? c : a.cellWidth.CompareTo(b.cellWidth);
+                    });
+                    break;
+                case SizePreference.SmallestFirst:
+                    list.Sort((a, b) => (a.cellWidth * a.cellLength).CompareTo(b.cellWidth * b.cellLength));
+                    break;
+                // Random / Default: no sort — all will get rank 1
+            }
+        }
+
+        // Returns 1-based rank for candidate i, sharing rank with preceding entries of equal size key.
+        private static int GetCandidateRank(System.Collections.Generic.List<DistrictBuildingEntry> list, int idx, SizePreference pref)
+        {
+            if (pref == SizePreference.Random || pref == SizePreference.Default) return 1;
+            int rank = 1;
+            for (int i = 0; i < idx; i++)
+            {
+                if (!SameSizeKey(list[i], list[idx], pref)) rank++;
+            }
+            return rank;
+        }
+
+        private static bool SameSizeKey(DistrictBuildingEntry a, DistrictBuildingEntry b, SizePreference pref)
+        {
+            switch (pref)
+            {
+                case SizePreference.BiggestFirst:
+                case SizePreference.SmallestFirst:
+                    return (a.cellWidth * a.cellLength) == (b.cellWidth * b.cellLength);
+                case SizePreference.WidestFirst:
+                    return a.cellWidth == b.cellWidth && a.cellLength == b.cellLength;
+                case SizePreference.DeepestFirst:
+                    return a.cellLength == b.cellLength && a.cellWidth == b.cellWidth;
+                default: return true;
+            }
         }
 
         public static int GetAreaIndex(ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level, int width, int length, BuildingInfo.ZoningMode zoningMode)

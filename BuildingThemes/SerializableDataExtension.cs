@@ -152,9 +152,14 @@ namespace BuildingThemes
                         id = i,
                         blacklistMode = themesManager.IsBlacklistModeEnabled(i),
                         themes = themesNames,
-                        missingAssetMode  = (int)themesManager.GetDistrictMissingAssetMode(i),
+                        missingAssetMode   = (int)themesManager.GetDistrictMissingAssetMode(i),
                         emptyLevelBehavior = (int)themesManager.GetDistrictEmptyLevelBehavior(i),
-                        autoBulldoze = themesManager.GetDistrictAutoBulldoze(i)
+                        autoBulldoze       = themesManager.GetDistrictAutoBulldoze(i),
+                        residentialSizePref = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Residential),
+                        commercialSizePref  = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Commercial),
+                        industrialSizePref  = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Industrial),
+                        officeSizePref      = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Office),
+                        strengthPref        = (int)themesManager.GetDistrictPreferenceStrength(i),
                     });
                     if (Debugger.Enabled)
                     {
@@ -238,6 +243,21 @@ namespace BuildingThemes
                 // autoBulldoze defaults to false for old saves (field missing = XML default)
                 buildingThemesManager.SetDistrictAutoBulldoze(district.id, district.autoBulldoze);
 
+                // Size preferences added in version 3; -1 means not saved → keep default
+                if (configuration.version >= 3)
+                {
+                    if (district.residentialSizePref >= 0)
+                        buildingThemesManager.SetDistrictSizePreference(district.id, ItemClass.Service.Residential, (SizePreference)district.residentialSizePref);
+                    if (district.commercialSizePref >= 0)
+                        buildingThemesManager.SetDistrictSizePreference(district.id, ItemClass.Service.Commercial, (SizePreference)district.commercialSizePref);
+                    if (district.industrialSizePref >= 0)
+                        buildingThemesManager.SetDistrictSizePreference(district.id, ItemClass.Service.Industrial, (SizePreference)district.industrialSizePref);
+                    if (district.officeSizePref >= 0)
+                        buildingThemesManager.SetDistrictSizePreference(district.id, ItemClass.Service.Office, (SizePreference)district.officeSizePref);
+                    if (district.strengthPref >= 0)
+                        buildingThemesManager.SetDistrictPreferenceStrength(district.id, (PreferenceStrength)district.strengthPref);
+                }
+
                 if (Debugger.Enabled)
                 {
                     var themeNames = string.Join(", ", System.Array.ConvertAll(district.themes ?? new string[0], t => t));
@@ -252,9 +272,10 @@ namespace BuildingThemes
     public class DistrictsConfiguration
     {
         // version 2 adds missingAssetMode + emptyLevelBehavior per district.
+        // version 3 adds size-preference fields per district.
         // Old saves deserialise version as 0 — those fields are ignored on load.
         [System.Xml.Serialization.XmlAttribute("version")]
-        public int version = 2;
+        public int version = 3;
 
         public class District
         {
@@ -265,6 +286,12 @@ namespace BuildingThemes
             public int missingAssetMode = -1;
             public int emptyLevelBehavior = -1;
             public bool autoBulldoze = false;
+            // -1 = not saved (old save / version < 3)
+            public int residentialSizePref = -1;
+            public int commercialSizePref  = -1;
+            public int industrialSizePref  = -1;
+            public int officeSizePref      = -1;
+            public int strengthPref        = -1;
         }
 
         public List<District> Districts = new List<District>();

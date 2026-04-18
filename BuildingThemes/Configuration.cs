@@ -24,6 +24,37 @@ namespace BuildingThemes
     }
 
     /// <summary>
+    /// Controls which lot sizes are preferred when selecting a theme building to spawn.
+    /// </summary>
+    public enum SizePreference
+    {
+        /// <summary>Existing 8-candidate SimulationStep loop — no size bias.</summary>
+        Default      = 0,
+        /// <summary>Prefer buildings with the largest footprint area (width × length).</summary>
+        BiggestFirst = 1,
+        /// <summary>Prefer widest buildings first; tie-break by shortest depth.</summary>
+        WidestFirst  = 2,
+        /// <summary>Prefer deepest buildings first; tie-break by narrowest width.</summary>
+        DeepestFirst = 3,
+        /// <summary>All candidates share rank 1 — selection is purely by spawn weight.</summary>
+        Random       = 4,
+        /// <summary>Prefer buildings with the smallest footprint area (width × length).</summary>
+        SmallestFirst = 5,
+    }
+
+    /// <summary>
+    /// Controls how strongly size preference biases selection relative to spawn weight.
+    /// α exponent in: score = spawnWeight / rank^α
+    /// </summary>
+    public enum PreferenceStrength
+    {
+        Gentle   = 0,  // α = 0.5
+        Moderate = 1,  // α = 1.0
+        Strong   = 2,  // α = 2.0
+        Absolute = 3,  // always pick highest-ranked size; spawn weight only breaks ties within the top rank
+    }
+
+    /// <summary>
     /// Controls how the spawning system handles theme buildings whose assets are not loaded.
     /// </summary>
     public enum MissingAssetMode

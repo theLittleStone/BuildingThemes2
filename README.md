@@ -60,6 +60,8 @@ If no theme is active for a district, any growable building can spawn (vanilla b
   exclude.
 - **Spawn weight** — control how often a building appears relative to others in the same
   zone, level, and footprint slot.
+- **Size preference** — bias spawning toward larger, smaller, widest, or deepest footprints
+  per zone type, with adjustable strength.
 
 ---
 
@@ -183,6 +185,8 @@ Open via the **District Options** button in the Themes tab.
 | Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
 | Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default) or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
+| Size preference (4 dropdowns) | Bias spawning toward a particular footprint size for each zone type — see [Size Preference](#size-preference) |
+| Preference strength | How strongly size preference overrides spawn weight — Gentle / Moderate / Strong |
 | Spawn Diagnostics | Accepted/rejected counts, missing-asset list, and a live list of non-theme buildings currently placed in the district |
 
 ---
@@ -262,6 +266,70 @@ Set the default in **Mod Options → Building Themes**, or override per district
 > To control which specific building a level-up produces, use the **Upgrade building** field
 > in the Theme Manager options panel for that building. That explicit mapping takes priority
 > over the Level behavior setting.
+
+---
+
+## Size Preference
+
+**Size preference** lets you bias which building footprint sizes spawn in a district, per
+zone type. Set it in **District Options** — one dropdown each for Residential, Commercial,
+Industrial, and Office.
+
+| Mode | Effect |
+| --- | --- |
+| **Default** | Original game behaviour: tries the widest available lot first, shrinks width until a theme building fits |
+| **Biggest first** | Prefers buildings with the largest total footprint (width × depth) |
+| **Widest first** | Prefers widest buildings; tie-break by shallowest depth |
+| **Deepest first** | Prefers deepest buildings; tie-break by narrowest width |
+| **Random (weight only)** | No size bias — selection is purely by spawn weight |
+| **Smallest first** | Prefers buildings with the smallest total footprint (width × depth) |
+
+When any mode other than **Default** is active, all theme buildings that fit the available
+lot are considered at once in a single weighted roll — the game's original shrink loop is
+replaced by this selection.
+
+### How the selection formula works
+
+For each candidate building that fits the lot:
+
+```text
+score = spawn_weight / rank ^ α
+```
+
+- **rank** — position in the size ordering (rank 1 = most preferred). Buildings with the
+  same size key share the same rank.
+- **α** — set by **Preference strength**: Gentle = 0.5, Moderate = 1.0, Strong = 2.0. **Absolute** bypasses the formula entirely (see below).
+- A single weighted random roll over all scores selects the building.
+
+**Preference strength** controls how dominant the size preference is relative to spawn weight:
+
+| Strength | α | Effect |
+| --- | --- | --- |
+| Gentle | 0.5 | Size gives a mild boost — spawn weight still matters a lot |
+| Moderate *(default)* | 1.0 | Balanced — size and spawn weight both influence the result |
+| Strong | 2.0 | Size strongly dominates — only top-ranked sizes appear regularly |
+| Absolute | — | Only the highest-ranked size is ever chosen; spawn weight breaks ties within that size group |
+
+**Example — Biggest first, Moderate strength, three candidates:**
+
+| Building | Footprint | Spawn weight | Rank | Score |
+| --- | --- | --- | --- | --- |
+| Large house | 4×4 | 10 | 1 | 10 / 1¹ = **10** |
+| Medium house | 2×4 | 30 | 2 | 30 / 2¹ = **15** |
+| Small house | 2×2 | 10 | 3 | 10 / 3¹ ≈ **3.3** |
+
+Total = 28.3. The medium house wins most often despite having a lower size rank, because its
+higher spawn weight compensates.
+
+### Notes
+
+- **"Random (weight only)"** assigns every candidate rank 1, so α has no effect and selection
+  is identical to pure spawn weight. This is useful when you want weighted variety without any
+  size bias.
+- **Lots with no matching theme building** stay empty regardless of the preference mode — the
+  size preference only affects which building is chosen among those that fit, not whether a
+  building spawns at all.
+- Preference settings are saved per district in the save game and survive mod updates.
 
 ---
 

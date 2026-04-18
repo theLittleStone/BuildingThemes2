@@ -455,6 +455,63 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
             int depth_alt = Mathf.Min(depth_A, 4);
             int width_alt = width_A;
 
+            // Size-preference path: replaces the 8-candidate while loop when the district has
+            // a non-Default preference for the current zone's service type.
+            SizePreference sizePref = BuildingThemesManager.instance != null
+                ? BuildingThemesManager.instance.GetDistrictSizePreference(district, service)
+                : SizePreference.Default;
+
+            if (sizePref != SizePreference.Default)
+            {
+                // Resolve subService/level for zone types that depend on spawn position.
+                if (zone == ItemClass.Zone.Industrial)
+                    ZoneBlock.GetIndustryType(vector6, out subService, out level);
+                else if (zone == ItemClass.Zone.CommercialLow || zone == ItemClass.Zone.CommercialHigh)
+                    ZoneBlock.GetCommercialType(vector6, zone, width_A, depth_A, out subService, out level);
+                else if (zone == ItemClass.Zone.ResidentialLow || zone == ItemClass.Zone.ResidentialHigh)
+                    ZoneBlock.GetResidentialType(vector6, zone, width_A, depth_A, out subService, out level);
+                else if (zone == ItemClass.Zone.Office)
+                    ZoneBlock.GetOfficeType(vector6, zone, width_A, depth_A, out subService, out level);
+
+                // Try primary lot (A), then secondary lot (B) for corner lots.
+                buildingInfo = BuildingThemesManager.instance.GetRandomBuildingInfoWithPreference(
+                    district, service, subService, level,
+                    width_A, depth_A, zoningMode,
+                    ref Singleton<SimulationManager>.instance.m_randomizer);
+
+                if (buildingInfo == null && zoningMode2 != BuildingInfo.ZoningMode.Straight)
+                {
+                    buildingInfo = BuildingThemesManager.instance.GetRandomBuildingInfoWithPreference(
+                        district, service, subService, level,
+                        width_B, depth_B, zoningMode2,
+                        ref Singleton<SimulationManager>.instance.m_randomizer);
+                    if (buildingInfo != null)
+                    {
+                        num25_row = num19 + num20 + 1;
+                        length = depth_B;
+                        width  = width_B;
+                        zoningMode3 = zoningMode2;
+                    }
+                }
+                else if (buildingInfo != null)
+                {
+                    num25_row = num15 + num16 + 1;
+                    length = depth_A;
+                    width  = width_A;
+                    zoningMode3 = zoningMode;
+                }
+
+                if (buildingInfo != null)
+                {
+                    vector6 = m_position + VectorUtils.X_Y(
+                        ((float)length * 0.5f - 4f) * xDirection +
+                        ((float)num25_row * 0.5f + (float)spawnpointRow - 10f) * zDirection);
+                    goto IL_AfterLoop;
+                }
+
+                return false; // no theme building fits → leave lot empty
+            }
+
             while (num28 < 8)
             {
                 switch (num28)
@@ -670,6 +727,7 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                 goto IL_DF0;
             }
 
+            IL_AfterLoop:
             if (buildingInfo == null)
             {
                 if (Debugger.Enabled)
