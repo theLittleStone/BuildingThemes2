@@ -463,15 +463,21 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
 
             if (sizePref != SizePreference.Default)
             {
+                // Compute a real spawn position for GetIndustryType / GetCommercialType
+                // (vector6 is still zero here — use the primary lot center as approximation).
+                Vector3 prefSpawnPos = m_position + VectorUtils.X_Y(
+                    ((float)depth_A * 0.5f - 4f) * xDirection +
+                    ((float)(num15 + num16 + 1) * 0.5f + (float)spawnpointRow - 10f) * zDirection);
+
                 // Resolve subService/level for zone types that depend on spawn position.
                 if (zone == ItemClass.Zone.Industrial)
-                    ZoneBlock.GetIndustryType(vector6, out subService, out level);
+                    ZoneBlock.GetIndustryType(prefSpawnPos, out subService, out level);
                 else if (zone == ItemClass.Zone.CommercialLow || zone == ItemClass.Zone.CommercialHigh)
-                    ZoneBlock.GetCommercialType(vector6, zone, width_A, depth_A, out subService, out level);
+                    ZoneBlock.GetCommercialType(prefSpawnPos, zone, width_A, depth_A, out subService, out level);
                 else if (zone == ItemClass.Zone.ResidentialLow || zone == ItemClass.Zone.ResidentialHigh)
-                    ZoneBlock.GetResidentialType(vector6, zone, width_A, depth_A, out subService, out level);
+                    ZoneBlock.GetResidentialType(prefSpawnPos, zone, width_A, depth_A, out subService, out level);
                 else if (zone == ItemClass.Zone.Office)
-                    ZoneBlock.GetOfficeType(vector6, zone, width_A, depth_A, out subService, out level);
+                    ZoneBlock.GetOfficeType(prefSpawnPos, zone, width_A, depth_A, out subService, out level);
 
                 // Try primary lot (A), then secondary lot (B) for corner lots.
                 buildingInfo = BuildingThemesManager.instance.GetRandomBuildingInfoWithPreference(
@@ -487,17 +493,17 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                         ref Singleton<SimulationManager>.instance.m_randomizer);
                     if (buildingInfo != null)
                     {
-                        num25_row = num19 + num20 + 1;
-                        length = depth_B;
-                        width  = width_B;
+                        num25_row   = num19 + num20 + 1;
+                        length      = buildingInfo.m_cellLength;
+                        width       = buildingInfo.m_cellWidth;
                         zoningMode3 = zoningMode2;
                     }
                 }
                 else if (buildingInfo != null)
                 {
-                    num25_row = num15 + num16 + 1;
-                    length = depth_A;
-                    width  = width_A;
+                    num25_row   = num15 + num16 + 1;
+                    length      = buildingInfo.m_cellLength;
+                    width       = buildingInfo.m_cellWidth;
                     zoningMode3 = zoningMode;
                 }
 
