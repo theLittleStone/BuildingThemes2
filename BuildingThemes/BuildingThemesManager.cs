@@ -945,15 +945,13 @@ namespace BuildingThemes
 
             if (valid == null || valid.m_size == 0)
             {
-                // Pool is null: this footprint is not configured in the theme at all.
-                // The spawn path allows vanilla to fill these slots in non-Strict mode —
-                // be consistent: treat the vanilla building as valid so auto-bulldoze
-                // doesn't create an infinite removal loop for unconfigured footprints.
-                if (valid == null
-                    && IsEffectivelyThemed(districtId)
-                    && GetDistrictEmptyLevelBehavior(districtId) != EmptyLevelBehavior.StrictThemeOnly)
-                    return true;
-
+                // No theme buildings for this footprint — the building is not part of the
+                // active theme regardless of spawn mode. FillWithVanilla only supplements
+                // existing pool entries (line 883 skips null pools), so a null pool here
+                // means the footprint is genuinely uncovered: the shrink loop in
+                // SimulationStepPatch will find a smaller theme building or leave the lot
+                // empty. Either way, demolishing the standing building causes no infinite
+                // loop — return false so auto-bulldoze and diagnostics are consistent.
                 return false;
             }
 

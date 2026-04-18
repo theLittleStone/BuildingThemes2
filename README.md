@@ -152,17 +152,24 @@ footprint (unless props or trees occupy the extra space). This enables tight lay
 the UK Terraced Housing theme.
 
 **Footprint coverage:** the game generates zone lots in many sizes (1×1, 1×2, 2×2, 2×3,
-2×4, corner lots, and so on). Your theme only needs to cover the sizes you actually want —
-but any lot size that has **no matching building in your theme** is handled as follows:
+2×4, corner lots, and so on). Your theme only needs to cover the sizes you actually want,
+but each lot must be matched by at least one theme building of that exact footprint (or
+smaller, if the shrink fallback can reach it).
 
-- **Vanilla fallback (default):** the game spawns a vanilla building on that lot.
-  Auto-bulldoze will *not* remove it — a vanilla building on an uncovered lot is the
-  intended fallback, not a mistake.
-- **Strict mode:** nothing spawns on uncovered lots. The area stays empty until
-  demand changes the lot layout.
+When a lot has **no matching theme building**, the mod tries progressively narrower
+footprints (the shrink loop). If a smaller-width theme building is found, it is placed and
+the plot is trimmed. If nothing fits — because your theme simply has no buildings for any
+reachable footprint — **the lot stays empty**. Vanilla buildings are not used to fill
+uncovered footprints; they are only used for missing workshop assets (see Missing Assets)
+and for level-up behaviour when Level Behavior is set to Vanilla fallback.
 
-If your district has many empty spots or unexpected vanilla buildings, check which lot
-sizes your theme covers using **Spawn Diagnostics** (District Options).
+Lots left empty this way are not permanent: when demand shifts and the game re-evaluates
+the zone, a different lot layout may be tried, or a theme building of the right size added
+later will fill them naturally.
+
+If your district has many empty spots, check which lot sizes your theme covers using
+**Spawn Diagnostics** (District Options). The "Accepted" count tells you which footprint
+pools are active.
 
 ---
 
@@ -196,16 +203,24 @@ active themes. Replacements spawn according to the normal themed-spawn rules.
 - Use **Spawn Diagnostics** (District Options) to see which non-theme buildings are
   currently present in the district before and after enabling auto-bulldoze.
 
-**Vanilla buildings on uncovered lots:** if your theme has no buildings for a given lot
-size, the game spawns a vanilla building there. Auto-bulldoze treats these as valid —
-removing a vanilla building from a lot your theme does not cover would just let the same
-vanilla building grow back. If you want those lots to stay empty instead, switch
-**Level Behavior** to **Strict** in District Options.
+**What auto-bulldoze considers valid:** a building is valid for a district if and only if
+its exact prefab appears in the active theme pool for its footprint and zone type. This
+applies to all buildings regardless of origin — base-game, DLC, or Workshop. If you remove
+a building from your theme, any placed copy of that building will be demolished the next
+time the scan reaches it, even if it is a DLC or vanilla building.
+
+**Uncovered footprints and empty lots:** if your theme has no buildings for a lot size,
+that lot spawns empty (or a smaller theme building via the shrink loop). Auto-bulldoze
+will demolish any building standing on such a lot that is no longer in the theme. Once
+demolished, the lot stays empty until the game re-evaluates the zone layout or you add a
+theme building that covers that footprint. Vanilla buildings do **not** fill uncovered
+footprints — they are only used for missing workshop assets (see Missing Assets below).
 
 **"Fill with vanilla" mode and auto-bulldoze:** when Missing Asset handling is set to
-*Fill with vanilla*, vanilla buildings are added to the spawn pool alongside your theme
-buildings to cover missing assets. Those vanilla buildings are also considered valid by
-auto-bulldoze and will not be removed.
+*Fill with vanilla*, vanilla buildings are added to the spawn pool to supplement slots
+where theme buildings are missing. Those supplemented vanilla buildings are considered
+valid by auto-bulldoze and will not be removed — they exist to replace the missing
+workshop asset, not as a sign of an uncovered footprint.
 
 ---
 
@@ -311,14 +326,20 @@ spawn in a residential zone.
 Open the district policy panel → Themes tab → confirm **Enable Theme Management** is
 checked and your theme has a checkmark.
 
-**5. Vanilla buildings appearing that auto-bulldoze won't remove**
-Your theme has no buildings for some lot sizes (e.g. your theme covers 2×2 lots but the
-game generated a 2×4 lot). Vanilla fills those uncovered lots and auto-bulldoze intentionally
-leaves them — removing a vanilla building from a lot your theme can't fill would just let
-it regrow. Options: add theme buildings that cover the missing sizes, or switch Level
-Behavior to **Strict** so uncovered lots stay empty instead.
+**5. Empty lots appearing after auto-bulldoze**
+Auto-bulldoze removed buildings from lots that your theme does not cover (no theme building
+exists for that exact footprint size). Vanilla buildings do not fill uncovered footprints —
+those lots stay empty until the game re-evaluates zone demand or you add theme buildings for
+that size. Open **Spawn Diagnostics** to see which footprint pools are active, then add
+buildings for the missing sizes in the Theme Manager.
 
-**6. Run Spawn Diagnostics**
+**6. DLC or vanilla buildings being demolished unexpectedly**
+Auto-bulldoze checks whether a building's exact prefab is in the active theme pool —
+origin (base-game, DLC, Workshop) does not matter. If you previously included a DLC
+building in your theme and later removed it, auto-bulldoze will demolish it. Re-add it
+to the theme to keep it.
+
+**7. Run Spawn Diagnostics**
 District policy panel → Themes tab → **District Options** → **Spawn Diagnostics**. Shows
 accepted/rejected counts and lists missing assets by name.
 
