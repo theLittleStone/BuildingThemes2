@@ -62,6 +62,9 @@ If no theme is active for a district, any growable building can spawn (vanilla b
   zone, level, and footprint slot.
 - **Size preference** — bias spawning toward larger, smaller, widest, or deepest footprints
   per zone type, with adjustable strength.
+- **Rename themes** — rename any custom theme directly from the Theme Manager.
+- **Import from District Styles Plus** — convert District Styles Plus styles into Building
+  Themes 2 themes with one click (see [District Styles Plus](#district-styles-plus)).
 
 ---
 
@@ -83,13 +86,19 @@ Open from the **Themes** tab in the district policy panel.
 | Show loaded / missing / DLC-locked | Toggle visibility of asset groups |
 | Spawnable only | Show only fully spawnable buildings |
 
+### Theme Actions
+
+- **New Theme** — create a blank theme with a custom name.
+- **Rename Theme** — rename the selected theme. Disabled for built-in (vanilla/DLC) themes.
+- **Delete Theme** — permanently remove a custom theme.
+- **Workshop Dependencies** — lists all workshop assets in the selected theme (loaded /
+  missing), with copy-to-clipboard and one-click Steam subscribe buttons.
+
 ### Bulk Actions
 
 - **Include All / None** — include or exclude everything in the current filtered view.
 - **Include Valid** — include all loaded, in-bounds-dimension buildings in the view.
 - **Exclude Missing** — remove all unloaded assets from the current filtered view.
-- **Workshop Dependencies** — lists all workshop assets in the selected theme (loaded /
-  missing), with copy-to-clipboard and one-click Steam subscribe buttons.
 
 ### Per-Building Options
 
@@ -351,6 +360,41 @@ Cloning can be disabled in mod options.
 
 ---
 
+## District Styles Plus
+
+[District Styles Plus](https://steamcommunity.com/sharedfiles/filedetails/?id=1204126181) is
+a separate mod that lets you create and assign district styles in-game. Building Themes 2 can
+import those styles as fully editable themes.
+
+**How to import:**
+
+1. Load a city that has District Styles Plus styles defined.
+2. Open **Mod Options → Building Themes → District Styles Plus**.
+3. Click **Import from District Styles Plus**.
+
+Each imported style becomes a theme named **`[DSP] <style name>`**. Only growable
+(zone-compatible) buildings are included — service buildings, parks, and unique buildings are
+skipped automatically.
+
+Running the import a second time is safe: styles already imported under the same `[DSP] …`
+name are skipped; only new styles are added.
+
+After importing, use **Rename Theme** in the Theme Manager to remove the `[DSP]` prefix or
+give the theme a name that fits your workflow.
+
+> **Compatibility note:** Do not enable BT2 theme management and assign a DSP style to the
+> **same district** — the two mods filter the same spawning call and will interfere with each
+> other, causing empty lots or unexpected vanilla spawns. Use one system per district. The
+> recommended migration path is to import your DSP styles into BT2 (see above), then
+> disable DSP and manage everything through BT2.
+>
+> **Note:** District Styles Plus does not need to be active for the import to work. If you
+> previously used DSP and still have its `.crp` style packages on disk, the game loads them
+> into memory when a city is open, and the import button will find them regardless of whether
+> the DSP mod itself is enabled.
+
+---
+
 ## Compatibility
 
 **Compatible with Cities: Skylines 1.21.1-f9** (and later 1.x releases).
@@ -361,6 +405,18 @@ Cloning can be disabled in mod options.
 - **Building Themes (original)** — unsubscribe the original before enabling this fork
 - **Building Simulation Overhaul**
 - **Runways and Taxiways** — use [Airport Roads](http://steamcommunity.com/sharedfiles/filedetails/?id=465127441) instead
+
+**Partially compatible — per-district rule:**
+
+- **District Styles Plus** — both mods patch `BuildingManager.GetRandomBuildingInfo`. BT2
+  runs a prefix that selects a themed building; DSP runs a postfix that rejects any building
+  not in the district's assigned style. When both are active on the **same district** — BT2
+  theme management enabled *and* a DSP style assigned — DSP will silently null out BT2's
+  chosen buildings, causing empty lots or vanilla spawns. They are safe when used on
+  **different districts**: disable BT2 theme management for districts managed by DSP, and
+  do not assign a DSP style to districts managed by BT2. The [import feature](#district-styles-plus)
+  is specifically designed to help you migrate styles from DSP into BT2 so you can manage
+  everything through BT2 and drop DSP afterwards.
 
 Save games made with the original Building Themes are **fully compatible** — district
 assignments load normally.

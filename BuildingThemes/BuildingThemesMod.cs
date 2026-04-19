@@ -78,10 +78,100 @@ namespace BuildingThemes
                 var cloningCheck = maintenanceGroup.AddCheckbox("Enable Prefab Cloning (experimental — read warning below)", BuildingVariationManager.Enabled,
                     delegate (bool c) { BuildingVariationManager.Enabled = c; }) as ColossalFramework.UI.UICheckBox;
                 maintenanceGroup.AddGroup(
-                    "⚠ SAVE RISK: Cloned buildings are generated at load time and stored in your save. " +
-                    "If you disable this option or unsubscribe the mod, all cloned buildings will vanish from your city on next load. " +
-                    "The save file itself is not corrupted, but those buildings are gone permanently. " +
-                    "Only enable this if you understand and accept that risk.");
+                    "⚠ SAVE RISK: Cloned buildings are generated\n" +
+                    "at load time and stored in your save.\n" +
+                    "If you disable this or unsubscribe the mod,\n" +
+                    "all cloned buildings vanish on next load.\n" +
+                    "The save file is not corrupted, but those\n" +
+                    "buildings are gone permanently.\n" +
+                    "Only enable this if you accept that risk.");
+
+                // ── District Styles Plus import ───────────────────────────────────────────
+                // Shown always: DSP may be disabled but its style packages still exist on disk
+                // and are loaded by the game into DistrictManager.m_Styles when a city is open.
+                {
+                    UIHelperBase dspGroup = root.AddGroup("District Styles Plus");
+
+                    dspGroup.AddGroup(
+                        "Imports District Styles Plus styles as BT2 themes.\n" +
+                        "Each is named \"[DSP] <style name>\".\n" +
+                        "Load a city first — skips already-imported styles.");
+
+                    dspGroup.AddButton("Import from District Styles Plus", () =>
+                    {
+                        try
+                        {
+                            var dm = DistrictManager.instance;
+                            var manager = BuildingThemesManager.instance;
+
+                            if (dm == null || dm.m_Styles == null || manager == null || manager.Configuration == null)
+                            {
+                                ExceptionPanel ep = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                                ep.SetMessage("Import from District Styles Plus",
+                                    "This action requires an active game session.\nLoad a city first, then click this button.", true);
+                                return;
+                            }
+
+                            const string prefix = "[DSP] ";
+                            int imported = 0;
+                            int skipped = 0;
+
+                            foreach (var style in dm.m_Styles)
+                            {
+                                if (style == null || style.BuiltIn) continue;
+                                if (style.PackageName == "DSPTransient") continue;
+
+                                string themeName = prefix + style.Name;
+
+                                if (manager.GetThemeByName(themeName) != null)
+                                {
+                                    skipped++;
+                                    continue;
+                                }
+
+                                var newTheme = new Configuration.Theme { name = themeName };
+                                var buildingInfos = style.GetBuildingInfos();
+                                if (buildingInfos != null)
+                                {
+                                    foreach (var bi in buildingInfos)
+                                    {
+                                        if (bi == null || bi.m_placementStyle != ItemClass.Placement.Automatic) continue;
+                                        if (!newTheme.containsBuilding(bi.name))
+                                            newTheme.buildings.Add(new Configuration.Building(bi.name) { include = true });
+                                    }
+                                }
+                                manager.Configuration.themes.Add(newTheme);
+                                imported++;
+                            }
+
+                            if (imported > 0)
+                            {
+                                manager.SaveConfig();
+                                manager.RefreshDistrictThemeInfos();
+                                if (UIThemeManager.instance != null)
+                                    UIThemeManager.instance.RebuildThemeList();
+                            }
+
+                            string msg;
+                            if (imported == 0 && skipped == 0)
+                                msg = "No custom District Styles Plus styles found. " +
+                                      "Make sure District Styles Plus has custom styles created in your current city.";
+                            else if (imported == 0)
+                                msg = string.Format("All {0} style(s) already imported (prefix \"{1}\"). Nothing new to add.", skipped, prefix);
+                            else if (skipped == 0)
+                                msg = string.Format("{0} style(s) imported as Building Themes (prefix \"{1}\").", imported, prefix);
+                            else
+                                msg = string.Format("{0} style(s) imported (prefix \"{1}\"). {2} already existed and were skipped.", imported, prefix, skipped);
+
+                            ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
+                            panel.SetMessage("Import from District Styles Plus", msg, false);
+                        }
+                        catch (Exception e)
+                        {
+                            Debugger.LogException(e);
+                        }
+                    });
+                }
 
                 maintenanceGroup.AddButton("Reset to Defaults", () =>
                 {

@@ -103,6 +103,7 @@
         <Compile Include="GUI\ThemeManager\UIBuildingOptions.cs" />
         <Compile Include="GUI\ThemeManager\UIThemeItem.cs" />
         <Compile Include="GUI\ThemeManager\UINewThemeModal.cs" />
+        <Compile Include="GUI\ThemeManager\UIRenameThemeModal.cs" />
         <Compile Include="GUI\ThemeManager\UIThemeManager.cs" />
         <Compile Include="GUI\ThemeManager\UIWorkshopDependenciesModal.cs" />
         <Compile Include="GUI\UITitleBar.cs" />

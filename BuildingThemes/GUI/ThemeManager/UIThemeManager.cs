@@ -18,6 +18,7 @@ namespace BuildingThemes.GUI
         private UIButton m_themeAdd;
         private UIButton m_themeRemove;
         private UIButton m_dependencies;
+        private UIButton m_themeRename;
         private UIFastList m_buildingSelection;
         private UIButton m_includeAll;
         private UIButton m_includeNone;
@@ -472,7 +473,7 @@ namespace BuildingThemes.GUI
 
             m_themeSelection.backgroundSprite = "UnlockingPanel";
             m_themeSelection.width = left.width;
-            m_themeSelection.height = left.height - 80; // 80 = 40 (New/Delete row) + 40 (Dependencies row)
+            m_themeSelection.height = left.height - 120; // 120 = 40 (New/Delete row) + 40 (Dependencies row) + 40 (Rename row)
             m_themeSelection.canSelect = true;
             m_themeSelection.rowHeight = 40;
             m_themeSelection.autoHideScrollbar = true;
@@ -500,7 +501,9 @@ namespace BuildingThemes.GUI
                     m_buildingSelection.DisplayAt(pos);
                 }
 
-                m_themeRemove.isEnabled = !((Configuration.Theme)m_themeSelection.selectedItem).isBuiltIn;
+                bool canEdit = !((Configuration.Theme)m_themeSelection.selectedItem).isBuiltIn;
+                m_themeRemove.isEnabled = canEdit;
+                m_themeRename.isEnabled = canEdit;
             };
 
             // Add theme
@@ -540,6 +543,22 @@ namespace BuildingThemes.GUI
                 if (selectedTheme != null)
                     UIWorkshopDependenciesModal.instance.ShowFor(selectedTheme);
             };
+
+            // Rename theme button (full-width, third row below Add/Delete)
+            m_themeRename = UIUtils.CreateButton(left);
+            m_themeRename.width = LEFT_WIDTH;
+            m_themeRename.text = "Rename Theme";
+            m_themeRename.isEnabled = false;
+            m_themeRename.relativePosition = new Vector3(0, m_themeSelection.height + 80 + SPACING);
+
+            m_themeRename.eventClick += (c, p) =>
+            {
+                if (selectedTheme != null)
+                    UIRenameThemeModal.instance.ShowFor(selectedTheme);
+            };
+
+            // Pre-create the rename modal so its Start() runs before the first user click
+            UIRenameThemeModal.instance.Hide();
 
             // Counter label — filtered item stats, shown above the building list
             m_counterLabel = middle.AddUIComponent<UILabel>();
@@ -770,10 +789,11 @@ namespace BuildingThemes.GUI
 
             // Left panel — width stays fixed, height grows
             m_leftPanel.height = panelHeight;
-            m_themeSelection.height = panelHeight - 80;
+            m_themeSelection.height = panelHeight - 120;
             m_themeAdd.relativePosition = new Vector3(0, m_themeSelection.height + SPACING);
             m_themeRemove.relativePosition = new Vector3(LEFT_WIDTH - m_themeRemove.width, m_themeSelection.height + SPACING);
             m_dependencies.relativePosition = new Vector3(0, m_themeSelection.height + 40 + SPACING);
+            m_themeRename.relativePosition = new Vector3(0, m_themeSelection.height + 80 + SPACING);
 
             // Middle panel — both width and height grow
             m_middlePanel.width = currentMiddleWidth;
@@ -1070,6 +1090,41 @@ namespace BuildingThemes.GUI
             return compare;
         }
         #endregion
+
+        public void RenameTheme(Configuration.Theme theme, string newName)
+        {
+            if (theme == null || newName.IsNullOrWhiteSpace()) return;
+
+            theme.name = newName;
+            m_isDistrictThemesDirty = true;
+
+            m_themeSelection.selectedIndex = -1;
+            m_themeSelection.rowsData.m_buffer = m_themes.Keys.ToArray();
+            m_themeSelection.rowsData.m_size = m_themeSelection.rowsData.m_buffer.Length;
+
+            for (int i = 0; i < m_themeSelection.rowsData.m_buffer.Length; i++)
+            {
+                if (m_themeSelection.rowsData.m_buffer[i] == theme)
+                {
+                    m_themeSelection.DisplayAt(i);
+                    m_themeSelection.selectedIndex = i;
+                    break;
+                }
+            }
+
+            ThemePolicyTab.RefreshThemesContainer();
+        }
+
+        internal void RebuildThemeList()
+        {
+            InitBuildingLists();
+            m_themeSelection.selectedIndex = -1;
+            m_themeSelection.rowsData.m_buffer = m_themes.Keys.ToArray();
+            m_themeSelection.rowsData.m_size = m_themeSelection.rowsData.m_buffer.Length;
+            m_themeSelection.DisplayAt(0);
+            m_themeSelection.selectedIndex = 0;
+            ThemePolicyTab.RefreshThemesContainer();
+        }
 
         public void Plop(BuildingItem mItem)
         {
