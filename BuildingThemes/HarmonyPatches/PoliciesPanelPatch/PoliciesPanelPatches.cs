@@ -18,18 +18,15 @@ namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
         {
             if (!HarmonyHelper.IsHarmonyInstalled || deployed) return;
 
-            // RefreshPanel is private; SetParentButton is public.
+            // RefreshPanel validates every policy button — our tab would fail that check,
+            // so we remove it before the call and restore it after.
+            // SetParentButton no longer needs a patch: we add TutorialUITag to our tab
+            // in AddThemesTab() so it survives SetParentButton's component search.
             PatchUtil.Patch(
                 new PatchUtil.MethodDefinition(typeof(PoliciesPanel), "RefreshPanel",
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance),
                 prefix:  new PatchUtil.MethodDefinition(typeof(PoliciesPanelPatches), nameof(RefreshPanel_Prefix)),
                 postfix: new PatchUtil.MethodDefinition(typeof(PoliciesPanelPatches), nameof(RefreshPanel_Postfix)));
-
-            PatchUtil.Patch(
-                new PatchUtil.MethodDefinition(typeof(PoliciesPanel), "SetParentButton",
-                    System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance),
-                prefix:  new PatchUtil.MethodDefinition(typeof(PoliciesPanelPatches), nameof(SetParentButton_Prefix)),
-                postfix: new PatchUtil.MethodDefinition(typeof(PoliciesPanelPatches), nameof(SetParentButton_Postfix)));
 
             deployed = true;
             Debugger.Log("PoliciesPanel methods patched.");
@@ -41,8 +38,6 @@ namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
 
             PatchUtil.Unpatch(new PatchUtil.MethodDefinition(typeof(PoliciesPanel), "RefreshPanel",
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance));
-            PatchUtil.Unpatch(new PatchUtil.MethodDefinition(typeof(PoliciesPanel), "SetParentButton",
-                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance));
 
             deployed = false;
             Debugger.Log("PoliciesPanel methods unpatched.");
@@ -62,20 +57,5 @@ namespace BuildingThemes.HarmonyPatches.PoliciesPanelPatch
             catch (Exception e) { Debug.LogException(e); }
         }
 
-        // SetParentButton searches for a TutorialUITag on each button — our tab doesn't have one,
-        // so we remove it before the call and restore it after.
-        public static void SetParentButton_Prefix(UIButton button)
-        {
-            if (button == null) return;
-            try { ThemePolicyTab.RemoveThemesTab(); }
-            catch (Exception e) { Debug.LogException(e); }
-        }
-
-        public static void SetParentButton_Postfix(UIButton button)
-        {
-            if (button == null) return;
-            try { ThemePolicyTab.AddThemesTab(); }
-            catch (Exception e) { Debug.LogException(e); }
-        }
     }
 }

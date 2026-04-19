@@ -33,6 +33,9 @@ namespace BuildingThemes.GUI
             tab = tabstrip.AddTab("Themes");
             tab.stringUserData = "Themes";
             tab.textScale = 0.875f;
+            // SetParentButton iterates all tabs looking for TutorialUITag; add a dummy
+            // one so it doesn't crash when it reaches our tab.
+            tab.gameObject.AddComponent<TutorialUITag>();
 
             // recalculate the width of the tabs
             for (int i = 0; i < tabstrip.tabCount; i++)
