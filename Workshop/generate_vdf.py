@@ -10,13 +10,11 @@ workspace = os.environ['GITHUB_WORKSPACE']
 note = os.environ.get('CHANGE_NOTE', 'Update')
 
 desc_path = os.path.join(workspace, 'Workshop', 'description.txt')
-with open(desc_path, 'r') as f:
-    description = f.read()
 
 
 def vdf_escape(s):
-    """Escape a string for use as a VDF value (single-line or multiline via \\n)."""
-    return s.replace('\\', '\\\\').replace('"', '\\"').replace('\r', '').replace('\n', '\\n')
+    """Escape a string for use as a VDF single-line value."""
+    return s.replace('\\', '\\\\').replace('"', '\\"').replace('\r', '').replace('\n', ' ')
 
 
 vdf = (
@@ -26,7 +24,7 @@ vdf = (
     '\t"publishedfileid"\t"3708105182"\n'
     '\t"contentfolder"\t\t"' + workspace + '/dist/BuildingThemes2"\n'
     '\t"previewfile"\t\t"' + workspace + '/Workshop/PreviewImage.png"\n'
-    '\t"description"\t\t"' + vdf_escape(description) + '"\n'
+    '\t"descriptionfile"\t"' + desc_path + '"\n'
     '\t"changenote"\t\t"' + vdf_escape(note)[:7900] + '"\n'
     '}\n'
 )
