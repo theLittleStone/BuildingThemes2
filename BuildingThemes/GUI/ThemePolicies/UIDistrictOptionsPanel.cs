@@ -39,6 +39,15 @@ namespace BuildingThemes.GUI
             }
         }
 
+        public static void Cleanup()
+        {
+            if (_instance != null)
+            {
+                Destroy(_instance.gameObject);
+                _instance = null;
+            }
+        }
+
         public void Toggle()
         {
             if (isVisible)

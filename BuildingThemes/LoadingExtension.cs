@@ -156,7 +156,9 @@ namespace BuildingThemes
                 Debugger.LogFormat("OnLevelUnloading — {0} themed district(s) were active.", themedDistricts);
             }
             BuildingThemesManager.instance.Reset();
+            ThemePolicyTab.RemoveThemesTab();
             UIThemeManager.Destroy();
+            UIDistrictOptionsPanel.Cleanup();
             GUI.UIUtils.ClearAtlasCache();
         }
 
