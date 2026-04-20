@@ -108,6 +108,21 @@ namespace BuildingThemes
             info.autoBulldoze = enabled;
         }
 
+        public bool GetDistrictPreferElectricity(byte districtId)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info != null) return info.preferElectricity;
+            if (districtId != 0) { var c = districtThemeInfos[0]; if (c != null) return c.preferElectricity; }
+            return false;
+        }
+
+        public void SetDistrictPreferElectricity(byte districtId, bool enabled)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null || info.preferElectricity == enabled) return;
+            info.preferElectricity = enabled;
+        }
+
         public SizePreference GetDistrictSizePreference(byte districtId, ItemClass.Service service)
         {
             var info = districtThemeInfos[districtId];
@@ -198,6 +213,9 @@ namespace BuildingThemes
 
             /// <summary>When true, buildings not belonging to any active theme are gradually demolished.</summary>
             public bool autoBulldoze = false;
+
+            /// <summary>When true, zone blocks without electricity conductivity are skipped during spawn.</summary>
+            public bool preferElectricity = false;
 
             // Size preference per zone type
             public SizePreference residentialSizePref = SizePreference.Default;

@@ -81,6 +81,12 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
         // Prefix returns false to completely replace ZoneBlock.SimulationStep.
         // Logic is identical to the original ZoneBlockDetour, with __instance in place of zoneBlock,
         // and the temporary ImmaterialResourceManager revert/re-redirect removed (Harmony handles it).
+        // Per-district count of consecutive zone blocks skipped because they lacked electricity.
+        // When this reaches the fallback threshold the electricity filter is suspended for that
+        // district so zones can still grow while the player extends their power grid.
+        private static readonly int[] s_electricityMissCount = new int[128];
+        private const int ELECTRICITY_FALLBACK_THRESHOLD = 40;
+
         public static bool Prefix(ref ZoneBlock __instance, ushort blockID)
         {
             if (Debugger.Enabled && debugCount < 10)
@@ -232,6 +238,27 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
             if (num14 == 0) return false;
 
             bool flag3 = IsGoodPlace(ref __instance, vector3);
+
+            // Electricity preference: skip this block when the spawn position has no conductivity,
+            // unless too many consecutive blocks have already been skipped (fallback to normal
+            // spawning so zones can still grow before the player extends their power grid).
+            if (BuildingThemesManager.instance.GetDistrictPreferElectricity(district))
+            {
+                bool hasPower;
+                Singleton<ElectricityManager>.instance
+                    .CheckElectricity(new Vector3(vector3.x, 0f, vector3.y), out hasPower);
+                if (hasPower)
+                {
+                    s_electricityMissCount[district] = 0;
+                }
+                else
+                {
+                    s_electricityMissCount[district]++;
+                    if (s_electricityMissCount[district] < ELECTRICITY_FALLBACK_THRESHOLD)
+                        return false;
+                }
+            }
+
             if (Singleton<SimulationManager>.instance.m_randomizer.Int32(100u) >= num4)
             {
                 if (flag3) zoneManager.m_goodAreaFound[(int)zone] = 1024;

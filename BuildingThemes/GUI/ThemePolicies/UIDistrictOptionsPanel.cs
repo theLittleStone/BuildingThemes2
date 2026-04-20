@@ -16,6 +16,7 @@ namespace BuildingThemes.GUI
         private UIDropDown m_levelDropdown;
         private UIDropDown m_missingDropdown;
         private UICheckBox m_autoBulldozeCheck;
+        private UICheckBox m_preferElectricityCheck;
 
         // Size-preference controls
         private UIDropDown m_resSizePref;
@@ -185,6 +186,26 @@ namespace BuildingThemes.GUI
             };
             y += CHK_H + ROW_GAP;
 
+            // ── Prefer electricity ────────────────────────────────────────────
+            m_preferElectricityCheck = ThemePolicyTab.CreateCheckBox(this);
+            m_preferElectricityCheck.width            = CW;
+            m_preferElectricityCheck.relativePosition = new Vector3(X, y);
+            m_preferElectricityCheck.text             = "Prefer zones with electricity";
+            m_preferElectricityCheck.tooltip =
+                "Only spawn new buildings in zone cells that are already connected to\n" +
+                "the electricity grid. Cells without power are skipped and retried later.\n" +
+                "\n" +
+                "⚠ Spawning can be significantly slower while large parts of the district\n" +
+                "are not yet electrified. After 40 consecutive skips the filter is\n" +
+                "suspended automatically so growth is never blocked permanently — it\n" +
+                "re-activates as soon as an electrified cell is found again.";
+            m_preferElectricityCheck.eventCheckChanged += (c, val) =>
+            {
+                if (_updating) return;
+                BuildingThemesManager.instance.SetDistrictPreferElectricity(GetDistrictId(), val);
+            };
+            y += CHK_H + ROW_GAP;
+
             // ── Size preference section ───────────────────────────────────────
             AddLabel(X, y, CW, LBL_H, TS, "Building size preference per zone type  (Default = original game behaviour):");
             y += LBL_H + SEC_GAP;
@@ -334,6 +355,15 @@ namespace BuildingThemes.GUI
                     bool bulldoze = BuildingThemesManager.instance.GetDistrictAutoBulldoze(districtId);
                     if (m_autoBulldozeCheck.isChecked != bulldoze)
                         m_autoBulldozeCheck.isChecked = bulldoze;
+                }
+
+                if (m_preferElectricityCheck != null)
+                {
+                    m_preferElectricityCheck.isEnabled = managed;
+                    m_preferElectricityCheck.opacity   = managed ? 1f : 0.5f;
+                    bool prefElec = BuildingThemesManager.instance.GetDistrictPreferElectricity(districtId);
+                    if (m_preferElectricityCheck.isChecked != prefElec)
+                        m_preferElectricityCheck.isChecked = prefElec;
                 }
 
                 SyncSizeDrop(m_resSizePref, managed, BuildingThemesManager.instance.GetDistrictSizePreference(districtId, ItemClass.Service.Residential));

@@ -155,6 +155,7 @@ namespace BuildingThemes
                         missingAssetMode   = (int)themesManager.GetDistrictMissingAssetMode(i),
                         emptyLevelBehavior = (int)themesManager.GetDistrictEmptyLevelBehavior(i),
                         autoBulldoze       = themesManager.GetDistrictAutoBulldoze(i),
+                        preferElectricity  = themesManager.GetDistrictPreferElectricity(i),
                         residentialSizePref = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Residential),
                         commercialSizePref  = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Commercial),
                         industrialSizePref  = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Industrial),
@@ -240,8 +241,9 @@ namespace BuildingThemes
                 if (configuration.version >= 2)
                     buildingThemesManager.RestoreDistrictBehavior(district.id, district.missingAssetMode, district.emptyLevelBehavior);
 
-                // autoBulldoze defaults to false for old saves (field missing = XML default)
+                // autoBulldoze and preferElectricity default to false for old saves
                 buildingThemesManager.SetDistrictAutoBulldoze(district.id, district.autoBulldoze);
+                buildingThemesManager.SetDistrictPreferElectricity(district.id, district.preferElectricity);
 
                 // Size preferences added in version 3; -1 means not saved → keep default
                 if (configuration.version >= 3)
@@ -273,9 +275,10 @@ namespace BuildingThemes
     {
         // version 2 adds missingAssetMode + emptyLevelBehavior per district.
         // version 3 adds size-preference fields per district.
+        // version 4 adds preferElectricity per district.
         // Old saves deserialise version as 0 — those fields are ignored on load.
         [System.Xml.Serialization.XmlAttribute("version")]
-        public int version = 3;
+        public int version = 4;
 
         public class District
         {
@@ -292,6 +295,8 @@ namespace BuildingThemes
             public int industrialSizePref  = -1;
             public int officeSizePref      = -1;
             public int strengthPref        = -1;
+            // added in version 4; defaults to false for older saves
+            public bool preferElectricity = false;
         }
 
         public List<District> Districts = new List<District>();

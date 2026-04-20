@@ -206,6 +206,7 @@ Open via the **District Options** button in the Themes tab.
 | --- | --- |
 | Allow buildings not in any theme | Blacklist mode — anything not explicitly excluded can spawn |
 | Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
+| Prefer zones with electricity | Only spawn new buildings in zone cells that are already connected to the electricity grid. See [Prefer Zones With Electricity](#prefer-zones-with-electricity) below. |
 | Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default) or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
 | Size preference (4 dropdowns) | Bias spawning toward a particular footprint size or height for each zone type — see [Size Preference](#size-preference) |
@@ -250,6 +251,31 @@ footprints — they are only used for missing workshop assets (see Missing Asset
 where theme buildings are missing. Those supplemented vanilla buildings are considered
 valid by auto-bulldoze and will not be removed — they exist to replace the missing
 workshop asset, not as a sign of an uncovered footprint.
+
+---
+
+## Prefer Zones With Electricity
+
+Enable **Prefer zones with electricity** in District Options to make the mod skip zone
+cells that are not yet connected to the electricity grid. Only cells with active
+conductivity are used for new spawns; the rest wait until power reaches them.
+
+> ⚠ **Spawning will be noticeably slower** while large parts of the district are
+> unelectrified. Plan your power grid before zoning, or enable this option only after
+> electricity infrastructure is in place.
+
+**Automatic fallback:** after 40 consecutive zone blocks are skipped due to no
+electricity, the filter suspends itself so growth is never permanently blocked. As soon
+as the game finds an electrified block in the district the counter resets and the
+preference re-activates automatically.
+
+**Typical workflow:**
+
+1. Lay out roads and power lines first.
+2. Zone the area.
+3. Enable **Prefer zones with electricity** in District Options.
+4. New buildings only appear where electricity reaches — extend power lines to grow the
+   district further.
 
 ---
 
