@@ -21,6 +21,9 @@ namespace BuildingThemes.GUI
         public UIDropDown dlcFilter;
         public UITextField nameFilter;
 
+        public float minHeight = 0f;
+        public float maxHeight = 0f;
+
         // Parallel list to dlcFilter.items.  Index 0 = "All DLC" (both masks None).
         private struct DlcEntry
         {
@@ -251,13 +254,10 @@ namespace BuildingThemes.GUI
             get { return (ItemClass.Level)(levelFilter.selectedIndex - 1); }
         }
 
+        // Each component is 0 when "All" is selected, or 1-4 for a specific size.
         public Vector2 buildingSize
         {
-            get
-            {
-                if (sizeFilterX.selectedIndex == 0) return Vector2.zero;
-                return new Vector2(sizeFilterX.selectedIndex, sizeFilterY.selectedIndex + 1);
-            }
+            get { return new Vector2(sizeFilterX.selectedIndex, sizeFilterY.selectedIndex); }
         }
 
         public string buildingName
@@ -417,7 +417,7 @@ namespace BuildingThemes.GUI
             sizeLabel.relativePosition = new Vector3(levelFilter.relativePosition.x + levelFilter.width + 10, 40);
 
             sizeFilterX = UIUtils.CreateDropDown(this);
-            sizeFilterX.width = 55;
+            sizeFilterX.width = 60;
             sizeFilterX.AddItem("All");
             sizeFilterX.AddItem("1");
             sizeFilterX.AddItem("2");
@@ -428,54 +428,76 @@ namespace BuildingThemes.GUI
 
             UILabel XLabel = AddUIComponent<UILabel>();
             XLabel.textScale = 0.8f;
-            XLabel.padding = new RectOffset(0, 0, 8, 0);
+            XLabel.autoSize = true;
+            XLabel.padding = new RectOffset(3, 3, 8, 0);
             XLabel.text = "X";
-            XLabel.isVisible = false;
-            XLabel.relativePosition = new Vector3(sizeFilterX.relativePosition.x + sizeFilterX.width - 5, 40);
+            XLabel.relativePosition = new Vector3(sizeFilterX.relativePosition.x + sizeFilterX.width, 40);
 
             sizeFilterY = UIUtils.CreateDropDown(this);
-            sizeFilterY.width = 45;
+            sizeFilterY.width = 60;
+            sizeFilterY.AddItem("All");
             sizeFilterY.AddItem("1");
             sizeFilterY.AddItem("2");
             sizeFilterY.AddItem("3");
             sizeFilterY.AddItem("4");
             sizeFilterY.selectedIndex = 0;
-            sizeFilterY.isVisible = false;
             sizeFilterY.relativePosition = new Vector3(XLabel.relativePosition.x + XLabel.width + 5, 40);
 
-            sizeFilterX.eventSelectedIndexChanged += (c, i) =>
-            {
-                if (i == 0)
-                {
-                    sizeFilterX.width = 55;
-                    XLabel.isVisible = false;
-                    sizeFilterY.isVisible = false;
-                }
-                else
-                {
-                    sizeFilterX.width = 45;
-                    XLabel.isVisible = true;
-                    sizeFilterY.isVisible = true;
-                }
-
-                eventFilteringChanged(this, 4);
-            };
-
+            sizeFilterX.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 4);
             sizeFilterY.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 4);
 
-            // DLC filter — own row between the Display row and the status checkboxes.
-            // Width fills the panel so the selected name is always fully visible.
+            // DLC filter — left half of the row; height filter occupies the right half.
+            float halfWidth = (width - 5) / 2f;
             dlcFilter = UIUtils.CreateDropDown(this);
-            dlcFilter.width = width - 5;
+            dlcFilter.width = halfWidth;
             dlcFilter.tooltip = "Filter by DLC / Content Creator Pack.\nOnly DLCs that are installed and have buildings in this theme are shown.";
             dlcFilter.relativePosition = new Vector3(0, 74);
-            dlcFilter.anchor = UIAnchorStyle.Left | UIAnchorStyle.Right;
 
             m_dlcEntries.Add(new DlcEntry()); // index 0 = "All DLC"
             dlcFilter.AddItem("All DLC");
             dlcFilter.selectedIndex = 0;
 
             dlcFilter.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 8);
+
+            // Height filter — right half of the DLC row.
+            UILabel heightLabel = AddUIComponent<UILabel>();
+            heightLabel.textScale = 0.8f;
+            heightLabel.padding = new RectOffset(0, 0, 8, 0);
+            heightLabel.text = "Height:";
+            heightLabel.relativePosition = new Vector3(halfWidth + 8, 74);
+
+            UITextField heightMin = UIUtils.CreateTextField(this);
+            heightMin.width = 48;
+            heightMin.height = 28;
+            heightMin.padding = new RectOffset(4, 4, 6, 4);
+            heightMin.tooltip = "Minimum building height in metres (leave blank for no limit)";
+            heightMin.relativePosition = new Vector3(heightLabel.relativePosition.x + heightLabel.width + 3, 74);
+
+            UILabel heightSep = AddUIComponent<UILabel>();
+            heightSep.textScale = 0.8f;
+            heightSep.padding = new RectOffset(0, 0, 8, 0);
+            heightSep.text = "–";
+            heightSep.relativePosition = new Vector3(heightMin.relativePosition.x + heightMin.width + 2, 74);
+
+            UITextField heightMax = UIUtils.CreateTextField(this);
+            heightMax.width = 48;
+            heightMax.height = 28;
+            heightMax.padding = new RectOffset(4, 4, 6, 4);
+            heightMax.tooltip = "Maximum building height in metres (leave blank for no limit)";
+            heightMax.relativePosition = new Vector3(heightSep.relativePosition.x + heightSep.width + 2, 74);
+
+            heightMin.eventTextChanged += (c, s) =>
+            {
+                float v;
+                minHeight = float.TryParse(s, out v) && v > 0 ? v : 0f;
+                eventFilteringChanged(this, 9);
+            };
+            heightMax.eventTextChanged += (c, s) =>
+            {
+                float v;
+                maxHeight = float.TryParse(s, out v) && v > 0 ? v : 0f;
+                eventFilteringChanged(this, 9);
+            };
 
             // Name filter
             UILabel nameLabel = AddUIComponent<UILabel>();

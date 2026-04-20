@@ -1,4 +1,5 @@
 using CitiesHarmony.API;
+using ColossalFramework;
 using ColossalFramework.Math;
 
 namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
@@ -35,6 +36,15 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
             ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level,
             int width, int length, BuildingInfo.ZoningMode zoningMode, int style)
         {
+            // Fast path: skip all theme logic for unthemed districts.
+            var mgr = BuildingThemesManager.instance;
+            if (mgr != null)
+            {
+                byte districtId = Singleton<DistrictManager>.instance.GetDistrict(BuildingThemesMod.position);
+                if (!mgr.IsEffectivelyThemed(districtId))
+                    return true;
+            }
+
             __result = RandomBuildings.GetRandomBuildingInfo_Spawn(
                 BuildingThemesMod.position, ref r, service, subService, level,
                 width, length, zoningMode, style);

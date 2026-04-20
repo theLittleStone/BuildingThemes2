@@ -175,6 +175,7 @@ namespace BuildingThemes
             public int    spawnWeight;
             public int    cellWidth;
             public int    cellLength;
+            public float  height;
             public ItemClass.SubService subService;
             public ItemClass.Level      level;
             public BuildingInfo.ZoningMode zoningMode;
@@ -899,12 +900,19 @@ namespace BuildingThemes
                             // Append to flat entry list for size-preference selection path
                             if (buildingEntries != null)
                             {
+                                float entryHeight = 0f;
+                                var gen = prefab.m_generatedInfo;
+                                if (gen != null && gen.m_heights != null)
+                                    for (int h = 0; h < gen.m_heights.Length; h++)
+                                        if (gen.m_heights[h] > entryHeight) entryHeight = gen.m_heights[h];
+
                                 buildingEntries.Add(new DistrictBuildingEntry
                                 {
                                     prefabIndex = (ushort)j,
                                     spawnWeight = spawnRate,
                                     cellWidth   = prefab.m_cellWidth,
                                     cellLength  = prefab.m_cellLength,
+                                    height      = entryHeight,
                                     subService  = prefab.m_class.m_subService,
                                     level       = prefab.m_class.m_level,
                                     zoningMode  = prefab.m_zoningMode,
@@ -1164,6 +1172,12 @@ namespace BuildingThemes
                 case SizePreference.SmallestFirst:
                     list.Sort((a, b) => (a.cellWidth * a.cellLength).CompareTo(b.cellWidth * b.cellLength));
                     break;
+                case SizePreference.TallestFirst:
+                    list.Sort((a, b) => b.height.CompareTo(a.height));
+                    break;
+                case SizePreference.ShortestFirst:
+                    list.Sort((a, b) => a.height.CompareTo(b.height));
+                    break;
                 // Random / Default: no sort — all will get rank 1
             }
         }
@@ -1191,6 +1205,9 @@ namespace BuildingThemes
                     return a.cellWidth == b.cellWidth && a.cellLength == b.cellLength;
                 case SizePreference.DeepestFirst:
                     return a.cellLength == b.cellLength && a.cellWidth == b.cellWidth;
+                case SizePreference.TallestFirst:
+                case SizePreference.ShortestFirst:
+                    return a.height == b.height;
                 default: return true;
             }
         }

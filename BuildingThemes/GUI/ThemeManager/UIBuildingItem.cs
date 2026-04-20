@@ -12,7 +12,6 @@ namespace BuildingThemes.GUI
         private UILabel m_level;
         private UILabel m_size;
         private UIPanel m_background;
-        private UIPanel m_statusBadge;
 
         private BuildingItem m_building;
         private bool _displaying;
@@ -42,11 +41,9 @@ namespace BuildingThemes.GUI
             if (m_name == null) return;
 
             background.width = width;
-            // Shifted 15px left from original positions to make room for the status badge
-            m_statusBadge.relativePosition = new Vector3(width - 12f, 15);
-            m_size.relativePosition = new Vector3(width - 50f, 15);
-            m_level.relativePosition = new Vector3(width - 80f, 15);
-            m_category.relativePosition = new Vector3(width - 110f, 10);
+            m_size.relativePosition = new Vector3(width - 35f, 15);
+            m_level.relativePosition = new Vector3(width - 65f, 15);
+            m_category.relativePosition = new Vector3(width - 95f, 10);
         }
 
         protected override void OnMouseEnter(UIMouseEventParameter p)
@@ -114,13 +111,6 @@ namespace BuildingThemes.GUI
 
             m_category = AddUIComponent<UISprite>();
             m_category.size = new Vector2(20, 20);
-
-            // Status badge: small colored square at far right edge
-            m_statusBadge = AddUIComponent<UIPanel>();
-            m_statusBadge.size = new Vector2(10, 10);
-            m_statusBadge.backgroundSprite = "IconPolicyBaseRect";
-            m_statusBadge.relativePosition = new Vector3(width - 12f, 15);
-            m_statusBadge.isVisible = false;
         }
 
         #region IUIFastListRow implementation
@@ -128,7 +118,7 @@ namespace BuildingThemes.GUI
         {
             SetupControls();
 
-            float maxLabelWidth = width - 135; // 15px extra for the status badge
+            float maxLabelWidth = width - 120;
 
             m_building = data as BuildingItem;
             m_name.text = m_building.displayName;
@@ -166,24 +156,6 @@ namespace BuildingThemes.GUI
                 m_steamIcon.isVisible = false;
 
                 m_name.label.relativePosition = new Vector3(22, 2);
-            }
-
-            // Status badge — priority: missing (red) > DLC locked (grey) > zero weight (orange)
-            switch (m_building.assetStatus)
-            {
-                case AssetStatus.Missing:
-                    m_statusBadge.color = new Color32(220, 60, 60, 255);
-                    m_statusBadge.tooltip = "Workshop asset not loaded";
-                    m_statusBadge.isVisible = true;
-                    break;
-                case AssetStatus.DLCLocked:
-                    m_statusBadge.color = new Color32(120, 120, 120, 255);
-                    m_statusBadge.tooltip = "Not available (DLC not owned or wrong map environment)";
-                    m_statusBadge.isVisible = true;
-                    break;
-                default:
-                    m_statusBadge.isVisible = false;
-                    break;
             }
 
             if (isRowOdd)

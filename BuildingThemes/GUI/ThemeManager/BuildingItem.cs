@@ -162,6 +162,21 @@ namespace BuildingThemes.GUI
             }
         }
 
+        // Returns the building's maximum height in metres, or -1 if unavailable (unloaded prefab).
+        public float height
+        {
+            get
+            {
+                if (prefab == null) return -1f;
+                var gen = prefab.m_generatedInfo;
+                if (gen == null || gen.m_heights == null || gen.m_heights.Length == 0) return -1f;
+                float max = 0f;
+                for (int i = 0; i < gen.m_heights.Length; i++)
+                    if (gen.m_heights[i] > max) max = gen.m_heights[i];
+                return max;
+            }
+        }
+
         public string sizeAsString
         {
             get

@@ -80,7 +80,8 @@ Open from the **Themes** tab in the district policy panel.
 | Display (Origin) | All / Default (vanilla/DLC) / Custom (Workshop) / Cloned |
 | Display (Status) | All / Included / Excluded |
 | Level | Filter by building level (1–5) |
-| Size | Filter by footprint (width × depth) |
+| Size | Filter by footprint (width × depth); each axis is independent — set one to All and the other to a specific value |
+| Height | Filter by building height in metres (min / max); unloaded assets are excluded when the filter is active |
 | DLC / CCP | Filter by installed expansion or Content Creator Pack |
 | Name | Filter by name or Steam Workshop ID |
 | Show loaded / missing / DLC-locked | Toggle visibility of asset groups |
@@ -111,12 +112,25 @@ Open from the **Themes** tab in the district policy panel.
 
 ### Building List Indicators
 
-Each row in the building list shows a small colored badge on the right edge when attention is needed:
+Each row uses text colour to signal asset status:
 
-| Badge color | Meaning |
+| Text colour | Meaning |
 | --- | --- |
-| Red | Workshop asset is not loaded (unsubscribed, disabled, or failed to load) |
-| Grey | Asset is unavailable — DLC not owned or wrong map environment |
+| White | Asset loaded and available |
+| Yellow | Workshop asset not loaded (unsubscribed, disabled, or failed to load) |
+| Grey | Asset unavailable — DLC not owned or wrong map environment |
+| Cyan | Cloned building (generated at level load) |
+
+### Theme List Indicators
+
+A green **♦** badge is shown next to themes that contain only base-game
+buildings — no DLC or workshop assets required to use them. Hovering the
+badge shows a tooltip confirming this.
+
+Workshop mod themes imported via `BuildingThemes.xml` (e.g. the Japanese
+theme mod) show their plain name without any prefix. Built-in game district
+styles show a `[DLC]` prefix; non-DLC workshop-registered district styles
+show `[Custom]`.
 
 ### Spawn Weight
 
@@ -194,7 +208,7 @@ Open via the **District Options** button in the Themes tab.
 | Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
 | Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default) or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
-| Size preference (4 dropdowns) | Bias spawning toward a particular footprint size for each zone type — see [Size Preference](#size-preference) |
+| Size preference (4 dropdowns) | Bias spawning toward a particular footprint size or height for each zone type — see [Size Preference](#size-preference) |
 | Preference strength | How strongly size preference overrides spawn weight — Gentle / Moderate / Strong |
 | Spawn Diagnostics | Accepted/rejected counts, missing-asset list, and a live list of non-theme buildings currently placed in the district |
 
@@ -207,7 +221,9 @@ gradually demolish any growable zone building in that district that is not part 
 active themes. Replacements spawn according to the normal themed-spawn rules.
 
 - The scan runs in the background — buildings are removed a batch at a time so performance
-  impact is minimal. Expect full turnover within a few seconds of game time.
+  impact is minimal. The pace can be configured in **Mod Options → Building Themes →
+  Auto-bulldoze pace**: Gentle (~26 s full pass), Normal (~6.5 s, default), or Aggressive
+  (~1.6 s).
 - Only active in districts where **Theme Management** is enabled and **Blacklist mode** is
   off (blacklist mode has no concept of "non-theme").
 - After changing which buildings are included in a theme, the scan resets so newly-invalid
@@ -292,6 +308,8 @@ Industrial, and Office.
 | **Deepest first** | Prefers deepest buildings; tie-break by narrowest width |
 | **Random (weight only)** | No size bias — selection is purely by spawn weight |
 | **Smallest first** | Prefers buildings with the smallest total footprint (width × depth) |
+| **Tallest first** | Prefers the tallest buildings by mesh height |
+| **Shortest first** | Prefers the shortest buildings by mesh height |
 
 When any mode other than **Default** is active, all theme buildings that fit the available
 lot are considered at once in a single weighted roll — the game's original shrink loop is
@@ -438,7 +456,7 @@ list is empty, no buildings are in your theme. Every theme must include at least
 Level 1 building for the target zone type.
 
 **2. Workshop assets are not loaded**
-Missing (red) buildings in the Theme Manager indicate assets that are not active in your
+Yellow-text buildings in the Theme Manager indicate assets that are not active in your
 playset. Use **Workshop Dependencies** to copy their IDs for resubscription or click
 **Subscribe Missing** to subscribe from within the game.
 

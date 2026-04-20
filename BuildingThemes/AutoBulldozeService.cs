@@ -4,18 +4,32 @@ namespace BuildingThemes
 {
     /// <summary>
     /// Gradually demolishes growable buildings that are not valid for their district's active themes.
-    /// Called every BuildingManager.SimulationStepImpl call (all four subSteps).
+    /// Called once per simulation frame (subStep 0 only via AutoBulldozePatch).
     /// Only runs when at least one district has autoBulldoze enabled.
     /// </summary>
     internal static class AutoBulldozeService
     {
-        // How many building slots to inspect each tick.
-        // The array is sparse (most slots are empty service buildings), so this needs to be
-        // large enough that real growable buildings are encountered regularly.
-        // 49152 total slots / 128 per tick = ~384 ticks per full city pass.
-        // SimulationStepImpl fires for all 4 subSteps (~240/s at normal speed), so a full
-        // pass takes ~1.6 seconds — responsive without being jarring.
-        private const int BatchSize = 128;
+        // Pace 0 = Gentle (32 slots/tick)  → ~26 s full pass at 60 fps
+        // Pace 1 = Normal  (128 slots/tick) → ~6.5 s full pass at 60 fps  (default)
+        // Pace 2 = Aggressive (512 slots/tick) → ~1.6 s full pass at 60 fps
+        // Persisted via ColossalFramework's game settings file (survives game restarts).
+        private static readonly SavedInt s_pace = new SavedInt("autoBulldozePace", "BuildingThemes2", 1, true);
+
+        public static int Pace
+        {
+            get => s_pace;
+            set { if ((int)s_pace != value) s_pace.value = value; }
+        }
+
+        private static int GetBatchSize()
+        {
+            switch ((int)s_pace)
+            {
+                case 0: return 32;
+                case 2: return 512;
+                default: return 128;
+            }
+        }
 
         private static ushort s_cursor = 0;
         private static int s_tickCount = 0;
@@ -52,7 +66,7 @@ namespace BuildingThemes
             int eligible = 0;
             int released = 0;
 
-            while (scanned < BatchSize)
+            while (scanned < GetBatchSize())
             {
                 if (++s_cursor >= size) s_cursor = 1;
                 scanned++;

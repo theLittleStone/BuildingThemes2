@@ -61,6 +61,13 @@ namespace BuildingThemes
                     }
                 ) as ColossalFramework.UI.UIDropDown;
 
+                var autoBulldozePaceDropdown = behaviourGroup.AddDropdown(
+                    "Auto-bulldoze pace",
+                    new string[] { "Gentle (slow)", "Normal", "Aggressive (fast)" },
+                    AutoBulldozeService.Pace,
+                    delegate (int idx) { AutoBulldozeService.Pace = idx; }
+                ) as ColossalFramework.UI.UIDropDown;
+
                 var warningCheck = behaviourGroup.AddCheckbox("Warning message when selecting an invalid theme", UIThemePolicyItem.showWarning,
                     delegate (bool c) { UIThemePolicyItem.showWarning = c; }) as ColossalFramework.UI.UICheckBox;
 
@@ -181,6 +188,7 @@ namespace BuildingThemes
                     Debugger.Enabled = false;
                     BuildingThemesManager.MissingAssetBehavior = MissingAssetMode.FillWithVanilla;
                     BuildingThemesManager.EmptyLevelBehavior = EmptyLevelBehavior.VanillaFallback;
+                    AutoBulldozeService.Pace = 1;
 
                     if (unlockCheck != null)  unlockCheck.isChecked  = true;
                     if (cloningCheck != null) cloningCheck.isChecked = false;
@@ -188,6 +196,7 @@ namespace BuildingThemes
                     if (debugCheck != null)   debugCheck.isChecked   = false;
                     if (missingModeDropdown != null) missingModeDropdown.selectedIndex = (int)MissingAssetMode.FillWithVanilla;
                     if (emptyLevelDropdown != null)  emptyLevelDropdown.selectedIndex  = (int)EmptyLevelBehavior.VanillaFallback;
+                    if (autoBulldozePaceDropdown != null) autoBulldozePaceDropdown.selectedIndex = 1;
                 });
             }
             catch

@@ -106,8 +106,9 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
             return fallback;
         }
 
-        public static void Postfix()
+        public static void Postfix(int __0)
         {
+            if (__0 != 0) return; // only subStep 0 — one tick per frame instead of 4×
             try
             {
                 AutoBulldozeService.Tick();

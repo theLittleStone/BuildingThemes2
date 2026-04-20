@@ -51,7 +51,7 @@ namespace BuildingThemes.GUI
         private const float TITLE_HEIGHT = 40;
         // Minimum window dimensions (= original fixed size)
         private const float MIN_WIDTH = SPACING + LEFT_WIDTH + SPACING + MIDDLE_WIDTH + SPACING + RIGHT_WIDTH + SPACING;
-        private const float MIN_HEIGHT = TITLE_HEIGHT + HEIGHT + SPACING;
+        private const float MIN_HEIGHT = (TITLE_HEIGHT + HEIGHT + SPACING + MIN_WIDTH) / 2f - 60f; // ~722
         #endregion
 
         private static GameObject _gameObject;
@@ -412,11 +412,12 @@ namespace BuildingThemes.GUI
                 canFocus = true;
                 isInteractive = true;
                 width = SPACING + LEFT_WIDTH + SPACING + MIDDLE_WIDTH + SPACING + RIGHT_WIDTH + SPACING;
-                height = TITLE_HEIGHT + HEIGHT + SPACING;
+                height = MIN_HEIGHT;
                 relativePosition = new Vector3(Mathf.Floor((GetUIView().fixedWidth - width) / 2), Mathf.Floor((GetUIView().fixedHeight - height) / 2));
 
                 InitBuildingLists();
                 SetupControls();
+                ResizeUI(); // panels were built at fixed HEIGHT; sync them to the actual window size
             }
             catch (Exception e)
             {
@@ -1008,9 +1009,19 @@ namespace BuildingThemes.GUI
                 int level = (int)(m_filter.buildingLevel + 1);
                 if (m_filter.buildingLevel != ItemClass.Level.None && item.level != level) continue;
 
-                // Size
+                // Size — each dimension filtered independently (0 = All)
                 Vector2 buildingSize = m_filter.buildingSize;
-                if (buildingSize != Vector2.zero && item.size != buildingSize) continue;
+                if (buildingSize.x > 0 && item.size.x != buildingSize.x) continue;
+                if (buildingSize.y > 0 && item.size.y != buildingSize.y) continue;
+
+                // Height
+                if (m_filter.minHeight > 0 || m_filter.maxHeight > 0)
+                {
+                    float h = item.height;
+                    if (h < 0) continue; // unknown height (unloaded prefab) — exclude when filter active
+                    if (m_filter.minHeight > 0 && h < m_filter.minHeight) continue;
+                    if (m_filter.maxHeight > 0 && h > m_filter.maxHeight) continue;
+                }
 
                 // Zone
                 if (!m_filter.IsAllZoneSelected())

@@ -15,17 +15,17 @@ Apply building themes to districts — only buildings in the selected themes wil
 
 [list]
 [*][b]Per-district themes[/b] — assign different building sets to each district
-[*][b]Theme Manager[/b] — browse and filter by zone, level, size, origin, DLC/CCP, or name; create, rename, and delete themes
+[*][b]Theme Manager[/b] — browse and filter by zone, level, size, height, origin, DLC/CCP, or name; create, rename, and delete themes
 [*][b]Bulk actions[/b] — Include All / None / Valid (loaded + correct dimensions) / Exclude Missing in the current filtered view
 [*][b]Per-building options[/b] — spawn weight, forced upgrade target, plop, bulldoze all instances
 [*][b]Workshop Dependencies[/b] — see missing assets, copy IDs, or subscribe in one click
 [*][b]Spawn Diagnostics[/b] — accepted/rejected counts, missing-asset list, and live non-theme building count per district
 [*][b]Missing asset handling[/b] — Skip / Fill with vanilla / Fall back to vanilla (global default + per-district override)
 [*][b]Level behavior[/b] — Vanilla fallback (default) or Strict freeze when a theme has no buildings for the next level
-[*][b]Auto-bulldoze[/b] — gradually replace non-theme buildings in a district with themed ones
+[*][b]Auto-bulldoze[/b] — gradually replace non-theme buildings in a district with themed ones; configurable pace (Gentle / Normal / Aggressive)
 [*][b]Asset Cloning[/b] — duplicate a building and assign a different wealth level (experimental)
 [*][b]Spawn weight[/b] — control how often a building appears relative to same-type peers
-[*][b]Size preference[/b] — bias spawning toward Biggest / Widest / Deepest / Smallest / Random footprints per zone type, with Gentle / Moderate / Strong / Absolute strength
+[*][b]Size preference[/b] — bias spawning toward Biggest / Widest / Deepest / Smallest / Tallest / Shortest / Random footprints per zone type, with Gentle / Moderate / Strong / Absolute strength
 [*][b]Blacklist mode[/b] — invert the theme: everything spawns except what you explicitly exclude
 [*][b]Import from District Styles Plus[/b] — convert DSP styles into BT2 themes with one click (see below)
 [/list]

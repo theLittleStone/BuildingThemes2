@@ -40,6 +40,10 @@ namespace BuildingThemes
         Random       = 4,
         /// <summary>Prefer buildings with the smallest footprint area (width × length).</summary>
         SmallestFirst = 5,
+        /// <summary>Prefer tallest buildings first.</summary>
+        TallestFirst  = 6,
+        /// <summary>Prefer shortest buildings first.</summary>
+        ShortestFirst = 7,
     }
 
     /// <summary>
@@ -112,9 +116,31 @@ namespace BuildingThemes
             {
                 get
                 {
-                    if (!isBuiltIn) return name;
-                    string prefix = isDlc ? "[DLC] " : "[Vanilla] ";
+                    // Only game district styles (stylePackage != null) get [Vanilla]/[DLC] prefix.
+                    // Mod/workshop themes are isBuiltIn=true (read-only) but show their plain name.
+                    if (!isBuiltIn || stylePackage == null) return name;
+                    string prefix = isDlc ? "[DLC] " : "[Custom] ";
                     return prefix + ResolveLocaleName();
+                }
+            }
+
+            /// <summary>
+            /// True when this theme contains only base-game buildings — no DLC and no workshop assets required.
+            /// Style-based themes use the isDlc flag; mod/user themes check each building individually.
+            /// </summary>
+            [XmlIgnore]
+            public bool isVanillaOnly
+            {
+                get
+                {
+                    if (buildings.Count == 0) return false;
+                    if (isBuiltIn && stylePackage != null) return !isDlc;
+                    foreach (var b in buildings)
+                    {
+                        if (b.dlc != null) return false;
+                        if (b.name != null && b.name.Contains('.')) return false;
+                    }
+                    return true;
                 }
             }
 

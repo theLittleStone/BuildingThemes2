@@ -191,7 +191,8 @@ namespace BuildingThemes.GUI
 
             string[] sizePrefItems = new string[] {
                 "Default", "Biggest first", "Widest first",
-                "Deepest first", "Random (weight only)", "Smallest first"
+                "Deepest first", "Random (weight only)", "Smallest first",
+                "Tallest first", "Shortest first"
             };
             string sizePrefTooltip =
                 "Default: original game behaviour — tries widest lot first, shrinks until a theme building fits.\n" +
@@ -199,7 +200,9 @@ namespace BuildingThemes.GUI
                 "Widest first: prefers widest buildings, tie-break by shallowest depth.\n" +
                 "Deepest first: prefers deepest buildings, tie-break by narrowest width.\n" +
                 "Random (weight only): no size bias — purely by spawn weight.\n" +
-                "Smallest first: prefers narrowest × shallowest footprint.";
+                "Smallest first: prefers narrowest × shallowest footprint.\n" +
+                "Tallest first: prefers tallest buildings (by mesh height).\n" +
+                "Shortest first: prefers shortest buildings (by mesh height).";
 
             // Row 1: Residential | Commercial
             AddLabel(X,            y, HW, LBL_H, TS, "Residential:");

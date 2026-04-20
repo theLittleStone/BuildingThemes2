@@ -17,6 +17,7 @@ namespace BuildingThemes.GUI
         private UISprite m_categoryIcon;
 
         private UILabel m_level;
+        private UILabel m_height;
         private UILabel m_size;
 
         public override void Start()
@@ -79,6 +80,16 @@ namespace BuildingThemes.GUI
             m_level.isVisible = false;
             m_level.relativePosition = new Vector3(5, height - 20);
 
+            // Height
+            m_height = AddUIComponent<UILabel>();
+            m_height.textScale = 0.8f;
+            m_height.useDropShadow = true;
+            m_height.dropShadowColor = new Color32(80, 80, 80, 255);
+            m_height.dropShadowOffset = new Vector2(2, -2);
+            m_height.text = "Height";
+            m_height.isVisible = false;
+            m_height.relativePosition = new Vector3(5, height - 20);
+
             // Size
             m_size = AddUIComponent<UILabel>();
             m_size.textScale = 0.8f;
@@ -120,6 +131,7 @@ namespace BuildingThemes.GUI
             m_buildingName.isVisible = false;
             m_categoryIcon.isVisible = false;
             m_level.isVisible = false;
+            m_height.isVisible = false;
             m_size.isVisible = false;
 
             if(item == null) return;
@@ -140,11 +152,21 @@ namespace BuildingThemes.GUI
                 m_categoryIcon.isVisible = true;
             }
 
-            // Level
+            // Level and Height — stacked at bottom-left
+            float bottomY = height - 20;
+            float h = m_item.height;
+            if (h >= 0)
+            {
+                m_height.text = Mathf.RoundToInt(h) + "m";
+                m_height.isVisible = true;
+                m_height.relativePosition = new Vector3(5, bottomY);
+                bottomY -= 18;
+            }
             if (m_item.level != 0)
             {
                 m_level.text = "Level " + m_item.level;
                 m_level.isVisible = true;
+                m_level.relativePosition = new Vector3(5, bottomY);
             }
 
             // Size
