@@ -59,15 +59,42 @@ namespace BuildingThemes
                 if (!isGameMode) return;
 
                 RandomBuildings.ResetLogThrottle();
-                BuildingThemesManager.instance.ImportThemes();
-                Debugger.Log("ImportThemes done.");
-                if (Debugger.Enabled)
+
+                // Import mod themes synchronously (needed immediately for compat checks etc.).
+                // Style import is deferred: district styles from DSP and other mods are only
+                // fully populated inside their own OnLevelLoaded, which may run after ours.
+                // SimulationManager.AddAction() fires on the first simulation tick — guaranteed
+                // to be after ALL mods have returned from OnLevelLoaded.
+                BuildingThemesManager.instance.ImportThemesFromThemeMods();
+                Debugger.Log("ImportThemesFromThemeMods done.");
+
+                SimulationManager.instance.AddAction(() =>
                 {
-                    var allThemes = BuildingThemesManager.instance.GetAllThemes();
-                    int totalBuildings = 0;
-                    foreach (var t in allThemes) totalBuildings += t.buildings.Count;
-                    Debugger.LogFormat("{0} theme(s) loaded, {1} building entries total.", allThemes.Count, totalBuildings);
-                }
+                    try
+                    {
+                        // importedStyles is still false (ApplyConfiguration only called
+                        // ImportThemesFromThemeMods). Full ImportThemes() now runs
+                        // ImportStylesAsThemes() with DSP/other mods fully initialized.
+                        BuildingThemesManager.instance.ImportThemes();
+
+                        // Re-apply saved district config so style-themed districts
+                        // (e.g. DSP custom styles) get their theme assignments restored.
+                        SerializableDataExtension.ApplyPendingConfiguration();
+
+                        // Rebuild spawn pools for districts whose theme was empty on first compile.
+                        BuildingThemesManager.instance.RefreshDistrictThemeInfos();
+
+                        if (Debugger.Enabled)
+                        {
+                            var allThemes = BuildingThemesManager.instance.GetAllThemes();
+                            int totalBuildings = 0;
+                            foreach (var t in allThemes) totalBuildings += t.buildings.Count;
+                            Debugger.LogFormat("Deferred import done — {0} theme(s), {1} building entries.", allThemes.Count, totalBuildings);
+                        }
+                        Debugger.Log("Deferred style import and district config restore complete.");
+                    }
+                    catch (Exception e) { Debugger.LogException(e); }
+                });
 
                 // Mod compatibility check — logs warnings and shows in-game panel for critical conflicts
                 var conflicts = ModCompatibilityChecker.Check();

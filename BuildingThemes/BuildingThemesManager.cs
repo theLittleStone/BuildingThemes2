@@ -475,6 +475,12 @@ namespace BuildingThemes
                 }
             }
 
+            if (buildings.Count == 0)
+                Debugger.LogFormat(
+                    "WARNING: Style \"{0}\" imported with 0 growable buildings. " +
+                    "If District Styles Plus is installed, this style may not yet be initialized — " +
+                    "it will be re-imported after level load.", style.FullName);
+
             var theme = AddImportedTheme(buildings, FormatStyleName(style), style.PackageName);
             theme.isDlc = isModderPackDlc || isExpansionDlc;
 
@@ -514,6 +520,12 @@ namespace BuildingThemes
                 Configuration.themes.Add(theme);
             }
             theme.isBuiltIn = true;
+
+            // For style-based themes, re-import is authoritative: clear any buildings that came
+            // from a previous (possibly empty) style import before adding the new list.
+            if (stylePackage != null)
+                theme.buildings.RemoveAll(b => b.fromStyle);
+
             if (builtInBuildings != null)
             {
                 foreach (var builtInBuilding in builtInBuildings)

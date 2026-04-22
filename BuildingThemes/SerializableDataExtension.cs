@@ -14,7 +14,11 @@ namespace BuildingThemes
     public class SerializableDataExtension : ISerializableDataExtension
     {
         public static ISerializableData SerializableData;
-        
+
+        // Stored during OnLoadData so the deferred style-import action in LoadingExtension
+        // can re-apply district assignments after all mods finish OnLevelLoaded.
+        internal static DistrictsConfiguration s_pendingConfiguration;
+
         public static string XMLSaveDataId = "BuildingThemes-SaveData";
 
         // support for legacy data
@@ -52,6 +56,7 @@ namespace BuildingThemes
                         Debugger.LogFormat("Save data deserialized — {0} district(s).",
                             configuration.Districts.Count);
 
+                    s_pendingConfiguration = configuration;
                     ApplyConfiguration(configuration);
                 }
                 else
@@ -101,6 +106,7 @@ namespace BuildingThemes
                             configuration = null;
                         }
 
+                        s_pendingConfiguration = configuration;
                         ApplyConfiguration(configuration);
                     }
                     else
@@ -205,10 +211,21 @@ namespace BuildingThemes
             }
         }
 
-        private static void ApplyConfiguration(DistrictsConfiguration configuration) 
+        // Called from LoadingExtension's deferred action after all OnLevelLoaded calls complete.
+        internal static void ApplyPendingConfiguration()
+        {
+            if (s_pendingConfiguration == null) return;
+            var cfg = s_pendingConfiguration;
+            s_pendingConfiguration = null;
+            ApplyConfiguration(cfg);
+        }
+
+        internal static void ApplyConfiguration(DistrictsConfiguration configuration)
         {
             var buildingThemesManager = BuildingThemesManager.instance;
-            buildingThemesManager.ImportThemes();
+            // Import only mod themes here (XML-based). Style import (ImportStylesAsThemes) is
+            // deferred to LoadingExtension so it runs after DSP and other mods finish OnLevelLoaded.
+            buildingThemesManager.ImportThemesFromThemeMods();
 
             foreach (var district in configuration.Districts)
             {
