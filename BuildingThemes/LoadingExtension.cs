@@ -60,28 +60,37 @@ namespace BuildingThemes
 
                 RandomBuildings.ResetLogThrottle();
 
-                // Import mod themes synchronously (needed immediately for compat checks etc.).
-                // Style import is deferred: district styles from DSP and other mods are only
-                // fully populated inside their own OnLevelLoaded, which may run after ours.
-                // SimulationManager.AddAction() fires on the first simulation tick — guaranteed
-                // to be after ALL mods have returned from OnLevelLoaded.
-                BuildingThemesManager.instance.ImportThemesFromThemeMods();
-                Debugger.Log("ImportThemesFromThemeMods done.");
+                // Synchronous import: vanilla/DLC styles are already populated by the game's
+                // asset loader, so they are available immediately. DSP-created styles may still
+                // be empty shells here if DSP's OnLevelLoaded runs after ours.
+                BuildingThemesManager.instance.ImportThemes();
+                Debugger.Log("ImportThemes done.");
+                if (Debugger.Enabled)
+                {
+                    var allThemes = BuildingThemesManager.instance.GetAllThemes();
+                    int totalBuildings = 0;
+                    foreach (var t in allThemes) totalBuildings += t.buildings.Count;
+                    Debugger.LogFormat("{0} theme(s) loaded, {1} building entries total.", allThemes.Count, totalBuildings);
+                }
 
+                // Deferred re-import: fires on the first simulation tick, which is guaranteed
+                // to be AFTER every mod has returned from OnLevelLoaded (including DSP).
+                // ImportStylesAsThemes() is called directly (bypasses the importedStyles flag)
+                // so DSP styles that were empty on the first pass get their buildings now.
+                // The fromStyle-clearing logic in AddImportedTheme makes this re-import safe.
                 SimulationManager.instance.AddAction(() =>
                 {
                     try
                     {
-                        // importedStyles is still false (ApplyConfiguration only called
-                        // ImportThemesFromThemeMods). Full ImportThemes() now runs
-                        // ImportStylesAsThemes() with DSP/other mods fully initialized.
-                        BuildingThemesManager.instance.ImportThemes();
+                        BuildingThemesManager.instance.ImportStylesAsThemes();
 
-                        // Re-apply saved district config so style-themed districts
-                        // (e.g. DSP custom styles) get their theme assignments restored.
+                        // Re-apply saved district config so DSP-style themed districts
+                        // get their theme assignments (they failed name-lookup during OnLoadData
+                        // because styles weren't imported yet at that stage).
                         SerializableDataExtension.ApplyPendingConfiguration();
 
-                        // Rebuild spawn pools for districts whose theme was empty on first compile.
+                        // Rebuild spawn pools for any district whose theme now has buildings
+                        // after the deferred DSP import.
                         BuildingThemesManager.instance.RefreshDistrictThemeInfos();
 
                         if (Debugger.Enabled)
@@ -89,9 +98,9 @@ namespace BuildingThemes
                             var allThemes = BuildingThemesManager.instance.GetAllThemes();
                             int totalBuildings = 0;
                             foreach (var t in allThemes) totalBuildings += t.buildings.Count;
-                            Debugger.LogFormat("Deferred import done — {0} theme(s), {1} building entries.", allThemes.Count, totalBuildings);
+                            Debugger.LogFormat("Deferred re-import done — {0} theme(s), {1} building entries.", allThemes.Count, totalBuildings);
                         }
-                        Debugger.Log("Deferred style import and district config restore complete.");
+                        Debugger.Log("Deferred style re-import and district config restore complete.");
                     }
                     catch (Exception e) { Debugger.LogException(e); }
                 });
