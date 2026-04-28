@@ -38,7 +38,8 @@ namespace BuildingThemes
 
         public static EmptyLevelBehavior EmptyLevelBehavior
         {
-            get {
+            get
+            {
                 var v = (EmptyLevelBehavior)(int)s_emptyLevelMode;
 #pragma warning disable CS0618
                 return v == EmptyLevelBehavior.CascadeFromTheme ? EmptyLevelBehavior.VanillaFallback : v;
@@ -130,9 +131,9 @@ namespace BuildingThemes
             switch (service)
             {
                 case ItemClass.Service.Residential: return info.residentialSizePref;
-                case ItemClass.Service.Commercial:  return info.commercialSizePref;
-                case ItemClass.Service.Industrial:  return info.industrialSizePref;
-                case ItemClass.Service.Office:      return info.officeSizePref;
+                case ItemClass.Service.Commercial: return info.commercialSizePref;
+                case ItemClass.Service.Industrial: return info.industrialSizePref;
+                case ItemClass.Service.Office: return info.officeSizePref;
                 default: return SizePreference.Default;
             }
         }
@@ -144,9 +145,9 @@ namespace BuildingThemes
             switch (service)
             {
                 case ItemClass.Service.Residential: info.residentialSizePref = pref; break;
-                case ItemClass.Service.Commercial:  info.commercialSizePref  = pref; break;
-                case ItemClass.Service.Industrial:  info.industrialSizePref  = pref; break;
-                case ItemClass.Service.Office:      info.officeSizePref      = pref; break;
+                case ItemClass.Service.Commercial: info.commercialSizePref = pref; break;
+                case ItemClass.Service.Industrial: info.industrialSizePref = pref; break;
+                case ItemClass.Service.Office: info.officeSizePref = pref; break;
             }
         }
 
@@ -166,9 +167,9 @@ namespace BuildingThemes
         {
             switch (s)
             {
-                case PreferenceStrength.Gentle:  return 0.5f;
-                case PreferenceStrength.Strong:  return 2.0f;
-                default:                         return 1.0f;
+                case PreferenceStrength.Gentle: return 0.5f;
+                case PreferenceStrength.Strong: return 2.0f;
+                default: return 1.0f;
             }
         }
 
@@ -187,12 +188,12 @@ namespace BuildingThemes
         internal struct DistrictBuildingEntry
         {
             public ushort prefabIndex;
-            public int    spawnWeight;
-            public int    cellWidth;
-            public int    cellLength;
-            public float  height;
+            public int spawnWeight;
+            public int cellWidth;
+            public int cellLength;
+            public float height;
             public ItemClass.SubService subService;
-            public ItemClass.Level      level;
+            public ItemClass.Level level;
             public BuildingInfo.ZoningMode zoningMode;
         }
 
@@ -219,10 +220,10 @@ namespace BuildingThemes
 
             // Size preference per zone type
             public SizePreference residentialSizePref = SizePreference.Default;
-            public SizePreference commercialSizePref  = SizePreference.Default;
-            public SizePreference industrialSizePref  = SizePreference.Default;
-            public SizePreference officeSizePref      = SizePreference.Default;
-            public PreferenceStrength strengthPref    = PreferenceStrength.Moderate;
+            public SizePreference commercialSizePref = SizePreference.Default;
+            public SizePreference industrialSizePref = SizePreference.Default;
+            public SizePreference officeSizePref = SizePreference.Default;
+            public PreferenceStrength strengthPref = PreferenceStrength.Moderate;
 
             public readonly HashSet<Configuration.Theme> themes = new HashSet<Configuration.Theme>();
 
@@ -295,10 +296,10 @@ namespace BuildingThemes
             ThemeDiagnostics.Reset();
         }
 
-        public void ImportThemes() 
+        public void ImportThemes()
         {
             if (!importedModThemes) ImportThemesFromThemeMods();
-            if(!importedStyles) ImportStylesAsThemes();
+            if (!importedStyles) ImportStylesAsThemes();
         }
 
 
@@ -335,10 +336,12 @@ namespace BuildingThemes
             {
                 return;
             }
+            bool hasEuropeanStyle = false;
             foreach (var style in styles)
             {
                 try
                 {
+                    if (IsEuropeanStyle(style)) hasEuropeanStyle = true;
                     AddStyleTheme(style);
                 }
                 catch (Exception e)
@@ -347,6 +350,13 @@ namespace BuildingThemes
                     Debugger.LogException(e);
                 }
             }
+
+            if (!hasEuropeanStyle)
+            {
+                Debugger.Log("European district style not detected in active styles. " +
+                             "Skipping European theme import (likely disabled in Content Manager or DLC not active).");
+            }
+
             for (byte districtId = 0; districtId < DistrictManager.instance.m_districts.m_buffer.Length; ++districtId)
             {
                 var district = DistrictManager.instance.m_districts.m_buffer[districtId];
@@ -381,7 +391,6 @@ namespace BuildingThemes
                 modName, theme.name, theme.buildings.Count);
         }
 
-
         // Maps DistrictStyle.Name constants → locale keys used by the game for display.
         // Keys resolve to the style's official name (e.g. "Bridges & Piers", "European Suburbia").
         private static readonly System.Collections.Generic.Dictionary<string, string> s_styleLocaleKeys =
@@ -400,9 +409,20 @@ namespace BuildingThemes
             { DistrictStyle.kModderPack26StyleName,     "STYLES_MODDERPACKTWENTYSIX" },
         };
 
+        private static bool IsEuropeanStyle(DistrictStyle style)
+        {
+            return style != null && style.BuiltIn &&
+                   (style.Name == DistrictStyle.kEuropeanStyleName
+                    || style.PackageName == DistrictStyle.kEuropeanStyleName
+                    || style.FullName == DistrictStyle.kEuropeanStyleName);
+        }
+
         private void AddStyleTheme(DistrictStyle style)
         {
-            if (style.Name == DistrictStyle.kEuropeanStyleName) return; //skip builtin style
+            if (style == null)
+            {
+                return;
+            }
 
             var allBuildingInfos = style.GetBuildingInfos();
 
@@ -414,7 +434,7 @@ namespace BuildingThemes
                 foreach (var b in allBuildingInfos)
                 {
                     if (b == null) continue;
-                    packMask      |= b.m_requiredModderPack;
+                    packMask |= b.m_requiredModderPack;
                     expansionMask |= b.m_requiredExpansion;
                 }
 
@@ -435,7 +455,7 @@ namespace BuildingThemes
 
             // If this is a paid DLC pack, skip it entirely when the player doesn't own it.
             bool isModderPackDlc = packMask != SteamHelper.ModderPackBitMask.None;
-            bool isExpansionDlc  = expansionMask != SteamHelper.ExpansionBitMask.None;
+            bool isExpansionDlc = expansionMask != SteamHelper.ExpansionBitMask.None;
 
             if (isModderPackDlc)
             {
@@ -481,7 +501,12 @@ namespace BuildingThemes
                     "If District Styles Plus is installed, this style may not yet be initialized — " +
                     "it will be re-imported after level load.", style.FullName);
 
-            var theme = AddImportedTheme(buildings, FormatStyleName(style), style.PackageName);
+            bool isEuropeanStyle = IsEuropeanStyle(style);
+
+            string themeName = isEuropeanStyle ? "European" : FormatStyleName(style);
+            string stylePackage = isEuropeanStyle ? DistrictStyle.kEuropeanStyleName : style.PackageName;
+
+            var theme = AddImportedTheme(buildings, themeName, stylePackage);
             theme.isDlc = isModderPackDlc || isExpansionDlc;
 
             // Wire up the locale key so the UI can show the official expansion name.
@@ -826,7 +851,8 @@ namespace BuildingThemes
                 {
                     int privateServiceIndex = ItemClass.GetPrivateServiceIndex(prefab.m_class.m_service);
 
-                    if (privateServiceIndex != -1) {
+                    if (privateServiceIndex != -1)
+                    {
                         if (prefab.m_cellWidth < 1 || prefab.m_cellWidth > 4 || prefab.m_cellLength < 1 || prefab.m_cellLength > 4)
                         {
                             continue;
@@ -940,12 +966,12 @@ namespace BuildingThemes
                                 {
                                     prefabIndex = (ushort)j,
                                     spawnWeight = spawnRate,
-                                    cellWidth   = prefab.m_cellWidth,
-                                    cellLength  = prefab.m_cellLength,
-                                    height      = entryHeight,
-                                    subService  = prefab.m_class.m_subService,
-                                    level       = prefab.m_class.m_level,
-                                    zoningMode  = prefab.m_zoningMode,
+                                    cellWidth = prefab.m_cellWidth,
+                                    cellLength = prefab.m_cellLength,
+                                    height = entryHeight,
+                                    subService = prefab.m_class.m_subService,
+                                    level = prefab.m_class.m_level,
+                                    zoningMode = prefab.m_zoningMode,
                                 });
                             }
 
@@ -1119,8 +1145,8 @@ namespace BuildingThemes
             {
                 var e = info.buildingEntries.m_buffer[i];
                 if (e.subService != subService || e.level != level) continue;
-                if (!ZoningModeCompatible(e.zoningMode, zoningMode))            continue;
-                if (e.cellWidth > maxWidth || e.cellLength > maxDepth)          continue;
+                if (!ZoningModeCompatible(e.zoningMode, zoningMode)) continue;
+                if (e.cellWidth > maxWidth || e.cellLength > maxDepth) continue;
                 candidates.Add(e);
             }
             if (candidates.Count == 0) return null;
@@ -1162,7 +1188,7 @@ namespace BuildingThemes
             if (total <= 0f) return null;
 
             float roll = (r.Int32(100000) / 100000f) * total;
-            float acc  = 0f;
+            float acc = 0f;
             for (int i = 0; i < candidates.Count; i++)
             {
                 acc += scores[i];
@@ -1188,13 +1214,15 @@ namespace BuildingThemes
                     list.Sort((a, b) => (b.cellWidth * b.cellLength).CompareTo(a.cellWidth * a.cellLength));
                     break;
                 case SizePreference.WidestFirst:
-                    list.Sort((a, b) => {
+                    list.Sort((a, b) =>
+                    {
                         int c = b.cellWidth.CompareTo(a.cellWidth);
                         return c != 0 ? c : a.cellLength.CompareTo(b.cellLength);
                     });
                     break;
                 case SizePreference.DeepestFirst:
-                    list.Sort((a, b) => {
+                    list.Sort((a, b) =>
+                    {
                         int c = b.cellLength.CompareTo(a.cellLength);
                         return c != 0 ? c : a.cellWidth.CompareTo(b.cellWidth);
                     });
@@ -1208,7 +1236,7 @@ namespace BuildingThemes
                 case SizePreference.ShortestFirst:
                     list.Sort((a, b) => a.height.CompareTo(b.height));
                     break;
-                // Random / Default: no sort — all will get rank 1
+                    // Random / Default: no sort — all will get rank 1
             }
         }
 

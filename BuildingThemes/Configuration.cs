@@ -29,19 +29,19 @@ namespace BuildingThemes
     public enum SizePreference
     {
         /// <summary>Existing 8-candidate SimulationStep loop — no size bias.</summary>
-        Default      = 0,
+        Default = 0,
         /// <summary>Prefer buildings with the largest footprint area (width × length).</summary>
         BiggestFirst = 1,
         /// <summary>Prefer widest buildings first; tie-break by shortest depth.</summary>
-        WidestFirst  = 2,
+        WidestFirst = 2,
         /// <summary>Prefer deepest buildings first; tie-break by narrowest width.</summary>
         DeepestFirst = 3,
         /// <summary>All candidates share rank 1 — selection is purely by spawn weight.</summary>
-        Random       = 4,
+        Random = 4,
         /// <summary>Prefer buildings with the smallest footprint area (width × length).</summary>
         SmallestFirst = 5,
         /// <summary>Prefer tallest buildings first.</summary>
-        TallestFirst  = 6,
+        TallestFirst = 6,
         /// <summary>Prefer shortest buildings first.</summary>
         ShortestFirst = 7,
     }
@@ -52,9 +52,9 @@ namespace BuildingThemes
     /// </summary>
     public enum PreferenceStrength
     {
-        Gentle   = 0,  // α = 0.5
+        Gentle = 0,  // α = 0.5
         Moderate = 1,  // α = 1.0
-        Strong   = 2,  // α = 2.0
+        Strong = 2,  // α = 2.0
         Absolute = 3,  // always pick highest-ranked size; spawn weight only breaks ties within the top rank
     }
 
@@ -116,10 +116,14 @@ namespace BuildingThemes
             {
                 get
                 {
-                    // Only game district styles (stylePackage != null) get [Vanilla]/[DLC] prefix.
-                    // Mod/workshop themes are isBuiltIn=true (read-only) but show their plain name.
-                    if (!isBuiltIn || stylePackage == null) return name;
-                    string prefix = isDlc ? "[DLC] " : "[Custom] ";
+                    // User-created themes keep their plain name.
+                    if (!isBuiltIn) return name;
+
+                    // Imported mod/workshop themes are read-only and shown as custom.
+                    if (stylePackage == null) return "[Custom] " + name;
+
+                    // Built-in district styles use Vanilla/DLC prefixes.
+                    string prefix = isDlc ? "[DLC] " : "[Vanilla] ";
                     return prefix + ResolveLocaleName();
                 }
             }
@@ -326,7 +330,7 @@ namespace BuildingThemes
                             // a user-added building has to be included, or we don't need it in the config
                             (building.builtInBuilding == null && building.include)
 
-                                // a built-in building that was modified by the user: Only add it to the config if the modification differs
+                            // a built-in building that was modified by the user: Only add it to the config if the modification differs
                             || (building.builtInBuilding != null && !building.Equals(building.builtInBuilding))))
                         {
                             newTheme.buildings.Add(building);

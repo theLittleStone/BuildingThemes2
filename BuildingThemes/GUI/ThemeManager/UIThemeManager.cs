@@ -19,6 +19,7 @@ namespace BuildingThemes.GUI
         private UIButton m_themeRemove;
         private UIButton m_dependencies;
         private UIButton m_themeRename;
+        private UIButton m_themeCopy;
         private UIFastList m_buildingSelection;
         private UIButton m_includeAll;
         private UIButton m_includeNone;
@@ -154,6 +155,64 @@ namespace BuildingThemes.GUI
                 {
                     m_themeSelection.DisplayAt(i);
                     m_themeSelection.selectedIndex = i;
+                }
+            }
+
+            ThemePolicyTab.RefreshThemesContainer();
+        }
+
+        public void CopyTheme(Configuration.Theme sourceTheme)
+        {
+            if (sourceTheme == null) return;
+
+            string baseName = "Copy of " + sourceTheme.name;
+            string candidate = baseName;
+            int suffix = 2;
+            while (BuildingThemesManager.instance.GetThemeByName(candidate) != null)
+            {
+                candidate = baseName + " (" + suffix + ")";
+                suffix++;
+            }
+
+            var copiedTheme = new Configuration.Theme
+            {
+                name = candidate
+            };
+
+            foreach (var sourceBuilding in sourceTheme.buildings)
+            {
+                if (sourceBuilding == null) continue;
+
+                copiedTheme.buildings.Add(new Configuration.Building
+                {
+                    name = sourceBuilding.name,
+                    level = sourceBuilding.level,
+                    upgradeName = sourceBuilding.upgradeName,
+                    baseName = sourceBuilding.baseName,
+                    spawnRate = sourceBuilding.spawnRate,
+                    include = sourceBuilding.include,
+                    dlc = sourceBuilding.dlc,
+                    environments = sourceBuilding.environments,
+                    fromStyle = false
+                });
+            }
+
+            BuildingThemesManager.instance.Configuration.themes.Add(copiedTheme);
+            m_isDistrictThemesDirty = true;
+
+            InitBuildingLists();
+
+            m_themeSelection.selectedIndex = -1;
+            m_themeSelection.rowsData.m_buffer = m_themes.Keys.ToArray();
+            m_themeSelection.rowsData.m_size = m_themeSelection.rowsData.m_buffer.Length;
+
+            for (int i = 0; i < m_themeSelection.rowsData.m_buffer.Length; i++)
+            {
+                if (m_themeSelection.rowsData.m_buffer[i] == copiedTheme)
+                {
+                    m_themeSelection.DisplayAt(i);
+                    m_themeSelection.selectedIndex = i;
+                    break;
                 }
             }
 
@@ -474,7 +533,7 @@ namespace BuildingThemes.GUI
 
             m_themeSelection.backgroundSprite = "UnlockingPanel";
             m_themeSelection.width = left.width;
-            m_themeSelection.height = left.height - 120; // 120 = 40 (New/Delete row) + 40 (Dependencies row) + 40 (Rename row)
+            m_themeSelection.height = left.height - 160; // 160 = 40 x 4 rows (New/Delete, Dependencies, Rename, Copy)
             m_themeSelection.canSelect = true;
             m_themeSelection.rowHeight = 40;
             m_themeSelection.autoHideScrollbar = true;
@@ -505,6 +564,7 @@ namespace BuildingThemes.GUI
                 bool canEdit = !((Configuration.Theme)m_themeSelection.selectedItem).isBuiltIn;
                 m_themeRemove.isEnabled = canEdit;
                 m_themeRename.isEnabled = canEdit;
+                m_themeCopy.isEnabled = true;
             };
 
             // Add theme
@@ -556,6 +616,19 @@ namespace BuildingThemes.GUI
             {
                 if (selectedTheme != null)
                     UIRenameThemeModal.instance.ShowFor(selectedTheme);
+            };
+
+            // Copy theme button (full-width, fourth row below Add/Delete)
+            m_themeCopy = UIUtils.CreateButton(left);
+            m_themeCopy.width = LEFT_WIDTH;
+            m_themeCopy.text = "Copy Theme";
+            m_themeCopy.isEnabled = false;
+            m_themeCopy.relativePosition = new Vector3(0, m_themeSelection.height + 120 + SPACING);
+
+            m_themeCopy.eventClick += (c, p) =>
+            {
+                if (selectedTheme != null)
+                    CopyTheme(selectedTheme);
             };
 
             // Pre-create the rename modal so its Start() runs before the first user click
@@ -790,11 +863,12 @@ namespace BuildingThemes.GUI
 
             // Left panel — width stays fixed, height grows
             m_leftPanel.height = panelHeight;
-            m_themeSelection.height = panelHeight - 120;
+            m_themeSelection.height = panelHeight - 160;
             m_themeAdd.relativePosition = new Vector3(0, m_themeSelection.height + SPACING);
             m_themeRemove.relativePosition = new Vector3(LEFT_WIDTH - m_themeRemove.width, m_themeSelection.height + SPACING);
             m_dependencies.relativePosition = new Vector3(0, m_themeSelection.height + 40 + SPACING);
             m_themeRename.relativePosition = new Vector3(0, m_themeSelection.height + 80 + SPACING);
+            m_themeCopy.relativePosition = new Vector3(0, m_themeSelection.height + 120 + SPACING);
 
             // Middle panel — both width and height grow
             m_middlePanel.width = currentMiddleWidth;
@@ -977,12 +1051,12 @@ namespace BuildingThemes.GUI
                 BuildingItem item = (BuildingItem)list[i];
 
                 // DLC filter — uses BuildingInfo.m_requiredExpansion / m_requiredModderPack
-                var filterExp  = m_filter.dlcExpansionFilter;
+                var filterExp = m_filter.dlcExpansionFilter;
                 var filterPack = m_filter.dlcModderPackFilter;
                 if (filterExp != SteamHelper.ExpansionBitMask.None || filterPack != SteamHelper.ModderPackBitMask.None)
                 {
                     if (item.prefab == null) continue; // unloaded buildings have no mask — skip when filter active
-                    bool expMatch  = filterExp  == SteamHelper.ExpansionBitMask.None  || (item.prefab.m_requiredExpansion  & filterExp)  != SteamHelper.ExpansionBitMask.None;
+                    bool expMatch = filterExp == SteamHelper.ExpansionBitMask.None || (item.prefab.m_requiredExpansion & filterExp) != SteamHelper.ExpansionBitMask.None;
                     bool packMatch = filterPack == SteamHelper.ModderPackBitMask.None || (item.prefab.m_requiredModderPack & filterPack) != SteamHelper.ModderPackBitMask.None;
                     if (!expMatch || !packMatch) continue;
                 }
