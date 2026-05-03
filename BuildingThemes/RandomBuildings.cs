@@ -41,8 +41,8 @@ namespace BuildingThemes
             {
                 // Strict mode: if the district is themed but has no buildings for this level,
                 // signal to the Prefix that vanilla should NOT run as a fallback.
-                if (fastList == null
-                    && mgr.GetDistrictEmptyLevelBehavior(districtId) == EmptyLevelBehavior.StrictThemeOnly
+                // Covers both null (footprint never in theme) and empty (pool cleared after build).
+                if (mgr.GetDistrictEmptyLevelBehavior(districtId) == EmptyLevelBehavior.StrictThemeOnly
                     && mgr.IsEffectivelyThemed(districtId))
                 {
                     s_intentionalNull = true;

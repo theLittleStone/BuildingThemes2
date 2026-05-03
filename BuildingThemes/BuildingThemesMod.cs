@@ -15,8 +15,11 @@ namespace BuildingThemes
         public const string HarmonyId = "com.github.roberto-naharro.BuildingThemes2";
 
 
-        // we'll use this variable to pass the building position to GetRandomBuildingInfo method. It's here to make possible 81 Tiles compatibility
+        // Passes the spawn position to GetRandomBuildingInfoPatch for the abandoned-building
+        // replacement path (set by AddResourcePatch). positionIsValid is consumed (reset to false)
+        // by GetRandomBuildingInfoPatch after each use so a stale position is never re-used.
         public static Vector3 position;
+        public static bool positionIsValid;
         public static readonly string EIGHTY_ONE_MOD = "81 Tiles (Fixed for C:S 1.2+)";
         public static readonly string EIGHTY_ONE_2_ASSEMBLY = "EightyOne2";
 

@@ -36,6 +36,19 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
             ItemClass.Service service, ItemClass.SubService subService, ItemClass.Level level,
             int width, int length, BuildingInfo.ZoningMode zoningMode, int style)
         {
+            // This patch covers the abandoned-building replacement path only.
+            // Normal zone spawning is handled entirely inside SimulationStepPatch, which calls
+            // GetRandomBuildingInfo_Spawn directly and never reaches this method.
+            //
+            // If positionIsValid is false the position field is stale (no abandonment event
+            // preceded this call — likely a third-party mod). Skip theme logic so we don't
+            // classify the spawn against the wrong district.
+            if (!BuildingThemesMod.positionIsValid)
+                return true;
+
+            // Consume the flag so the same position is never reused for a subsequent call.
+            BuildingThemesMod.positionIsValid = false;
+
             // Fast path: skip all theme logic for unthemed districts.
             var mgr = BuildingThemesManager.instance;
             if (mgr != null)

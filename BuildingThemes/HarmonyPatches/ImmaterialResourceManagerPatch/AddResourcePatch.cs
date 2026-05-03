@@ -54,6 +54,7 @@ namespace BuildingThemes.HarmonyPatches.ImmaterialResourceManagerPatch
             if (resource == ImmaterialResourceManager.Resource.Abandonment)
             {
                 BuildingThemesMod.position = position;
+                BuildingThemesMod.positionIsValid = true;
             }
         }
     }
