@@ -4,8 +4,8 @@ name: Deploy to Steam Workshop
 #   1. Automatically — when Release Please creates a tag (v*) after merging a release PR
 #   2. Manually     — Actions → "Deploy to Steam Workshop" → Run workflow
 #
-# The workflow does NOT build the mod — it publishes the pre-staged dist/ folder.
-# Before merging a Release PR, run ./deploy.sh --release locally and commit dist/.
+# The workflow builds the mod from source (game DLLs are in GameReferences/),
+# injects the version from the git tag into AssemblyInfo.cs, then publishes to Steam.
 #
 # The change note sent to Steam Workshop is extracted automatically from CHANGELOG.md
 # for the current version, with a link to the full GitHub Release appended.
@@ -40,13 +40,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Verify dist folder exists
+      - name: Install Mono
         run: |
-          if [[ ! -f "dist/BuildingThemes2/BuildingThemes2.dll" ]]; then
-            echo "ERROR: dist/BuildingThemes2/BuildingThemes2.dll not found."
-            echo "Run ./deploy.sh --release locally, commit dist/, then push."
-            exit 1
+          sudo apt-get update
+          sudo apt-get install -y mono-complete mono-xbuild
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore BuildingThemes.sln -PackagesDirectory packages
+
+      - name: Inject version into AssemblyInfo.cs
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          if [[ -z "$VERSION" || "$VERSION" == "$TAG" ]]; then
+            VERSION=$(python3 -c "import json; print(json.load(open('.release-please-manifest.json'))['.'])")
           fi
+          echo "Building version: $VERSION"
+          ASSEMBLY_INFO="BuildingThemes/Properties/AssemblyInfo.cs"
+          sed -i "s/\[assembly: AssemblyVersion(\"[^\"]*\")\]/[assembly: AssemblyVersion(\"$VERSION.0\")]/" "$ASSEMBLY_INFO"
+          sed -i "s/\[assembly: AssemblyFileVersion(\"[^\"]*\")\]/[assembly: AssemblyFileVersion(\"$VERSION.0\")]/" "$ASSEMBLY_INFO"
+
+      - name: Build
+        run: xbuild BuildingThemes.sln /p:Configuration=Release /nologo /verbosity:quiet
+
+      - name: Stage dist/
+        run: |
+          mkdir -p dist/BuildingThemes2
+          cp BuildingThemes/bin/Release/BuildingThemes.dll dist/BuildingThemes2/BuildingThemes2.dll
+          cp packages/CitiesHarmony.API.2.1.0/lib/net35/CitiesHarmony.API.dll dist/BuildingThemes2/
           echo "dist/ contents:"
           ls -lh dist/BuildingThemes2/
 

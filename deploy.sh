@@ -42,27 +42,6 @@ DATA_MOUNT="${CITIES_DATA_MOUNT:-/mnt/cities_skylines_data}"
 MODS_DIR="$DATA_MOUNT/Addons/Mods/$MOD_NAME"
 LOG_FILE="$GAME_MOUNT/Cities_Data/output_log.txt"
 
-# ── Inject version (release builds only) ─────────────────────────────────────────
-if [[ "$CONFIGURATION" == "Release" ]]; then
-    MANIFEST="$SCRIPT_DIR/.release-please-manifest.json"
-    GH_REPO=$(git remote get-url origin 2>/dev/null | sed 's|.*github.com[:/]\(.*\)\.git|\1|;s|.*github.com[:/]\(.*\)|\1|')
-    RELEASE_PR_VERSION=$(gh pr list --repo "${GH_REPO}" --state open --json title \
-        --jq '.[].title | select(test("^chore\\(m(ain|aster)\\): release ")) | split(" ")[-1]' \
-        2>/dev/null | head -1)
-    if [[ -n "$RELEASE_PR_VERSION" ]]; then
-        MOD_VERSION="$RELEASE_PR_VERSION"
-        echo "Version: $MOD_VERSION (from open Release Please PR)"
-    elif [[ -f "$MANIFEST" ]]; then
-        MOD_VERSION=$(python3 -c "import json; print(json.load(open('$MANIFEST'))['.'])")
-        echo "Version: $MOD_VERSION (from manifest — no open release PR found)"
-    fi
-    if [[ -n "${MOD_VERSION:-}" ]]; then
-        ASSEMBLY_INFO="$SCRIPT_DIR/BuildingThemes/Properties/AssemblyInfo.cs"
-        sed -i "s/\[assembly: AssemblyVersion(\"[^\"]*\")\]/[assembly: AssemblyVersion(\"$MOD_VERSION.0\")]/" "$ASSEMBLY_INFO"
-        sed -i "s/\[assembly: AssemblyFileVersion(\"[^\"]*\")\]/[assembly: AssemblyFileVersion(\"$MOD_VERSION.0\")]/" "$ASSEMBLY_INFO"
-    fi
-fi
-
 # ── Build ────────────────────────────────────────────────────────────────────────
 echo "Building ($CONFIGURATION)..."
 cd "$SCRIPT_DIR"
