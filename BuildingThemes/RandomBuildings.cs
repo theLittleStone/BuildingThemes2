@@ -10,9 +10,11 @@ namespace BuildingThemes
         /// Set to true when strict mode deliberately returns null for a themed district.
         /// The Harmony prefixes read this to decide whether to skip the original vanilla method.
         /// ThreadStatic ensures each simulation thread has its own copy (default value is false).
+        /// Public so that third-party mods (e.g. Advanced Building Level Control) can check it
+        /// after calling GetRandomBuildingInfo_Upgrade and skip their own vanilla fallback when true.
         /// </summary>
         [System.ThreadStatic]
-        internal static bool s_intentionalNull;
+        public static bool s_intentionalNull;
 
         // Throttle per-building debug messages — these methods run every simulation tick.
         // First LogThrottle events per level load are logged; the rest are silently dropped.
