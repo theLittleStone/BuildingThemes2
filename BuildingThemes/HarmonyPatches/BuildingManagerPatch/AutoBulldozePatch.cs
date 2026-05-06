@@ -21,6 +21,7 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
     {
         private static bool deployed;
         private static MethodInfo s_patchedMethod;
+        private static int s_callCounter;
 
         public static void Deploy()
         {
@@ -106,9 +107,9 @@ namespace BuildingThemes.HarmonyPatches.BuildingManagerPatch
             return fallback;
         }
 
-        public static void Postfix(int __0)
+        public static void Postfix()
         {
-            if (__0 != 0) return; // only subStep 0 — one tick per frame instead of 4×
+            if (s_callCounter++ % 4 != 0) return; // run once per frame (BuildingManager.SimulationStep fires 4× per frame)
             try
             {
                 AutoBulldozeService.Tick();
