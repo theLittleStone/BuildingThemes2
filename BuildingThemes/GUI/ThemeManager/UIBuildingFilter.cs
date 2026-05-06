@@ -19,6 +19,7 @@ namespace BuildingThemes.GUI
         public UIDropDown sizeFilterX;
         public UIDropDown sizeFilterY;
         public UIDropDown dlcFilter;
+        public UIDropDown themeFilter;
         public UITextField nameFilter;
 
         public float minHeight = 0f;
@@ -275,6 +276,54 @@ namespace BuildingThemes.GUI
             get { return (Status)status.selectedIndex; }
         }
 
+        // Canonical theme names parallel to themeFilter.items (index 0 = null for "In any theme").
+        private readonly List<string> m_themeFilterNames = new List<string>();
+
+        /// <summary>Returns the canonical theme name to filter by, or null when "In any theme" is selected.</summary>
+        public string themeFilterName
+        {
+            get
+            {
+                int idx = themeFilter == null ? 0 : themeFilter.selectedIndex;
+                return (idx > 0 && idx < m_themeFilterNames.Count) ? m_themeFilterNames[idx] : null;
+            }
+        }
+
+        /// <summary>
+        /// Rebuilds the theme filter dropdown showing displayName labels (with [DLC]/[Vanilla]/[Custom]
+        /// prefixes). Excludes the currently-displayed theme. Canonical names are kept in a parallel
+        /// list so GetThemeByName lookups still work.
+        /// </summary>
+        public void SetThemeOptions(List<Configuration.Theme> themes, string currentThemeName)
+        {
+            if (themeFilter == null) return;
+
+            string prev = themeFilterName; // canonical name before rebuild
+
+            m_themeFilterNames.Clear();
+            m_themeFilterNames.Add(null); // index 0 = "In any theme"
+
+            themeFilter.items = new string[0];
+            themeFilter.AddItem("In any theme");
+            foreach (var t in themes)
+            {
+                if (t.name == currentThemeName) continue;
+                themeFilter.AddItem(t.displayName);
+                m_themeFilterNames.Add(t.name);
+            }
+
+            // Restore previous selection by canonical name.
+            int restored = 0;
+            if (prev != null)
+            {
+                for (int i = 1; i < m_themeFilterNames.Count; i++)
+                {
+                    if (m_themeFilterNames[i] == prev) { restored = i; break; }
+                }
+            }
+            themeFilter.selectedIndex = restored;
+        }
+
         public event PropertyChangedEventHandler<int> eventFilteringChanged;
 
         public override void Start()
@@ -515,24 +564,40 @@ namespace BuildingThemes.GUI
             nameFilter.eventTextChanged += (c, s) => eventFilteringChanged(this, 5);
             nameFilter.eventTextSubmitted += (c, s) => eventFilteringChanged(this, 5);
 
-            // Row 4 (y=108): four checkboxes + counter label
+            // Row 4 (y=108): theme filter — filter buildings by membership in another theme
+            UILabel themeLabel = AddUIComponent<UILabel>();
+            themeLabel.textScale = 0.8f;
+            themeLabel.padding = new RectOffset(0, 0, 8, 0);
+            themeLabel.text = "Also in:";
+            themeLabel.relativePosition = new Vector3(0, 108);
+
+            themeFilter = UIUtils.CreateDropDown(this);
+            themeFilter.width = width - themeLabel.width - 8;
+            themeFilter.tooltip = "Show only buildings that are also included in the selected theme.\nUseful for comparing or merging themes.";
+            themeFilter.relativePosition = new Vector3(themeLabel.width + 8, 108);
+            themeFilter.AddItem("In any theme");
+            themeFilter.selectedIndex = 0;
+
+            themeFilter.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 10);
+
+            // Row 5 (y=142): four checkboxes + counter label
             // "Show loaded" — hides buildings whose prefab is available
-            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 108, true);
+            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 142, true);
             m_showLoadedCb.tooltip = "Show buildings whose prefab is loaded and available";
             m_showLoadedCb.eventCheckChanged += (c, v) => { showLoaded = v; eventFilteringChanged(this, 6); };
 
             // "Show missing" — hides workshop/custom assets that failed to load
-            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 108, true);
+            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 142, true);
             m_showMissingCb.tooltip = "Show workshop/custom assets that are not currently loaded\n(not subscribed, disabled by Skyve, or load error)";
             m_showMissingCb.eventCheckChanged += (c, v) => { showMissing = v; eventFilteringChanged(this, 6); };
 
             // "Show DLC/Env" — hides assets gated by unowned DLC or wrong environment
-            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 108, true);
+            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 142, true);
             m_showDLCCb.tooltip = "Show vanilla/DLC assets not available\n(DLC not owned, or asset excluded for this map environment)";
             m_showDLCCb.eventCheckChanged += (c, v) => { showDLCLocked = v; eventFilteringChanged(this, 6); };
 
             // "Spawnable only" — show only loaded + included + valid-dimension buildings
-            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 108, false);
+            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 142, false);
             m_canSpawnCb.tooltip = "Show only buildings that are loaded, included in the theme,\nand have cell dimensions (1–4) valid for zone spawning";
             m_canSpawnCb.eventCheckChanged += (c, v) => { canSpawnOnly = v; eventFilteringChanged(this, 7); };
 

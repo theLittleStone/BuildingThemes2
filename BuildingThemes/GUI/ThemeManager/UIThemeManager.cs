@@ -496,7 +496,7 @@ namespace BuildingThemes.GUI
             // Filter
             m_filter = AddUIComponent<UIBuildingFilter>();
             m_filter.width = width - SPACING * 2;
-            m_filter.height = 133;
+            m_filter.height = 167;
             m_filter.relativePosition = new Vector3(SPACING, TITLE_HEIGHT);
 
             m_filter.eventFilteringChanged += (c, i) =>
@@ -1104,6 +1104,14 @@ namespace BuildingThemes.GUI
                     if (category == Category.None || !m_filter.IsZoneSelected(category)) continue;
                 }
 
+                // Theme membership filter
+                string themeNameFilter = m_filter.themeFilterName;
+                if (themeNameFilter != null)
+                {
+                    var filterTheme = BuildingThemesManager.instance.GetThemeByName(themeNameFilter);
+                    if (filterTheme == null || !filterTheme.containsBuilding(item.name)) continue;
+                }
+
                 // Name / Steam ID search
                 if (!m_filter.buildingName.IsNullOrWhiteSpace())
                 {
@@ -1134,6 +1142,10 @@ namespace BuildingThemes.GUI
         {
             if (m_filter == null) return;
             m_filter.SetDlcOptions(buildings);
+            var currentTheme = m_themeSelection?.selectedItem as Configuration.Theme;
+            m_filter.SetThemeOptions(
+                BuildingThemesManager.instance.GetAllThemes(),
+                currentTheme?.name);
         }
 
         private void UpdateCounterLabel(List<BuildingItem> filtered)
