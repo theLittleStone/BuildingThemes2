@@ -213,6 +213,11 @@ namespace BuildingThemes
 
         public void OnEnabled()
         {
+            // Register the settings file before any SavedInt/SavedBool with this name are
+            // first read, so the game does not log "not found or cannot be loaded" warnings.
+            ColossalFramework.GameSettings.AddSettingsFile(
+                new ColossalFramework.SettingsFile { fileName = "BuildingThemes2" });
+
             HarmonyHelper.DoOnHarmonyReady(() => HarmonyPatches.Patcher.PatchAll());
         }
 

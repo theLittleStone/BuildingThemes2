@@ -1280,6 +1280,11 @@ namespace BuildingThemes
 
         public FastList<ushort> GetAreaBuildings(byte districtId, int areaIndex)
         {
+            // Guard: a third-party mod (e.g. via m_BuildingWrapper.OnCalculateSpawn) may pass
+            // a service/subService combination that maps outside the array bounds.  Return null
+            // so the caller falls back to vanilla rather than crashing the simulation thread.
+            if (areaIndex < 0 || areaIndex >= AreaBuildingsLength) return null;
+
             var info = districtThemeInfos[districtId];
 
             // Theme management enabled in district? return custom fastlist for district
