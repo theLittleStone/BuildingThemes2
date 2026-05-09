@@ -121,6 +121,17 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
             Vector3 m_position = (Vector3)__instance.m_position;
 
             byte district = instance2.GetDistrict(m_position);
+
+            // Fast path: if no BT2 theme is active for this district (or city-wide), let the
+            // original SimulationStep run. This ensures the district's native m_Style (set by
+            // the Districts & Styles DLC or District Styles Plus) is respected for building
+            // selection instead of BT2's fallback pool, which would mix all styles together.
+            {
+                var mgr2 = BuildingThemesManager.instance;
+                if (mgr2 == null || !mgr2.IsEffectivelyThemed(district))
+                    return true;
+            }
+
             int num4;
             switch (zone)
             {
