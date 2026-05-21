@@ -129,6 +129,10 @@ namespace BuildingThemes.GUI
             m_name.isChecked = m_building.included;
             _displaying = false;
 
+            bool builtIn = UIThemeManager.instance.selectedTheme?.isBuiltIn ?? false;
+            m_name.isEnabled = !builtIn;
+            m_name.tooltip = builtIn ? "Built-in themes are read-only.\nUse 'Copy Theme' to create an editable copy." : null;
+
             m_level.text = m_building.level == 0 ? null : "L" + m_building.level;
             m_size.text = m_building.sizeAsString;
 

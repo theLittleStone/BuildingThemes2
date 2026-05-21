@@ -54,6 +54,7 @@ mkdir -p "$DIST"
 
 cp "$BUILD_OUT/BuildingThemes.dll" "$DIST/$MOD_NAME.dll"
 cp "$PACKAGES/CitiesHarmony.API.2.1.0/lib/net35/CitiesHarmony.API.dll" "$DIST/"
+cp "$BUILD_OUT/BuildingThemes.xml" "$DIST/"
 
 echo ""
 echo "Staged to: $DIST"
@@ -66,6 +67,7 @@ if mountpoint -q "$DATA_MOUNT"; then
     mkdir -p "$MODS_DIR"
     cp "$DIST/$MOD_NAME.dll"         "$MODS_DIR/"
     cp "$DIST/CitiesHarmony.API.dll" "$MODS_DIR/"
+    cp "$DIST/BuildingThemes.xml"    "$MODS_DIR/"
     echo "Done. Files in game Mods folder:"
     ls -lh "$MODS_DIR"
 else

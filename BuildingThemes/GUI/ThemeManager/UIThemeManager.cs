@@ -276,6 +276,7 @@ namespace BuildingThemes.GUI
         public void ChangeBuildingStatus(BuildingItem item, bool include)
         {
             if (include == item.included) return;
+            if (selectedTheme != null && selectedTheme.isBuiltIn) return;
 
             CreateBuilding(item);
             item.building.include = include;
@@ -293,6 +294,7 @@ namespace BuildingThemes.GUI
 
         public void ChangeUpgradeBuilding(BuildingItem building)
         {
+            if (selectedTheme != null && selectedTheme.isBuiltIn) return;
             CreateBuilding(selectedBuilding);
             if (building == null)
                 selectedBuilding.building.upgradeName = null;
@@ -304,6 +306,7 @@ namespace BuildingThemes.GUI
 
         public void ChangeSpawnRate(int spawnRate)
         {
+            if (selectedTheme != null && selectedTheme.isBuiltIn) return;
             CreateBuilding(selectedBuilding);
 
             spawnRate = Mathf.Clamp(spawnRate, 1, 100);
@@ -562,9 +565,20 @@ namespace BuildingThemes.GUI
                 }
 
                 bool canEdit = !((Configuration.Theme)m_themeSelection.selectedItem).isBuiltIn;
+                string readOnlyTip = canEdit ? null : "Built-in themes are read-only.\nUse 'Copy Theme' to create an editable copy.";
                 m_themeRemove.isEnabled = canEdit;
+                m_themeRemove.tooltip = readOnlyTip;
                 m_themeRename.isEnabled = canEdit;
+                m_themeRename.tooltip = readOnlyTip;
                 m_themeCopy.isEnabled = true;
+                m_includeAll.isEnabled = canEdit;
+                m_includeAll.tooltip = canEdit ? "Include all buildings in the current filtered view in this theme" : readOnlyTip;
+                m_includeNone.isEnabled = canEdit;
+                m_includeNone.tooltip = canEdit ? "Exclude all buildings in the current filtered view from this theme" : readOnlyTip;
+                m_includeValid.isEnabled = canEdit;
+                m_includeValid.tooltip = canEdit ? "Include all spawnable buildings in the current filtered view\n(loaded + valid cell dimensions 1–4)" : readOnlyTip;
+                m_excludeMissing.isEnabled = canEdit;
+                m_excludeMissing.tooltip = canEdit ? "Exclude all missing/unloaded buildings in the current filtered view from this theme" : readOnlyTip;
             };
 
             // Add theme
@@ -903,8 +917,7 @@ namespace BuildingThemes.GUI
 
         private void InitBuildingLists()
         {
-            Configuration.Theme[] themes = BuildingThemesManager.instance.GetAllThemes().ToArray();
-            Array.Sort(themes, ThemeCompare);
+            Configuration.Theme[] themes = BuildingThemesManager.instance.GetAllThemesSorted().ToArray();
 
             m_themes.Clear();
             for (int i = 0; i < themes.Length; i++)
@@ -1144,7 +1157,7 @@ namespace BuildingThemes.GUI
             m_filter.SetDlcOptions(buildings);
             var currentTheme = m_themeSelection?.selectedItem as Configuration.Theme;
             m_filter.SetThemeOptions(
-                BuildingThemesManager.instance.GetAllThemes(),
+                BuildingThemesManager.instance.GetAllThemesSorted(),
                 currentTheme?.name);
         }
 
@@ -1169,12 +1182,6 @@ namespace BuildingThemes.GUI
             m_counterLabel.text = sb.ToString();
         }
 
-        private static int ThemeCompare(Configuration.Theme a, Configuration.Theme b)
-        {
-            // Sort by name
-            return a.name.CompareTo(b.name);
-        }
-
         private static int BuildingCompare(BuildingItem a, BuildingItem b)
         {
             // Sort by category > displayName > level > size > name
@@ -1191,6 +1198,7 @@ namespace BuildingThemes.GUI
         public void RenameTheme(Configuration.Theme theme, string newName)
         {
             if (theme == null || newName.IsNullOrWhiteSpace()) return;
+            if (theme.isBuiltIn) return;
 
             theme.name = newName;
             m_isDistrictThemesDirty = true;

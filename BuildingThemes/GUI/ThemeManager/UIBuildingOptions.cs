@@ -293,15 +293,24 @@ namespace BuildingThemes.GUI
                 m_assetIdLabel.text = "Asset name:";
             m_assetName.parent.isVisible = true;
 
+            bool builtIn = UIThemeManager.instance.selectedTheme?.isBuiltIn ?? false;
+            string readOnlyTip = builtIn ? "Built-in themes are read-only.\nUse 'Copy Theme' to create an editable copy." : null;
+
             m_include.isVisible = true;
             m_include.isChecked = m_item.included;
+            m_include.isEnabled = !builtIn;
+            m_include.tooltip = readOnlyTip;
 
             m_spawnRate.text = "10";
             m_spawnRate.parent.isVisible = true;
+            m_spawnRate.isEnabled = !builtIn;
+            m_spawnRate.tooltip = builtIn ? readOnlyTip : null;
 
             m_upgradeName.text = "";
             m_upgradeBuilding = null;
             m_upgradeName.parent.isVisible = m_item.level < m_item.maxLevel;
+            m_upgradeName.isEnabled = !builtIn;
+            m_upgradeName.tooltip = builtIn ? readOnlyTip : "Name of the building to spawn when upgraded.\nLeave empty for random spawn.";
 
             if (m_item.building != null)
             {

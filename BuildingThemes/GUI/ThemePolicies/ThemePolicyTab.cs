@@ -132,9 +132,8 @@ namespace BuildingThemes.GUI
                 return;
             }
 
-            themePolicyButtons.rowsData.m_buffer = BuildingThemesManager.instance.GetAllThemes().ToArray();
+            themePolicyButtons.rowsData.m_buffer = BuildingThemesManager.instance.GetAllThemesSorted().ToArray();
             themePolicyButtons.rowsData.m_size = themePolicyButtons.rowsData.m_buffer.Length;
-            Array.Sort(themePolicyButtons.rowsData.m_buffer as Configuration.Theme[], ThemeCompare);
 
             // Fit the list to the remaining container space; UIFastList's own scrollbar handles
             // scrolling through themes. UITabContainer does not scroll its tab page children.
@@ -195,10 +194,5 @@ namespace BuildingThemes.GUI
             return checkBox;
         }
 
-        private static int ThemeCompare(Configuration.Theme a, Configuration.Theme b)
-        {
-            // Sort by name
-            return a.name.CompareTo(b.name);
-        }
     }
 }

@@ -319,9 +319,10 @@ namespace BuildingThemes
                     {
                         continue;
                     }
+                    bool isBt2Bundle = pluginInfo.userModInstance is BuildingThemesMod;
                     foreach (var theme in config.themes)
                     {
-                        AddModTheme(theme, pluginInfo.name);
+                        AddModTheme(theme, pluginInfo.name, isBt2Bundle);
                     }
                 }
                 catch (Exception e)
@@ -382,13 +383,17 @@ namespace BuildingThemes
             importedStyles = true;
         }
 
-        private void AddModTheme(Configuration.Theme modTheme, string modName)
+        private void AddModTheme(Configuration.Theme modTheme, string modName, bool isBundled = false)
         {
             if (modTheme == null)
             {
                 return;
             }
-            var theme = AddImportedTheme(modTheme.buildings, modTheme.name, null);
+            // BT2's own bundled XML themes (European, International) are vanilla content — pass the
+            // theme name as stylePackage so displayName resolves to "[Vanilla] <name>" rather than
+            // "[Custom] <name>". Other mods' themes keep stylePackage=null → "[Custom]".
+            string stylePackage = isBundled ? modTheme.name : null;
+            var theme = AddImportedTheme(modTheme.buildings, modTheme.name, stylePackage);
 
             Debugger.LogFormat(
                 "Imported theme from mod \"{0}\" as theme \"{1}\". Buildings in mod: {2}. Buildings in theme: {3} ",
@@ -548,6 +553,10 @@ namespace BuildingThemes
                     stylePackage = stylePackage
                 };
                 Configuration.themes.Add(theme);
+            }
+            else if (stylePackage != null && theme.stylePackage == null)
+            {
+                theme.stylePackage = stylePackage;
             }
             theme.isBuiltIn = true;
 
@@ -1320,27 +1329,18 @@ namespace BuildingThemes
 
             if (districtIdx == 0)
             {
-                /*
                 // city-wide default derived from environment (european, sunny, boreal, tropical)
-
                 var env = Singleton<SimulationManager>.instance.m_metaData.m_environment;
 
-                if (env == "Europe")
-                {
-                    theme.Add(GetThemeByName("European"));
-                }
-                else
-                {
-                    theme.Add(GetThemeByName("International"));
-                }
+                var defaultTheme = env == "Europe"
+                    ? GetThemeByName("European")
+                    : GetThemeByName("International");
+
+                if (defaultTheme != null)
+                    theme.Add(defaultTheme);
 
                 if (Debugger.Enabled)
-                {
-                    Debugger.LogFormat("Environment is {0}. Selected default builtin theme.", env);
-                }
-                */
-
-                // By default no theme is enabled, so custom buildings grow
+                    Debugger.LogFormat("Environment is {0}. Selected default built-in theme.", env);
             }
             else
             {
@@ -1372,6 +1372,33 @@ namespace BuildingThemes
         public List<Configuration.Theme> GetAllThemes()
         {
             return Configuration.themes;
+        }
+
+        // Sort order: user-created → [Custom] → [Vanilla] → [DLC].
+        // User themes keep creation order; built-in groups sort by displayName.
+        public List<Configuration.Theme> GetAllThemesSorted()
+        {
+            var all = Configuration.themes;
+            var idx = new Dictionary<Configuration.Theme, int>(all.Count);
+            for (int i = 0; i < all.Count; i++) idx[all[i]] = i;
+
+            var sorted = new List<Configuration.Theme>(all);
+            sorted.Sort((a, b) =>
+            {
+                int ga = ThemeSortGroup(a), gb = ThemeSortGroup(b);
+                if (ga != gb) return ga.CompareTo(gb);
+                if (ga == 0) return idx[b].CompareTo(idx[a]);
+                return string.Compare(a.displayName, b.displayName, StringComparison.OrdinalIgnoreCase);
+            });
+            return sorted;
+        }
+
+        private static int ThemeSortGroup(Configuration.Theme t)
+        {
+            if (!t.isBuiltIn)           return 0; // user-created
+            if (t.stylePackage == null) return 1; // [Custom] (other mods)
+            if (!t.isDlc)               return 2; // [Vanilla]
+            return 3;                              // [DLC]
         }
 
         /// <summary>
