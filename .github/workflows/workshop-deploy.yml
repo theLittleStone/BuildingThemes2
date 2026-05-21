@@ -71,6 +71,7 @@ jobs:
           mkdir -p dist/BuildingThemes2
           cp BuildingThemes/bin/Release/BuildingThemes.dll dist/BuildingThemes2/BuildingThemes2.dll
           cp packages/CitiesHarmony.API.2.1.0/lib/net35/CitiesHarmony.API.dll dist/BuildingThemes2/
+          cp BuildingThemes/bin/Release/BuildingThemes.xml dist/BuildingThemes2/
           echo "dist/ contents:"
           ls -lh dist/BuildingThemes2/
 
