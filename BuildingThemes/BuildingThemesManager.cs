@@ -248,23 +248,28 @@ namespace BuildingThemes
                     try
                     {
                         _configuration = Configuration.Deserialize(userConfigPath);
+                        Debugger.xmlCorrupt = false;
 
                         if (Debugger.Enabled)
                         {
                             Debugger.Log("User Configuration loaded.");
                         }
-
-                        if (_configuration == null)
-                        {
-                            _configuration = new Configuration();
-                            SaveConfig();
-                        }
-
-                        Debugger.xmlCorrupt = false;
                     }
                     catch
                     {
                         Debugger.xmlCorrupt = true;
+                    }
+
+                    if (_configuration == null && !Debugger.xmlCorrupt)
+                    {
+                        _configuration = new Configuration();
+                        try { SaveConfig(); }
+                        catch (Exception e)
+                        {
+                            Debugger.LogError("Could not create BuildingThemes.xml at: " +
+                                Path.GetFullPath(userConfigPath));
+                            Debugger.LogException(e);
+                        }
                     }
                 }
 

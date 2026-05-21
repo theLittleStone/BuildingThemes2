@@ -121,7 +121,7 @@ namespace BuildingThemes
                 text = "BuildingThemes is unable to read the BuildingThemes.xml file " +
                        "that stores your settings and themes!\n\n" +
                        "To fix it, delete the corrupted file and restart the game:\n" +
-                       "{Steam folder}\\steamapps\\common\\\nCities_Skylines\\BuildingThemes.xml\n\n" +
+                       System.IO.Path.GetFullPath("BuildingThemes.xml") + "\n\n" +
                        "(Your self-made themes and other settings will be lost. Thank your PC for that)";
             }
 
