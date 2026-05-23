@@ -206,7 +206,13 @@ namespace BuildingThemes.Diagnostics
                 sb.AppendFormat("Theme buildings in district ({0} placed, {1} types):\n",
                     themeTotal, themeCounts.Count);
                 foreach (var kv in themeCounts)
-                    sb.AppendFormat("  {0}: {1}\n", kv.Key, kv.Value);
+                {
+                    string origin = GUI.BuildingItem.GetOriginTextForName(kv.Key);
+                    if (!string.IsNullOrEmpty(origin))
+                        sb.AppendFormat("  {0}: {1}  [{2}]\n", kv.Key, kv.Value, origin);
+                    else
+                        sb.AppendFormat("  {0}: {1}\n", kv.Key, kv.Value);
+                }
             }
 
             sb.AppendLine();
@@ -220,7 +226,13 @@ namespace BuildingThemes.Diagnostics
                 sb.AppendFormat("Non-theme buildings in district ({0} placed, {1} types):\n",
                     forbiddenTotal, forbiddenCounts.Count);
                 foreach (var kv in forbiddenCounts)
-                    sb.AppendFormat("  {0}: {1}\n", kv.Key, kv.Value);
+                {
+                    string origin = GUI.BuildingItem.GetOriginTextForName(kv.Key);
+                    if (!string.IsNullOrEmpty(origin))
+                        sb.AppendFormat("  {0}: {1}  [{2}]\n", kv.Key, kv.Value, origin);
+                    else
+                        sb.AppendFormat("  {0}: {1}\n", kv.Key, kv.Value);
+                }
             }
 
             return sb.ToString();

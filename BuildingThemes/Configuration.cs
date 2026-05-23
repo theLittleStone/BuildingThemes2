@@ -168,10 +168,11 @@ namespace BuildingThemes
                 }
             }
 
-            // Considers the stored dlc string, the runtime prefab tags, and DistrictStyle
-            // membership. The third check catches buildings whose prefab masks resolve to None
-            // but still belong to a built-in DistrictStyle we have flagged as DLC — the
-            // canonical case being base-game European content on PC.
+            // A building needs DLC when its own prefab flags say so (expansion or modder pack).
+            // DistrictStyle membership is intentionally NOT checked here: a building shared
+            // between e.g. the European DistrictStyle and the Sunny spawn pool has exp=None
+            // and pack=None — it is vanilla by ownership. Whether the *theme* that contains
+            // the building is DLC-gated is tracked separately on Theme.isDlc.
             private static bool BuildingNeedsDlc(Building b)
             {
                 if (b == null) return false;
@@ -179,19 +180,9 @@ namespace BuildingThemes
                 if (b.name == null) return false;
 
                 var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
-                if (prefab != null)
-                {
-                    if (prefab.m_requiredExpansion != SteamHelper.ExpansionBitMask.None) return true;
-                    if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) return true;
-                }
-
-                var styleThemes = BuildingThemesManager.GetBuiltInThemesForPrefab(b.name);
-                if (styleThemes != null)
-                {
-                    foreach (var t in styleThemes)
-                        if (t != null && t.isDlc) return true;
-                }
-                return false;
+                if (prefab == null) return false;
+                return prefab.m_requiredExpansion != SteamHelper.ExpansionBitMask.None
+                    || prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None;
             }
 
             // Workshop assets follow the "<steamId>.Name_Data" pattern. Strip the optional

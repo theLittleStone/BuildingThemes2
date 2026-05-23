@@ -249,32 +249,48 @@ namespace BuildingThemes.GUI
             }
         }
 
-        /// <summary>
-        /// Short label describing where this asset comes from — "Vanilla asset", "Workshop", or
-        /// "Included in &lt;localized DLC name&gt;". Expansions and modder packs render the same way
-        /// from the user's perspective; both go through DlcNames so the displayed string follows
-        /// the in-game locale where keys are available.
-        /// </summary>
         public string GetOriginText()
         {
-            if (isCustomAsset) return "Workshop";
+            return GetOriginTextForName(name);
+        }
 
+        public Color32 GetStatusColor()
+        {
+            if (prefab == null && building != null && !isCustomAsset)
+                return new Color32(128, 128, 128, 255);
+            if (prefab == null)
+                return new Color32(255, 255, 0, 255);
+            if (building != null && building.baseName != null)
+                return new Color32(50, 230, 255, 255);
+
+
+            return new Color32(255, 255, 255, 255);
+        }
+
+        /// <summary>
+        /// Origin text resolved from a raw prefab name — "Vanilla asset", "Workshop", or
+        /// "Included in &lt;localized DLC / DistrictStyle name&gt;". Shared by the preview panel
+        /// and the diagnostics report so both surfaces show identical wording.
+        /// </summary>
+        public static string GetOriginTextForName(string prefabName)
+        {
+            if (string.IsNullOrEmpty(prefabName)) return "";
+
+            string clean = Regex.Replace(prefabName, @"^\{\{.*?\}\}\.", "");
+            if (clean.Contains(".")) return "Workshop";
+
+            var prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName);
             if (prefab == null) return "Vanilla asset";
 
-            var exp = prefab.m_requiredExpansion;
+            var exp  = prefab.m_requiredExpansion;
             var pack = prefab.m_requiredModderPack;
             var parts = new System.Collections.Generic.List<string>(2);
-            if (exp != SteamHelper.ExpansionBitMask.None)
-                parts.Add(DlcNames.GetExpansionName(exp));
-            if (pack != SteamHelper.ModderPackBitMask.None)
-                parts.Add(DlcNames.GetModderPackName(pack));
+            if (exp  != SteamHelper.ExpansionBitMask.None)  parts.Add(DlcNames.GetExpansionName(exp));
+            if (pack != SteamHelper.ModderPackBitMask.None) parts.Add(DlcNames.GetModderPackName(pack));
 
-            // Fallback: prefabs whose masks are both None but still belong to a built-in
-            // DistrictStyle (e.g. base-game European content on PC). General mechanism — any
-            // built-in style we imported this prefab from contributes its localized name.
             if (parts.Count == 0)
             {
-                var themes = BuildingThemesManager.GetBuiltInThemesForPrefab(prefab.name);
+                var themes = BuildingThemesManager.GetBuiltInThemesForPrefab(prefabName);
                 if (themes != null)
                 {
                     foreach (var t in themes)
@@ -289,19 +305,6 @@ namespace BuildingThemes.GUI
 
             if (parts.Count == 0) return "Vanilla asset";
             return "Included in " + string.Join(", ", parts.ToArray());
-        }
-
-        public Color32 GetStatusColor()
-        {
-            if (prefab == null && building != null && !isCustomAsset)
-                return new Color32(128, 128, 128, 255);
-            if (prefab == null)
-                return new Color32(255, 255, 0, 255);
-            if (building != null && building.baseName != null)
-                return new Color32(50, 230, 255, 255);
-
-
-            return new Color32(255, 255, 255, 255);
         }
 
         public static string CleanName(string name, bool cleanNumbers = false)

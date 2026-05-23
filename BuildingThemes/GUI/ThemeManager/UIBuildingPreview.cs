@@ -158,7 +158,7 @@ namespace BuildingThemes.GUI
             m_buildingName.autoHeight = true;
 
             // Origin label (DLC / workshop source) — positioned just below the building name
-            string originText = m_item.GetOriginText();
+            string originText = BuildingItem.GetOriginTextForName(m_item.name);
             if (!string.IsNullOrEmpty(originText))
             {
                 m_origin.text = originText;

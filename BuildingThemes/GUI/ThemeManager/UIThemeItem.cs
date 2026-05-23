@@ -81,15 +81,16 @@ namespace BuildingThemes.GUI
 
             m_theme = data as Configuration.Theme;
 
-            bool isVanilla = m_theme != null && m_theme.isVanillaOnly;
-            bool isDlcNoWorkshop = !isVanilla && m_theme != null && m_theme.hasNoWorkshopAssets;
+            bool isVanilla = m_theme != null && !m_theme.isDlc && m_theme.isVanillaOnly;
+            bool needsDlc  = !isVanilla && m_theme != null
+                && (m_theme.isDlc || m_theme.hasNoWorkshopAssets);
             if (isVanilla)
             {
                 m_dlcBadge.textColor = BadgeColorVanilla;
                 m_dlcBadge.tooltip = BadgeTooltipVanilla;
                 m_dlcBadge.isVisible = true;
             }
-            else if (isDlcNoWorkshop)
+            else if (needsDlc)
             {
                 m_dlcBadge.textColor = BadgeColorDlc;
                 m_dlcBadge.tooltip = BadgeTooltipDlc;
