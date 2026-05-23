@@ -49,14 +49,20 @@ namespace BuildingThemes
         }
 
         /// <summary>
-        /// Returns true when the given district (or the city-wide district 0) has theme management enabled.
-        /// Used by strict mode to decide whether an empty area bucket is intentionally restricted.
+        /// Returns true when the given district (or the city-wide district 0) has theme management
+        /// enabled AND at least one theme assigned. Districts that are toggled on with no themes
+        /// selected behave like vanilla: the spawn patch defers to the original code, leaving the
+        /// district's native m_Style filter intact.
         /// </summary>
         public bool IsEffectivelyThemed(byte districtId)
         {
             var info = districtThemeInfos[districtId];
-            if (info != null && info.isEnabled) return true;
-            if (districtId != 0) { var c = districtThemeInfos[0]; if (c != null && c.isEnabled) return true; }
+            if (info != null && info.isEnabled && info.themes != null && info.themes.Count > 0) return true;
+            if (districtId != 0)
+            {
+                var c = districtThemeInfos[0];
+                if (c != null && c.isEnabled && c.themes != null && c.themes.Count > 0) return true;
+            }
             return false;
         }
 
@@ -363,22 +369,10 @@ namespace BuildingThemes
                              "Skipping European theme import (likely disabled in Content Manager or DLC not active).");
             }
 
-            for (byte districtId = 0; districtId < DistrictManager.instance.m_districts.m_buffer.Length; ++districtId)
-            {
-                var district = DistrictManager.instance.m_districts.m_buffer[districtId];
-                if (district.m_flags == District.Flags.None || district.m_Style <= 0)
-                {
-                    continue;
-                }
-                var style = DistrictManager.instance.m_Styles[district.m_Style - 1];
-                var stylePackage = style.PackageName;
-                Singleton<DistrictManager>.instance.m_districts.m_buffer[districtId].m_Style = 0;
-                ToggleThemeManagement(districtId, true);
-                var theme = GetThemeByStylePackage(stylePackage);
-                EnableTheme(districtId, theme);
-                Debugger.LogFormat("Theme \"{0}\" was enabled for districtId={1} instead of style \"{2}\" (packageName={3})",
-                    theme.name, districtId, style.Name, style.PackageName);
-            }
+            // No auto-enable on load: a district with a vanilla m_Style set keeps its vanilla
+            // behaviour. The user opts in to theme management explicitly via the Policies tab,
+            // and the per-district opt-in code clears m_Style at that point. This restores
+            // exact vanilla parity for players who never touch the mod's UI.
 
             importedStyles = true;
         }
@@ -1394,36 +1388,14 @@ namespace BuildingThemes
 
         private HashSet<Configuration.Theme> getDefaultThemes(uint districtIdx)
         {
-            var theme = new HashSet<Configuration.Theme>();
+            // Theme management is opt-in. Enabling the toggle without selecting a theme leaves
+            // the district behaving like vanilla (IsEffectivelyThemed returns false for empty
+            // theme sets, so the spawn patch defers to the original code). The built-in env
+            // themes are references in the manager for the player to inspect or copy from.
+            if (Debugger.Enabled)
+                Debugger.LogFormat("Theme management enabled for district {0}; no default theme assigned.", districtIdx);
 
-            if (districtIdx == 0)
-            {
-                // city-wide default derived from environment (european, sunny, boreal, tropical)
-                var env = Singleton<SimulationManager>.instance.m_metaData.m_environment;
-
-                var defaultTheme = env == "Europe"
-                    ? GetThemeByName("European")
-                    : GetThemeByName("International");
-
-                if (defaultTheme != null)
-                    theme.Add(defaultTheme);
-
-                if (Debugger.Enabled)
-                    Debugger.LogFormat("Environment is {0}. Selected default built-in theme.", env);
-            }
-            else
-            {
-                // district theme derived from city-wide theme
-
-                theme.UnionWith(GetDistrictThemes(0, true));
-
-                if (Debugger.Enabled)
-                {
-                    Debugger.LogFormat("Deriving theme for district {0} from city-wide theme.", districtIdx);
-                }
-            }
-
-            return theme;
+            return new HashSet<Configuration.Theme>();
         }
 
         public HashSet<Configuration.Theme> GetDistrictThemes(byte districtId, bool initializeIfNull)
