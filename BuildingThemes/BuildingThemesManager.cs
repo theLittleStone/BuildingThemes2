@@ -452,8 +452,10 @@ namespace BuildingThemes
         }
 
         // Keep only buildings whose runtime prefab matches the env theme's single DLC source.
-        // Unloaded prefabs are kept (they may load later via DSP); modder-pack-tagged prefabs are
-        // always dropped (those buildings belong to their pack's own DistrictStyle theme).
+        // Modder-pack-tagged prefabs are always dropped (those belong to their pack's own
+        // DistrictStyle theme). Unloaded prefabs are also dropped — bundled env themes are
+        // derived from an exhaustive dump, so a name that doesn't resolve at import time is
+        // not part of the player's current install and should not pollute the theme.
         private static List<Configuration.Building> FilterEnvThemeBuildings(
             List<Configuration.Building> input, SteamHelper.ExpansionBitMask requiredExpansion)
         {
@@ -462,13 +464,7 @@ namespace BuildingThemes
             {
                 if (b == null || string.IsNullOrEmpty(b.name)) continue;
                 var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
-                if (prefab == null)
-                {
-                    // Building names that resolve later (DSP, post-asset-load fixups) — keep them
-                    // so they participate when the prefab eventually arrives.
-                    result.Add(b);
-                    continue;
-                }
+                if (prefab == null) continue;
                 if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) continue;
                 if (prefab.m_requiredExpansion != requiredExpansion) continue;
                 result.Add(b);
