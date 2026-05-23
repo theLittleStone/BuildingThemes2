@@ -16,6 +16,10 @@ namespace BuildingThemes
 
             Debugger.Initialize();
 
+            // Unconditional — always visible in output_log.txt so the dev can verify whether
+            // debug logging is active for this session without enabling it after the fact.
+            UnityEngine.Debug.Log("[BT2] OnCreated. Debugger.Enabled = " + Debugger.Enabled);
+
             Debugger.Log("ON_CREATED");
             Debugger.Log("Initializing Mod...");
             Debugger.LogFormat("Version={0} HarmonyId={1} ConfigPath={2}",
@@ -101,6 +105,10 @@ namespace BuildingThemes
                             Debugger.LogFormat("Deferred re-import done — {0} theme(s), {1} building entries.", allThemes.Count, totalBuildings);
                         }
                         Debugger.Log("Deferred style re-import and district config restore complete.");
+
+#if DEBUG
+                        EnvironmentDump.RunIfRequested();
+#endif
                     }
                     catch (Exception e) { Debugger.LogException(e); }
                 });

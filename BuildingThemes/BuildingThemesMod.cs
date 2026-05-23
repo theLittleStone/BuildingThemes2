@@ -215,8 +215,18 @@ namespace BuildingThemes
         {
             // Register the settings file before any SavedInt/SavedBool with this name are
             // first read, so the game does not log "not found or cannot be loaded" warnings.
-            ColossalFramework.GameSettings.AddSettingsFile(
-                new ColossalFramework.SettingsFile { fileName = "BuildingThemes2" });
+            // OnEnabled can fire more than once per session (re-enable in mods panel, recovery
+            // after a previous crash), so swallow the duplicate-key exception that
+            // GameSettings.AddSettingsFile throws if the file is already registered.
+            try
+            {
+                ColossalFramework.GameSettings.AddSettingsFile(
+                    new ColossalFramework.SettingsFile { fileName = "BuildingThemes2" });
+            }
+            catch (Exception e)
+            {
+                Debugger.Log("BuildingThemes2 settings file already registered; skipping. (" + e.GetType().Name + ")");
+            }
 
             HarmonyHelper.DoOnHarmonyReady(() => HarmonyPatches.Patcher.PatchAll());
         }
