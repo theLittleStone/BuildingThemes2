@@ -129,8 +129,10 @@ namespace BuildingThemes
             }
 
             /// <summary>
-            /// True when this theme contains only base-game buildings — no DLC and no workshop assets required.
-            /// Style-based themes use the isDlc flag; mod/user themes check each building individually.
+            /// True when this theme contains only base-game buildings — no DLC and no workshop
+            /// assets required. Every building is inspected (no shortcut for built-in themes)
+            /// so the badge is truthful even when a built-in theme's stored content is out of
+            /// sync with its isDlc flag.
             /// </summary>
             [XmlIgnore]
             public bool isVanillaOnly
@@ -138,14 +140,61 @@ namespace BuildingThemes
                 get
                 {
                     if (buildings.Count == 0) return false;
-                    if (isBuiltIn && stylePackage != null) return !isDlc;
                     foreach (var b in buildings)
                     {
-                        if (b.dlc != null) return false;
-                        if (b.name != null && b.name.Contains('.')) return false;
+                        if (BuildingNeedsDlc(b)) return false;
+                        if (BuildingIsWorkshop(b.name)) return false;
                     }
                     return true;
                 }
+            }
+
+            /// <summary>
+            /// True when this theme contains no workshop assets — only vanilla and/or DLC content.
+            /// Used together with isVanillaOnly to pick the badge: green when vanilla-only, red
+            /// when no-workshop-but-has-DLC, none otherwise.
+            /// </summary>
+            [XmlIgnore]
+            public bool hasNoWorkshopAssets
+            {
+                get
+                {
+                    if (buildings.Count == 0) return false;
+                    foreach (var b in buildings)
+                    {
+                        if (BuildingIsWorkshop(b.name)) return false;
+                    }
+                    return true;
+                }
+            }
+
+            // Considers both the stored dlc string (filled at theme deserialization) and the
+            // runtime prefab tags (authoritative when the prefab is loaded). Keeps the predicate
+            // accurate for built-in themes whose buildings are imported from PrefabCollection
+            // without ever setting Building.dlc.
+            private static bool BuildingNeedsDlc(Building b)
+            {
+                if (b == null) return false;
+                if (b.dlc != null) return true;
+                if (b.name != null)
+                {
+                    var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
+                    if (prefab != null)
+                    {
+                        if (prefab.m_requiredExpansion != SteamHelper.ExpansionBitMask.None) return true;
+                        if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) return true;
+                    }
+                }
+                return false;
+            }
+
+            // Workshop assets follow the "<steamId>.Name_Data" pattern. Strip the optional
+            // "{{steamId}}." namespace prefix some plugins inject before checking the dot.
+            private static bool BuildingIsWorkshop(string name)
+            {
+                if (string.IsNullOrEmpty(name)) return false;
+                string clean = System.Text.RegularExpressions.Regex.Replace(name, @"^\{\{.*?\}\}\.", "");
+                return clean.Contains(".");
             }
 
             private string ResolveLocaleName()

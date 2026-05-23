@@ -5,8 +5,17 @@ namespace BuildingThemes.GUI
 {
     public class UIThemeItem : UIPanel, IUIFastListRow
     {
+        // Single badge whose colour reflects DLC dependency:
+        //   green  - vanilla-only (no DLC, no workshop)
+        //   red    - no workshop, but requires DLC
+        //   hidden - has at least one workshop asset
+        private static readonly Color32 BadgeColorVanilla = new Color32(100, 220, 100, 255);
+        private static readonly Color32 BadgeColorDlc     = new Color32(220, 100, 100, 255);
+        private const string BadgeTooltipVanilla = "Vanilla-only theme: no DLC or workshop assets required.";
+        private const string BadgeTooltipDlc     = "Needs DLC. No workshop subscriptions required.";
+
         private UILabel m_name;
-        private UILabel m_vanillaBadge;
+        private UILabel m_dlcBadge;
         private UIPanel m_background;
 
         private Configuration.Theme m_theme;
@@ -45,8 +54,8 @@ namespace BuildingThemes.GUI
             base.OnSizeChanged();
 
             if (m_background != null) m_background.width = width;
-            if (m_vanillaBadge != null) m_vanillaBadge.relativePosition = new Vector3(width - 20f, 13f);
-            if (m_name != null) m_name.width = Mathf.Max(10f, width - (m_vanillaBadge != null && m_vanillaBadge.isVisible ? 25f : 10f));
+            if (m_dlcBadge != null) m_dlcBadge.relativePosition = new Vector3(width - 20f, 13f);
+            if (m_name != null) m_name.width = Mathf.Max(10f, width - (m_dlcBadge != null && m_dlcBadge.isVisible ? 25f : 10f));
         }
 
         #region IUIFastListRow implementation
@@ -61,25 +70,39 @@ namespace BuildingThemes.GUI
                 m_name.relativePosition = new Vector3(5, 13);
             }
 
-            if (m_vanillaBadge == null)
+            if (m_dlcBadge == null)
             {
-                m_vanillaBadge = AddUIComponent<UILabel>();
-                m_vanillaBadge.textScale = 0.8f;
-                m_vanillaBadge.text = "♦";
-                m_vanillaBadge.textColor = new Color32(100, 220, 100, 255);
-                m_vanillaBadge.autoSize = true;
-                m_vanillaBadge.tooltip = "Vanilla-only theme: no DLC or workshop assets required.";
-                m_vanillaBadge.relativePosition = new Vector3(width - 20f, 13f);
+                m_dlcBadge = AddUIComponent<UILabel>();
+                m_dlcBadge.textScale = 0.8f;
+                m_dlcBadge.text = "♦";
+                m_dlcBadge.autoSize = true;
+                m_dlcBadge.relativePosition = new Vector3(width - 20f, 13f);
             }
 
             m_theme = data as Configuration.Theme;
 
             bool isVanilla = m_theme != null && m_theme.isVanillaOnly;
-            m_vanillaBadge.isVisible = isVanilla;
+            bool isDlcNoWorkshop = !isVanilla && m_theme != null && m_theme.hasNoWorkshopAssets;
+            if (isVanilla)
+            {
+                m_dlcBadge.textColor = BadgeColorVanilla;
+                m_dlcBadge.tooltip = BadgeTooltipVanilla;
+                m_dlcBadge.isVisible = true;
+            }
+            else if (isDlcNoWorkshop)
+            {
+                m_dlcBadge.textColor = BadgeColorDlc;
+                m_dlcBadge.tooltip = BadgeTooltipDlc;
+                m_dlcBadge.isVisible = true;
+            }
+            else
+            {
+                m_dlcBadge.isVisible = false;
+            }
 
             // Keep label width in sync with row width (row width may still be 0 before Start(), use parent as fallback)
             float rowWidth = width > 0 ? width : (parent != null ? parent.width : 0f);
-            m_name.width = Mathf.Max(10f, rowWidth - (isVanilla ? 25f : 10f));
+            m_name.width = Mathf.Max(10f, rowWidth - (m_dlcBadge.isVisible ? 25f : 10f));
 
             string validityError = UIThemeManager.instance != null
                 ? UIThemeManager.instance.ThemeValidityError(m_theme)
