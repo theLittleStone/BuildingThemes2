@@ -577,7 +577,10 @@ namespace BuildingThemes
             string stylePackage = isEuropeanStyle ? DistrictStyle.kEuropeanStyleName : style.PackageName;
 
             var theme = AddImportedTheme(buildings, themeName, stylePackage);
-            theme.isDlc = isModderPackDlc || isExpansionDlc;
+            // European is shipped as an enable-able content pack (free on PC but still a
+            // separate pack the player must turn on), so it carries the [DLC] prefix even
+            // though its expansion/modder-pack masks resolve to None.
+            theme.isDlc = isModderPackDlc || isExpansionDlc || isEuropeanStyle;
 
             // Wire up the locale key so the UI can show the official expansion name.
             string localeKey;
