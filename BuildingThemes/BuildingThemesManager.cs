@@ -383,22 +383,88 @@ namespace BuildingThemes
             importedStyles = true;
         }
 
+        // BT2's bundled env themes: each maps to exactly one expansion source. Buildings whose
+        // prefab requires a different DLC (or a modder pack) are filtered out at import time so
+        // each theme is a clean, single-source representation. International is base-game-only
+        // (no expansion mask). Winter is Snowfall-only. European is provided by AddStyleTheme
+        // from the real DistrictStyle, so it is not in this table.
+        private static readonly System.Collections.Generic.Dictionary<string, SteamHelper.ExpansionBitMask> s_envThemeExpansion =
+            new System.Collections.Generic.Dictionary<string, SteamHelper.ExpansionBitMask>
+        {
+            { "International", SteamHelper.ExpansionBitMask.None     },
+            { "Winter",        SteamHelper.ExpansionBitMask.SnowFall },
+        };
+
         private void AddModTheme(Configuration.Theme modTheme, string modName, bool isBundled = false)
         {
             if (modTheme == null)
             {
                 return;
             }
-            // BT2's own bundled XML themes (European, International) are vanilla content — pass the
-            // theme name as stylePackage so displayName resolves to "[Vanilla] <name>" rather than
-            // "[Custom] <name>". Other mods' themes keep stylePackage=null → "[Custom]".
+            // Bundled XML themes pass the theme name as stylePackage so displayName resolves to
+            // "[Vanilla] <name>" / "[DLC] <name>" rather than "[Custom] <name>". Other mods'
+            // themes keep stylePackage=null → "[Custom]".
             string stylePackage = isBundled ? modTheme.name : null;
-            var theme = AddImportedTheme(modTheme.buildings, modTheme.name, stylePackage);
+
+            // Recognised env theme: enforce single-DLC-source filter and ownership gating.
+            SteamHelper.ExpansionBitMask requiredExpansion = SteamHelper.ExpansionBitMask.None;
+            bool isEnvTheme = isBundled && s_envThemeExpansion.TryGetValue(modTheme.name, out requiredExpansion);
+
+            if (isEnvTheme && requiredExpansion != SteamHelper.ExpansionBitMask.None)
+            {
+                // Hide the theme entirely when the player does not own the required expansion.
+                // Matches vanilla behaviour for DLC-locked content (the styles simply do not appear).
+                var owned = SteamHelper.GetOwnedExpansionMask();
+                if ((owned & requiredExpansion) == SteamHelper.ExpansionBitMask.None)
+                {
+                    Debugger.LogFormat(
+                        "Skipping bundled theme \"{0}\": required expansion not owned.",
+                        modTheme.name);
+                    return;
+                }
+            }
+            var buildingsToImport = modTheme.buildings;
+
+            if (isEnvTheme)
+            {
+                buildingsToImport = FilterEnvThemeBuildings(modTheme.buildings, requiredExpansion);
+            }
+
+            var theme = AddImportedTheme(buildingsToImport, modTheme.name, stylePackage);
+
+            if (isEnvTheme)
+            {
+                theme.isDlc = requiredExpansion != SteamHelper.ExpansionBitMask.None;
+            }
 
             Debugger.LogFormat(
                 "Imported theme from mod \"{0}\" as theme \"{1}\". Buildings in mod: {2}. Buildings in theme: {3} ",
-                modTheme.buildings.Count,
-                modName, theme.name, theme.buildings.Count);
+                modName, theme.name, modTheme.buildings.Count, theme.buildings.Count);
+        }
+
+        // Keep only buildings whose runtime prefab matches the env theme's single DLC source.
+        // Unloaded prefabs are kept (they may load later via DSP); modder-pack-tagged prefabs are
+        // always dropped (those buildings belong to their pack's own DistrictStyle theme).
+        private static List<Configuration.Building> FilterEnvThemeBuildings(
+            List<Configuration.Building> input, SteamHelper.ExpansionBitMask requiredExpansion)
+        {
+            var result = new List<Configuration.Building>(input.Count);
+            foreach (var b in input)
+            {
+                if (b == null || string.IsNullOrEmpty(b.name)) continue;
+                var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
+                if (prefab == null)
+                {
+                    // Building names that resolve later (DSP, post-asset-load fixups) — keep them
+                    // so they participate when the prefab eventually arrives.
+                    result.Add(b);
+                    continue;
+                }
+                if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) continue;
+                if (prefab.m_requiredExpansion != requiredExpansion) continue;
+                result.Add(b);
+            }
+            return result;
         }
 
         // Maps DistrictStyle.Name constants → locale keys used by the game for display.
@@ -544,7 +610,14 @@ namespace BuildingThemes
 
         private Configuration.Theme AddImportedTheme(List<Configuration.Building> builtInBuildings, string themeName, string stylePackage)
         {
-            var theme = Configuration.getTheme(themeName);
+            // Lookup strategy: built-in style / env themes match by stylePackage so a user theme
+            // that happens to share the name (e.g. user created a custom "International") is left
+            // alone instead of being silently adopted as a built-in. Themes without a stylePackage
+            // (user themes, other mods' themes) keep the legacy name-based lookup.
+            Configuration.Theme theme = stylePackage != null
+                ? GetThemeByStylePackage(stylePackage)
+                : Configuration.getTheme(themeName);
+
             if (theme == null)
             {
                 theme = new Configuration.Theme
@@ -553,10 +626,6 @@ namespace BuildingThemes
                     stylePackage = stylePackage
                 };
                 Configuration.themes.Add(theme);
-            }
-            else if (stylePackage != null && theme.stylePackage == null)
-            {
-                theme.stylePackage = stylePackage;
             }
             theme.isBuiltIn = true;
 
