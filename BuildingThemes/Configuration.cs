@@ -168,22 +168,28 @@ namespace BuildingThemes
                 }
             }
 
-            // Considers both the stored dlc string (filled at theme deserialization) and the
-            // runtime prefab tags (authoritative when the prefab is loaded). Keeps the predicate
-            // accurate for built-in themes whose buildings are imported from PrefabCollection
-            // without ever setting Building.dlc.
+            // Considers the stored dlc string, the runtime prefab tags, and DistrictStyle
+            // membership. The third check catches buildings whose prefab masks resolve to None
+            // but still belong to a built-in DistrictStyle we have flagged as DLC — the
+            // canonical case being base-game European content on PC.
             private static bool BuildingNeedsDlc(Building b)
             {
                 if (b == null) return false;
                 if (b.dlc != null) return true;
-                if (b.name != null)
+                if (b.name == null) return false;
+
+                var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
+                if (prefab != null)
                 {
-                    var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
-                    if (prefab != null)
-                    {
-                        if (prefab.m_requiredExpansion != SteamHelper.ExpansionBitMask.None) return true;
-                        if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) return true;
-                    }
+                    if (prefab.m_requiredExpansion != SteamHelper.ExpansionBitMask.None) return true;
+                    if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) return true;
+                }
+
+                var styleThemes = BuildingThemesManager.GetBuiltInThemesForPrefab(b.name);
+                if (styleThemes != null)
+                {
+                    foreach (var t in styleThemes)
+                        if (t != null && t.isDlc) return true;
                 }
                 return false;
             }
