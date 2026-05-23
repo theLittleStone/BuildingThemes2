@@ -261,9 +261,11 @@ namespace BuildingThemes
                             Debugger.Log("User Configuration loaded.");
                         }
                     }
-                    catch
+                    catch (Exception e)
                     {
                         Debugger.xmlCorrupt = true;
+                        Debugger.LogError("Configuration load failed — check Player.log for details.");
+                        Debugger.LogException(e);
                     }
 
                     if (_configuration == null && !Debugger.xmlCorrupt)

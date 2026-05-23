@@ -348,9 +348,9 @@ namespace BuildingThemes
         {
             if (!File.Exists(filename)) return null;
 
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(Configuration));
             try
             {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(Configuration));
                 using (System.IO.StreamReader streamReader = new System.IO.StreamReader(filename))
                 {
                     return (Configuration)xmlSerializer.Deserialize(streamReader);
@@ -358,8 +358,8 @@ namespace BuildingThemes
             }
             catch (Exception e)
             {
-                Debugger.Log("Couldn't load configuration (XML malformed?)");
-                throw e;
+                Debugger.Log("Couldn't load configuration (XML malformed or serializer error): " + e.GetType().Name);
+                throw;
             }
         }
 
