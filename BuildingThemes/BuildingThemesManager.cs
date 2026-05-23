@@ -480,24 +480,6 @@ namespace BuildingThemes
             return result;
         }
 
-        // Maps DistrictStyle.Name constants → locale keys used by the game for display.
-        // Keys resolve to the style's official name (e.g. "Bridges & Piers", "European Suburbia").
-        private static readonly System.Collections.Generic.Dictionary<string, string> s_styleLocaleKeys =
-            new System.Collections.Generic.Dictionary<string, string>
-        {
-            { DistrictStyle.kEuropeanSuburbiaStyleName, "STYLES_EUROPEANSUBURBIA"    },
-            { DistrictStyle.kModderPack5StyleName,      "STYLES_MODDERPACKFIVE"      },
-            { DistrictStyle.kModderPack11StyleName,     "STYLES_MODDERPACKELEVEN"    },
-            { DistrictStyle.kModderPack14StyleName,     "STYLES_MODDERPACKFOURTEEN"  },
-            { DistrictStyle.kModderPack16StyleName,     "STYLES_MODDERPACKSIXTEEN"   },
-            { DistrictStyle.kModderPack18StyleName,     "STYLES_MODDERPACKEIGHTEEN"  },
-            { DistrictStyle.kModderPack20StyleName,     "STYLES_MODDERPACKTWENTY"    },
-            { DistrictStyle.kModderPack21StyleName,     "STYLES_MODDERPACKTWENTYONE" },
-            { DistrictStyle.kModderPack24StyleName,     "STYLES_MODDERPACKTWENTYFOUR"},
-            { DistrictStyle.kModderPack25StyleName,     "STYLES_MODDERPACKTWENTYFIVE"},
-            { DistrictStyle.kModderPack26StyleName,     "STYLES_MODDERPACKTWENTYSIX" },
-        };
-
         private static bool IsEuropeanStyle(DistrictStyle style)
         {
             return style != null && style.BuiltIn &&
@@ -619,10 +601,8 @@ namespace BuildingThemes
                 }
             }
 
-            // Wire up the locale key so the UI can show the official expansion name.
-            string localeKey;
-            if (s_styleLocaleKeys.TryGetValue(style.Name, out localeKey))
-                theme.localeKey = localeKey;
+            // Wire up the locale key so the UI can show the localized style name.
+            theme.localeKey = DlcNames.GetStyleLocaleKey(style.Name);
 
             Debugger.LogFormat(
                 "Imported style \"{0}\" as theme \"{1}\". isDlc={2}. Style buildings: {3}. Theme buildings: {4}.",

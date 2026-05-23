@@ -63,10 +63,14 @@ namespace BuildingThemes
             { SteamHelper.ModderPackBitMask.Pack29, "Renewed History"        },
         };
 
-        // Locale keys for packs that have them (allows in-game language override).
+        // Locale keys for packs that have in-game locale strings (confirmed via monodis on
+        // Assembly-CSharp.dll — these are all the STYLES_* keys the game ships).
+        // Pack3 (EuropeanSuburbia) uses kEuropeanSuburbiaStyleName instead of kModderPack3StyleName
+        // but its buildings carry ModderPackBitMask.Pack3, so it belongs here.
         private static readonly Dictionary<SteamHelper.ModderPackBitMask, string> s_packLocale =
             new Dictionary<SteamHelper.ModderPackBitMask, string>
         {
+            { SteamHelper.ModderPackBitMask.Pack3,  "STYLES_EUROPEANSUBURBIA"    },
             { SteamHelper.ModderPackBitMask.Pack5,  "STYLES_MODDERPACKFIVE"      },
             { SteamHelper.ModderPackBitMask.Pack11, "STYLES_MODDERPACKELEVEN"    },
             { SteamHelper.ModderPackBitMask.Pack14, "STYLES_MODDERPACKFOURTEEN"  },
@@ -97,6 +101,36 @@ namespace BuildingThemes
             if (s_packNames.TryGetValue(mask, out hardcoded))
                 return hardcoded;
             return "CCP";
+        }
+
+        // Maps the game's DistrictStyle.Name constants (full strings with hash suffix, confirmed
+        // via monodis) to locale keys. Used by AddStyleTheme to localise built-in style theme names.
+        // All STYLES_* keys confirmed from Assembly-CSharp.dll strings table.
+        private static readonly Dictionary<string, string> s_styleLocaleKeys =
+            new Dictionary<string, string>
+        {
+            { DistrictStyle.kEuropeanStyleName,         "STYLES_EUROPEAN"            },
+            { DistrictStyle.kEuropeanSuburbiaStyleName, "STYLES_EUROPEANSUBURBIA"    },
+            { DistrictStyle.kModderPack5StyleName,      "STYLES_MODDERPACKFIVE"      },
+            { DistrictStyle.kModderPack11StyleName,     "STYLES_MODDERPACKELEVEN"    },
+            { DistrictStyle.kModderPack14StyleName,     "STYLES_MODDERPACKFOURTEEN"  },
+            { DistrictStyle.kModderPack16StyleName,     "STYLES_MODDERPACKSIXTEEN"   },
+            { DistrictStyle.kModderPack18StyleName,     "STYLES_MODDERPACKEIGHTEEN"  },
+            { DistrictStyle.kModderPack20StyleName,     "STYLES_MODDERPACKTWENTY"    },
+            { DistrictStyle.kModderPack21StyleName,     "STYLES_MODDERPACKTWENTYONE" },
+            { DistrictStyle.kModderPack24StyleName,     "STYLES_MODDERPACKTWENTYFOUR"},
+            { DistrictStyle.kModderPack25StyleName,     "STYLES_MODDERPACKTWENTYFIVE"},
+            { DistrictStyle.kModderPack26StyleName,     "STYLES_MODDERPACKTWENTYSIX" },
+        };
+
+        /// <summary>
+        /// Returns the locale key for a built-in DistrictStyle name, or null if unknown.
+        /// Used by AddStyleTheme to set theme.localeKey for in-game language support.
+        /// </summary>
+        public static string GetStyleLocaleKey(string styleName)
+        {
+            string key;
+            return s_styleLocaleKeys.TryGetValue(styleName, out key) ? key : null;
         }
     }
 }
