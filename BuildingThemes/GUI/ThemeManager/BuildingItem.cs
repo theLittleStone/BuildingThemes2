@@ -269,6 +269,24 @@ namespace BuildingThemes.GUI
             if (pack != SteamHelper.ModderPackBitMask.None)
                 parts.Add(DlcNames.GetModderPackName(pack));
 
+            // Fallback: prefabs whose masks are both None but still belong to a built-in
+            // DistrictStyle (e.g. base-game European content on PC). General mechanism — any
+            // built-in style we imported this prefab from contributes its localized name.
+            if (parts.Count == 0)
+            {
+                var themes = BuildingThemesManager.GetBuiltInThemesForPrefab(prefab.name);
+                if (themes != null)
+                {
+                    foreach (var t in themes)
+                    {
+                        if (t == null) continue;
+                        string label = t.localizedName;
+                        if (!string.IsNullOrEmpty(label) && !parts.Contains(label))
+                            parts.Add(label);
+                    }
+                }
+            }
+
             if (parts.Count == 0) return "Vanilla asset";
             return "Included in " + string.Join(", ", parts.ToArray());
         }

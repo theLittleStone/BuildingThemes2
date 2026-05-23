@@ -288,6 +288,20 @@ namespace BuildingThemes
             if (_configuration != null) Configuration.Serialize(userConfigPath, _configuration);
         }
 
+        // Maps prefab name -> themes imported from a built-in DistrictStyle that contain it.
+        // Populated during AddStyleTheme. Used by the per-building origin label to surface the
+        // owning style when the prefab itself carries no expansion / modder-pack mask (the
+        // canonical case is base-game European content on PC, which has neither flag set but
+        // still belongs to the European DistrictStyle).
+        private static readonly System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<Configuration.Theme>> s_prefabBuiltInThemes
+            = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<Configuration.Theme>>();
+
+        public static System.Collections.Generic.IList<Configuration.Theme> GetBuiltInThemesForPrefab(string prefabName)
+        {
+            System.Collections.Generic.List<Configuration.Theme> list;
+            return s_prefabBuiltInThemes.TryGetValue(prefabName, out list) ? list : null;
+        }
+
         public void Reset()
         {
             for (int d = 0; d < districtThemeInfos.Length; d++)
@@ -304,6 +318,7 @@ namespace BuildingThemes
             m_areaBuildingsDirty = true;
             importedModThemes = false;
             importedStyles = false;
+            s_prefabBuiltInThemes.Clear();
             ThemeDiagnostics.Reset();
         }
 
@@ -581,6 +596,24 @@ namespace BuildingThemes
             // separate pack the player must turn on), so it carries the [DLC] prefix even
             // though its expansion/modder-pack masks resolve to None.
             theme.isDlc = isModderPackDlc || isExpansionDlc || isEuropeanStyle;
+
+            // Record style membership so the per-building origin label can surface this style
+            // even for buildings whose prefab masks are both None (e.g. base-game European
+            // content on PC). General mechanism: any built-in DistrictStyle a prefab belongs to
+            // contributes to its "Included in ..." label.
+            if (style.BuiltIn)
+            {
+                foreach (var b in buildings)
+                {
+                    System.Collections.Generic.List<Configuration.Theme> list;
+                    if (!s_prefabBuiltInThemes.TryGetValue(b.name, out list))
+                    {
+                        list = new System.Collections.Generic.List<Configuration.Theme>();
+                        s_prefabBuiltInThemes[b.name] = list;
+                    }
+                    if (!list.Contains(theme)) list.Add(theme);
+                }
+            }
 
             // Wire up the locale key so the UI can show the official expansion name.
             string localeKey;

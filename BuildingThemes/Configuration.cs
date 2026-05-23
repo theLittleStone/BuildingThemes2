@@ -197,6 +197,18 @@ namespace BuildingThemes
                 return clean.Contains(".");
             }
 
+            /// <summary>
+            /// Returns the theme's display name without the [Vanilla] / [DLC] / [Custom] prefix.
+            /// Resolves via the locale key when available so the rendered text follows the in-game
+            /// language; falls back to the raw stored name otherwise. Suitable for per-building
+            /// origin labels and any context where the prefix would be redundant.
+            /// </summary>
+            [XmlIgnore]
+            public string localizedName
+            {
+                get { return ResolveLocaleName(); }
+            }
+
             private string ResolveLocaleName()
             {
                 if (localeKey != null)
