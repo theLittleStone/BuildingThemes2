@@ -395,13 +395,14 @@ namespace BuildingThemes
         // BT2's bundled env themes: each maps to exactly one expansion source. Buildings whose
         // prefab requires a different DLC (or a modder pack) are filtered out at import time so
         // each theme is a clean, single-source representation. International is base-game-only
-        // (no expansion mask). Winter is Snowfall-only. European is provided by AddStyleTheme
-        // from the real DistrictStyle, so it is not in this table.
+        // (no expansion mask). Snowfall holds the 15 winter-only resort/commercial buildings
+        // that only load on Winter maps. European is provided by AddStyleTheme from the real
+        // DistrictStyle, so it is not in this table.
         private static readonly System.Collections.Generic.Dictionary<string, SteamHelper.ExpansionBitMask> s_envThemeExpansion =
             new System.Collections.Generic.Dictionary<string, SteamHelper.ExpansionBitMask>
         {
             { "International", SteamHelper.ExpansionBitMask.None     },
-            { "Winter",        SteamHelper.ExpansionBitMask.SnowFall },
+            { "Snowfall",      SteamHelper.ExpansionBitMask.SnowFall },
         };
 
         private void AddModTheme(Configuration.Theme modTheme, string modName, bool isBundled = false)
@@ -452,19 +453,26 @@ namespace BuildingThemes
         }
 
         // Keep only buildings whose runtime prefab matches the env theme's single DLC source.
-        // Modder-pack-tagged prefabs are always dropped (those belong to their pack's own
-        // DistrictStyle theme). Unloaded prefabs are also dropped — bundled env themes are
-        // derived from an exhaustive dump, so a name that doesn't resolve at import time is
-        // not part of the player's current install and should not pollute the theme.
+        // Modder-pack-tagged prefabs are always dropped (they belong to their pack's own
+        // DistrictStyle theme). For base-game themes (requiredExpansion == None) unloaded
+        // prefabs are also dropped — a truly vanilla building should always be present.
+        // For expansion themes (e.g. Snowfall) unloaded prefabs are kept: their buildings only
+        // load on the matching map type (Winter), so absence on other maps is expected.
         private static List<Configuration.Building> FilterEnvThemeBuildings(
             List<Configuration.Building> input, SteamHelper.ExpansionBitMask requiredExpansion)
         {
+            bool isExpansion = requiredExpansion != SteamHelper.ExpansionBitMask.None;
             var result = new List<Configuration.Building>(input.Count);
             foreach (var b in input)
             {
                 if (b == null || string.IsNullOrEmpty(b.name)) continue;
                 var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
-                if (prefab == null) continue;
+                if (prefab == null)
+                {
+                    // Keep unresolved entries for expansion themes — they load on the correct env.
+                    if (isExpansion) result.Add(b);
+                    continue;
+                }
                 if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) continue;
                 if (prefab.m_requiredExpansion != requiredExpansion) continue;
                 result.Add(b);

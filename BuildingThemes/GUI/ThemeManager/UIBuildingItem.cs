@@ -6,14 +6,11 @@ namespace BuildingThemes.GUI
 {
     public class UIBuildingItem : UIPanel, IUIFastListRow
     {
-        private static readonly Color32 OriginTextColor = new Color32(160, 160, 160, 255);
-
         private UICheckBox m_name;
         private UISprite m_steamIcon;
         private UISprite m_category;
         private UILabel m_level;
         private UILabel m_size;
-        private UILabel m_origin;
         private UIPanel m_background;
 
         private BuildingItem m_building;
@@ -114,17 +111,6 @@ namespace BuildingThemes.GUI
 
             m_category = AddUIComponent<UISprite>();
             m_category.size = new Vector2(20, 20);
-
-            // Secondary line under the building name, in muted grey. Displays where the asset
-            // comes from ("Vanilla asset", "Workshop", "Included in <DLC>"). Lower textScale and
-            // dimmer colour keep it visually subordinate to the name.
-            m_origin = AddUIComponent<UILabel>();
-            m_origin.textScale = 0.65f;
-            m_origin.textColor = OriginTextColor;
-            m_origin.autoSize = false;
-            m_origin.height = 14f;
-            m_origin.relativePosition = new Vector3(27f, 23f);
-            m_origin.isVisible = false;
         }
 
         #region IUIFastListRow implementation
@@ -168,20 +154,13 @@ namespace BuildingThemes.GUI
                 maxLabelWidth -= 30;
 
                 m_name.label.relativePosition = new Vector3(52, 2);
-                m_origin.relativePosition = new Vector3(57f, 23f);
             }
             else
             {
                 m_steamIcon.isVisible = false;
 
                 m_name.label.relativePosition = new Vector3(22, 2);
-                m_origin.relativePosition = new Vector3(27f, 23f);
             }
-
-            string originText = m_building.GetOriginText();
-            m_origin.text = originText;
-            m_origin.width = Mathf.Max(10f, maxLabelWidth);
-            m_origin.isVisible = !string.IsNullOrEmpty(originText);
 
             if (isRowOdd)
             {

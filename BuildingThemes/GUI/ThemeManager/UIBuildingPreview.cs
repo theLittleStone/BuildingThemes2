@@ -19,6 +19,9 @@ namespace BuildingThemes.GUI
         private UILabel m_level;
         private UILabel m_height;
         private UILabel m_size;
+        private UILabel m_origin;
+
+        private static readonly Color32 OriginTextColor = new Color32(180, 180, 180, 255);
 
         public override void Start()
         {
@@ -63,6 +66,17 @@ namespace BuildingThemes.GUI
             m_buildingName.text = "Name";
             m_buildingName.isVisible = false;
             m_buildingName.relativePosition = new Vector3(5, 10);
+
+            // Origin label — DLC / workshop source, shown below the building name
+            m_origin = AddUIComponent<UILabel>();
+            m_origin.textScale = 0.65f;
+            m_origin.textColor = OriginTextColor;
+            m_origin.useDropShadow = true;
+            m_origin.dropShadowColor = new Color32(0, 0, 0, 200);
+            m_origin.dropShadowOffset = new Vector2(1, -1);
+            m_origin.autoSize = false;
+            m_origin.height = 14f;
+            m_origin.isVisible = false;
 
             // Category icon
             m_categoryIcon = AddUIComponent<UISprite>();
@@ -129,6 +143,7 @@ namespace BuildingThemes.GUI
             }
 
             m_buildingName.isVisible = false;
+            m_origin.isVisible = false;
             m_categoryIcon.isVisible = false;
             m_level.isVisible = false;
             m_height.isVisible = false;
@@ -141,6 +156,17 @@ namespace BuildingThemes.GUI
             m_buildingName.text = m_item.displayName;
             UIUtils.TruncateLabel(m_buildingName, width - 45);
             m_buildingName.autoHeight = true;
+
+            // Origin label (DLC / workshop source) — positioned just below the building name
+            string originText = m_item.GetOriginText();
+            if (!string.IsNullOrEmpty(originText))
+            {
+                m_origin.text = originText;
+                m_origin.width = width - 10;
+                m_origin.isVisible = true;
+                float nameBottom = m_buildingName.relativePosition.y + m_buildingName.height;
+                m_origin.relativePosition = new Vector3(5, nameBottom + 2);
+            }
 
             // Category icon
             Category category = m_item.category;

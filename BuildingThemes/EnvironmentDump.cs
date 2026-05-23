@@ -1,7 +1,6 @@
 #if DEBUG
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using ColossalFramework;
 using ColossalFramework.Plugins;
@@ -9,16 +8,20 @@ using ColossalFramework.Plugins;
 namespace BuildingThemes
 {
     // Dev-only tool. Compiled into Debug builds only; Release (the CD-published build) excludes it.
-    // Trigger: presence of an empty sentinel file `.dump-env` in the mod path. Touch it, load a vanilla
-    // map for each environment (Europe / Sunny / Boreal / Tropical), and `dump_<env>.xml` will be
-    // written next to the sentinel. Copy the resulting fragments into BuildingThemes.xml.
+    //
+    // When `.dump-env` sentinel exists in the mod path, writes a comprehensive prefab_dump.xml
+    // capturing everything needed for offline processing of the bundled themes:
+    //   - Every BuildingInfo prefab's identity + DLC tags + class info + size
+    //   - Every DistrictStyle's name, package, built-in flag, and building membership
+    //
+    // One dump on any map is enough — m_environment doesn't restrict PrefabCollection content,
+    // it only filters m_areaBuildings. The dump captures all loaded prefabs regardless of env,
+    // so any future theme-cleaning logic can run offline against this single file.
     internal static class EnvironmentDump
     {
         private const string SentinelFile = ".dump-env";
         private const string LogPrefix = "[BT2:DUMP] ";
 
-        // Logs unconditionally (no Debugger.Enabled gate) so dev sees status even with
-        // BT2 debug logging off. UnityEngine.Debug.Log always writes to output_log.txt.
         private static void Status(string msg)
         {
             UnityEngine.Debug.Log(LogPrefix + msg);
@@ -36,23 +39,14 @@ namespace BuildingThemes
                 }
 
                 string sentinel = Path.Combine(modPath, SentinelFile);
-                if (!File.Exists(sentinel))
-                {
-                    return; // no sentinel → nothing to do, silent in normal dev runs
-                }
+                if (!File.Exists(sentinel)) return;
 
-                Status("sentinel found at " + sentinel + " — running dump.");
+                Status("sentinel found — running comprehensive prefab dump.");
 
-                string env = Singleton<SimulationManager>.instance.m_metaData.m_environment;
-                if (string.IsNullOrEmpty(env))
-                {
-                    Status("m_environment is empty; aborting.");
-                    return;
-                }
-
-                string outPath = Path.Combine(modPath, "dump_" + env + ".xml");
-                int count = WriteDump(outPath, env);
-                Status("wrote " + count + " buildings to " + outPath);
+                string env = Singleton<SimulationManager>.instance.m_metaData.m_environment ?? "";
+                string outPath = Path.Combine(modPath, "prefab_dump.xml");
+                var stats = WriteDump(outPath, env);
+                Status("wrote " + stats.PrefabCount + " prefabs, " + stats.StyleCount + " styles to " + outPath);
             }
             catch (Exception e)
             {
@@ -71,117 +65,184 @@ namespace BuildingThemes
             return null;
         }
 
-        // Snapshot the game's no-style spawn pool (BuildingManager.m_areaBuildings[0]).
-        // That bucket is what vanilla spawns from when a district has no style set, and
-        // the game has already environment-filtered it (Sunny / Europe / North / Winter /
-        // Tropical see different sets), so this is the authoritative source for env themes.
-        // Workshop assets are still excluded — they don't belong in any built-in env theme.
-        private static int WriteDump(string outPath, string env)
+        private struct DumpStats
         {
-            var sb = new StringBuilder();
-            sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.AppendFormat("<!-- Environment dump: {0}. Generated {1:u}. -->", env, DateTime.UtcNow).AppendLine();
-            sb.AppendLine("<!-- Copy the <Theme> element below into BuildingThemes/BuildingThemes.xml. -->");
-            sb.AppendLine("<Configuration>");
-            sb.AppendLine("  <Themes>");
-            sb.AppendFormat("    <Theme name=\"{0}\">", env).AppendLine();
-            sb.AppendLine("      <Buildings>");
+            public int PrefabCount;
+            public int StyleCount;
+        }
 
-            // BuildingManager.m_areaBuildings is private. Force-populate it via the
-            // (also private) RefreshAreaBuildings() method, then read via reflection.
+        // Single comprehensive snapshot, intentionally unfiltered. Workshop assets and
+        // non-growable prefabs are included so offline tooling can decide what to keep.
+        private static DumpStats WriteDump(string outPath, string currentEnv)
+        {
+            var sb = new StringBuilder(1 << 20); // ~1 MB initial buffer
+            sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            sb.AppendFormat(
+                "<PrefabDump generatedUtc=\"{0:u}\" currentEnvironment=\"{1}\">",
+                DateTime.UtcNow, XmlEscape(currentEnv)).AppendLine();
+
+            int prefabCount = WritePrefabs(sb);
+            int styleCount  = WriteStyles(sb);
+            int areaCount   = WriteAreaBuildings(sb);
+            Status("AreaBuildings section: " + areaCount + " unique prefab names in current env's spawn pool.");
+
+            sb.AppendLine("</PrefabDump>");
+            File.WriteAllText(outPath, sb.ToString());
+
+            return new DumpStats { PrefabCount = prefabCount, StyleCount = styleCount };
+        }
+
+        // Captures every prefab name present in any bucket of BuildingManager.m_areaBuildings
+        // for the current environment. Lets offline tooling cross-reference "is this prefab
+        // spawnable on THIS env" without having to reload the game.
+        private static int WriteAreaBuildings(StringBuilder sb)
+        {
+            sb.AppendLine("  <AreaBuildings>");
+            int count = 0;
+
             var bm = Singleton<BuildingManager>.instance;
             if (bm == null)
             {
-                Status("BuildingManager.instance is null; aborting.");
+                sb.AppendLine("  </AreaBuildings>");
                 return 0;
             }
 
-            // Trigger refresh — buckets are lazy-initialized by the game and may all be null
-            // at sim-tick time when no district has actually requested a spawn yet.
-            var refreshMethod = typeof(BuildingManager).GetMethod("RefreshAreaBuildings",
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            if (refreshMethod != null)
-            {
-                refreshMethod.Invoke(bm, null);
-                Status("RefreshAreaBuildings() invoked.");
-            }
-            else
-            {
-                Status("RefreshAreaBuildings() method not found; proceeding anyway.");
-            }
+            // Force-populate the env-filtered pools; CS1 lazy-inits them on demand.
+            var refresh = typeof(BuildingManager).GetMethod("RefreshAreaBuildings",
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (refresh != null) refresh.Invoke(bm, null);
 
-            var field = typeof(BuildingManager).GetField("m_areaBuildings", BindingFlags.NonPublic | BindingFlags.Instance);
+            var field = typeof(BuildingManager).GetField("m_areaBuildings",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (field == null)
             {
-                Status("BuildingManager.m_areaBuildings field not found via reflection; aborting.");
+                sb.AppendLine("  </AreaBuildings>");
                 return 0;
             }
+
             var pools = field.GetValue(bm) as Array;
             if (pools == null)
             {
-                Status("BuildingManager.m_areaBuildings is null; aborting.");
+                sb.AppendLine("  </AreaBuildings>");
                 return 0;
             }
-            Status("m_areaBuildings array length = " + pools.Length);
-            if (pools.Length == 0)
-            {
-                Status("m_areaBuildings is empty; aborting.");
-                return 0;
-            }
-            // m_areaBuildings is partitioned by area characteristics (service+subService+
-            // level+width+length+zoningMode → index via GetAreaIndex), NOT by env. Each
-            // bucket's contents are env-filtered by the game at refresh time, so we iterate
-            // every non-null bucket and merge.
+
             var seen = new System.Collections.Generic.HashSet<string>();
             var names = new System.Collections.Generic.List<string>();
-            int nonNullBuckets = 0;
-            int totalEntries = 0;
-
             for (int b = 0; b < pools.Length; b++)
             {
                 var bucket = pools.GetValue(b) as FastList<ushort>;
                 if (bucket == null) continue;
-                nonNullBuckets++;
-                totalEntries += bucket.m_size;
-
                 for (int i = 0; i < bucket.m_size; i++)
                 {
-                    ushort idx = bucket.m_buffer[i];
-                    var prefab = PrefabCollection<BuildingInfo>.GetPrefab(idx);
-                    if (prefab == null) continue;
-                    if (prefab.m_placementStyle != ItemClass.Placement.Automatic) continue;
-                    if (prefab.m_class == null || prefab.m_class.GetZone() == ItemClass.Zone.None) continue;
-
-                    string name = prefab.name;
-                    if (string.IsNullOrEmpty(name)) continue;
-                    if (name.Contains(".")) continue; // workshop asset → never in env themes
-
-                    if (seen.Add(name)) names.Add(name);
+                    var prefab = PrefabCollection<BuildingInfo>.GetPrefab(bucket.m_buffer[i]);
+                    if (prefab == null || string.IsNullOrEmpty(prefab.name)) continue;
+                    if (seen.Add(prefab.name)) names.Add(prefab.name);
                 }
             }
-            Status("Scanned " + nonNullBuckets + " non-null buckets, " + totalEntries + " total entries.");
-
             names.Sort(StringComparer.Ordinal);
 
-            foreach (var name in names)
+            foreach (var n in names)
             {
-                sb.AppendFormat("        <Building name=\"{0}\" />", XmlEscape(name)).AppendLine();
+                sb.Append("    <B");
+                AppendAttr(sb, "n", n);
+                sb.AppendLine(" />");
+                count++;
             }
 
-            int kept = names.Count;
+            sb.AppendLine("  </AreaBuildings>");
+            return count;
+        }
 
-            sb.AppendLine("      </Buildings>");
-            sb.AppendLine("    </Theme>");
-            sb.AppendLine("  </Themes>");
-            sb.AppendLine("</Configuration>");
-            sb.AppendFormat("<!-- {0} building(s) -->", kept).AppendLine();
+        private static int WritePrefabs(StringBuilder sb)
+        {
+            sb.AppendLine("  <Prefabs>");
+            int count = 0;
 
-            File.WriteAllText(outPath, sb.ToString());
-            return kept;
+            uint total = (uint)PrefabCollection<BuildingInfo>.PrefabCount();
+            for (uint i = 0; i < total; i++)
+            {
+                var prefab = PrefabCollection<BuildingInfo>.GetPrefab(i);
+                if (prefab == null) continue;
+                if (string.IsNullOrEmpty(prefab.name)) continue;
+
+                string svc       = prefab.m_class != null ? prefab.m_class.m_service.ToString() : "None";
+                string subsvc    = prefab.m_class != null ? prefab.m_class.m_subService.ToString() : "None";
+                string level     = prefab.m_class != null ? prefab.m_class.m_level.ToString() : "None";
+                string zone      = prefab.m_class != null ? prefab.m_class.GetZone().ToString() : "None";
+
+                sb.Append("    <P");
+                AppendAttr(sb, "n",       prefab.name);
+                AppendAttr(sb, "exp",     prefab.m_requiredExpansion.ToString());
+                AppendAttr(sb, "pack",    prefab.m_requiredModderPack.ToString());
+                AppendAttr(sb, "dlc",     prefab.m_dlcRequired.ToString());
+                AppendAttr(sb, "svc",     svc);
+                AppendAttr(sb, "subsvc",  subsvc);
+                AppendAttr(sb, "lvl",     level);
+                AppendAttr(sb, "zone",    zone);
+                AppendAttrInt(sb, "w",    prefab.m_cellWidth);
+                AppendAttrInt(sb, "l",    prefab.m_cellLength);
+                AppendAttr(sb, "pl",      prefab.m_placementStyle.ToString());
+                sb.AppendLine(" />");
+                count++;
+            }
+
+            sb.AppendLine("  </Prefabs>");
+            return count;
+        }
+
+        private static int WriteStyles(StringBuilder sb)
+        {
+            sb.AppendLine("  <Styles>");
+            int count = 0;
+
+            var styles = Singleton<DistrictManager>.instance.m_Styles;
+            if (styles != null)
+            {
+                foreach (var style in styles)
+                {
+                    if (style == null) continue;
+                    sb.Append("    <S");
+                    AppendAttr(sb, "name",    style.Name ?? "");
+                    AppendAttr(sb, "pkg",     style.PackageName ?? "");
+                    AppendAttr(sb, "full",    style.FullName ?? "");
+                    AppendAttr(sb, "builtIn", style.BuiltIn ? "true" : "false");
+                    sb.AppendLine(">");
+
+                    var infos = style.GetBuildingInfos();
+                    if (infos != null)
+                    {
+                        foreach (var info in infos)
+                        {
+                            if (info == null || string.IsNullOrEmpty(info.name)) continue;
+                            sb.Append("      <B");
+                            AppendAttr(sb, "n", info.name);
+                            sb.AppendLine(" />");
+                        }
+                    }
+
+                    sb.AppendLine("    </S>");
+                    count++;
+                }
+            }
+
+            sb.AppendLine("  </Styles>");
+            return count;
+        }
+
+        private static void AppendAttr(StringBuilder sb, string name, string value)
+        {
+            sb.Append(' ').Append(name).Append("=\"").Append(XmlEscape(value)).Append('"');
+        }
+
+        private static void AppendAttrInt(StringBuilder sb, string name, int value)
+        {
+            sb.Append(' ').Append(name).Append("=\"").Append(value).Append('"');
         }
 
         private static string XmlEscape(string s)
         {
+            if (string.IsNullOrEmpty(s)) return "";
             return s.Replace("&", "&amp;").Replace("\"", "&quot;").Replace("<", "&lt;").Replace(">", "&gt;");
         }
     }
