@@ -65,6 +65,7 @@
         <Compile Include="Configuration.cs" />
         <Compile Include="Debugger.cs" />
         <Compile Include="EnvironmentDump.cs" />
+        <Compile Include="DlcNames.cs" />
         <Compile Include="AutoBulldozeService.cs" />
         <Compile Include="HarmonyPatches\BuildingManagerPatch\AutoBulldozePatch.cs" />
         <Compile Include="HarmonyPatches\BuildingManagerPatch\GetRandomBuildingInfoPatch.cs" />

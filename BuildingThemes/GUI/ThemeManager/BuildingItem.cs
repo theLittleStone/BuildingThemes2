@@ -249,6 +249,30 @@ namespace BuildingThemes.GUI
             }
         }
 
+        /// <summary>
+        /// Short label describing where this asset comes from — "Vanilla asset", "Workshop", or
+        /// "Included in &lt;localized DLC name&gt;". Expansions and modder packs render the same way
+        /// from the user's perspective; both go through DlcNames so the displayed string follows
+        /// the in-game locale where keys are available.
+        /// </summary>
+        public string GetOriginText()
+        {
+            if (isCustomAsset) return "Workshop";
+
+            if (prefab == null) return "Vanilla asset";
+
+            var exp = prefab.m_requiredExpansion;
+            var pack = prefab.m_requiredModderPack;
+            var parts = new System.Collections.Generic.List<string>(2);
+            if (exp != SteamHelper.ExpansionBitMask.None)
+                parts.Add(DlcNames.GetExpansionName(exp));
+            if (pack != SteamHelper.ModderPackBitMask.None)
+                parts.Add(DlcNames.GetModderPackName(pack));
+
+            if (parts.Count == 0) return "Vanilla asset";
+            return "Included in " + string.Join(", ", parts.ToArray());
+        }
+
         public Color32 GetStatusColor()
         {
             if (prefab == null && building != null && !isCustomAsset)
