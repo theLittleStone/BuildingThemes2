@@ -333,6 +333,14 @@ namespace BuildingThemes
 
         public void ImportThemesFromThemeMods()
         {
+            // Guard against double-import: ApplyConfiguration calls this directly AND
+            // ApplyPendingConfiguration calls it again via a second ApplyConfiguration.
+            // The second call is redundant and dangerous — FilterEnvThemeBuildings calls
+            // PrefabCollection.FindLoaded(), which triggers LSM's patched ResolveLegacyPrefab.
+            // That patch lazily constructs a Texture2D, which must run on the main thread; the
+            // deferred SimulationStep context is NOT the main thread, causing a native crash.
+            if (importedModThemes) return;
+
             foreach (var pluginInfo in Singleton<PluginManager>.instance.GetPluginsInfo().Where(pluginInfo => pluginInfo.isEnabled))
             {
                 try
