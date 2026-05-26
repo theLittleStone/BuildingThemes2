@@ -1,4 +1,3 @@
-#if DEBUG
 using System;
 using System.IO;
 using System.Text;
@@ -7,16 +6,16 @@ using ColossalFramework.Plugins;
 
 namespace BuildingThemes
 {
-    // Dev-only tool. Compiled into Debug builds only; Release (the CD-published build) excludes it.
+    // Dev tool. Only runs when Debugger.Enabled is true AND a `.dump-env` sentinel file exists
+    // in the mod path (touch the file to opt in; remove it when done).
     //
-    // When `.dump-env` sentinel exists in the mod path, writes a comprehensive prefab_dump.xml
-    // capturing everything needed for offline processing of the bundled themes:
+    // Writes a comprehensive prefab_dump.xml capturing everything needed for offline processing
+    // of the bundled themes:
     //   - Every BuildingInfo prefab's identity + DLC tags + class info + size
     //   - Every DistrictStyle's name, package, built-in flag, and building membership
+    //   - m_areaBuildings for the current environment's spawn pool
     //
-    // One dump on any map is enough — m_environment doesn't restrict PrefabCollection content,
-    // it only filters m_areaBuildings. The dump captures all loaded prefabs regardless of env,
-    // so any future theme-cleaning logic can run offline against this single file.
+    // One dump per environment is needed (m_areaBuildings is env-specific).
     internal static class EnvironmentDump
     {
         private const string SentinelFile = ".dump-env";
@@ -29,6 +28,7 @@ namespace BuildingThemes
 
         public static void RunIfRequested()
         {
+            if (!Debugger.Enabled) return;
             try
             {
                 string modPath = FindModPath();
@@ -247,4 +247,3 @@ namespace BuildingThemes
         }
     }
 }
-#endif

@@ -405,14 +405,20 @@ namespace BuildingThemes
         // BT2's bundled env themes: each maps to exactly one expansion source. Buildings whose
         // prefab requires a different DLC (or a modder pack) are filtered out at import time so
         // each theme is a clean, single-source representation. International is base-game-only
-        // (no expansion mask). Snowfall holds the 15 winter-only resort/commercial buildings
-        // that only load on Winter maps. European is provided by AddStyleTheme from the real
-        // DistrictStyle, so it is not in this table.
+        // Maps every bundled theme name to its required expansion for ownership gating.
+        // Env themes (International, Snowfall) are a subset — they also run through
+        // FilterEnvThemeBuildings to enforce single-DLC-source purity.
+        // DLC-only themes (AfterDark, GreenCities, etc.) are pre-filtered in the XML.
+        // European comes from AddStyleTheme via the real DistrictStyle, not from this table.
         private static readonly System.Collections.Generic.Dictionary<string, SteamHelper.ExpansionBitMask> s_envThemeExpansion =
             new System.Collections.Generic.Dictionary<string, SteamHelper.ExpansionBitMask>
         {
-            { "International", SteamHelper.ExpansionBitMask.None     },
-            { "Snowfall",      SteamHelper.ExpansionBitMask.SnowFall },
+            { "International",       SteamHelper.ExpansionBitMask.None                },
+            { "Snowfall",            SteamHelper.ExpansionBitMask.SnowFall            },
+            { "AfterDark",           SteamHelper.ExpansionBitMask.AfterDark           },
+            { "GreenCities",         SteamHelper.ExpansionBitMask.GreenCities         },
+            { "PlazasAndPromenades", SteamHelper.ExpansionBitMask.PlazasAndPromenades },
+            { "FinancialDistricts",  SteamHelper.ExpansionBitMask.FinancialDistricts  },
         };
 
         private void AddModTheme(Configuration.Theme modTheme, string modName, bool isBundled = false)
@@ -426,11 +432,13 @@ namespace BuildingThemes
             // themes keep stylePackage=null → "[Custom]".
             string stylePackage = isBundled ? modTheme.name : null;
 
-            // Recognised env theme: enforce single-DLC-source filter and ownership gating.
+            // Check ownership gate for all recognised bundled themes.
             SteamHelper.ExpansionBitMask requiredExpansion = SteamHelper.ExpansionBitMask.None;
-            bool isEnvTheme = isBundled && s_envThemeExpansion.TryGetValue(modTheme.name, out requiredExpansion);
+            bool isBundledKnown = isBundled && s_envThemeExpansion.TryGetValue(modTheme.name, out requiredExpansion);
+            // Env-sourced themes additionally need DLC-source filtering; DLC themes are pre-filtered in XML.
+            bool isEnvTheme = isBundledKnown && (modTheme.name == "International" || modTheme.name == "Snowfall");
 
-            if (isEnvTheme && requiredExpansion != SteamHelper.ExpansionBitMask.None)
+            if (isBundledKnown && requiredExpansion != SteamHelper.ExpansionBitMask.None)
             {
                 // Hide the theme entirely when the player does not own the required expansion.
                 // Matches vanilla behaviour for DLC-locked content (the styles simply do not appear).
@@ -450,9 +458,15 @@ namespace BuildingThemes
                 buildingsToImport = FilterEnvThemeBuildings(modTheme.buildings, requiredExpansion);
             }
 
-            var theme = AddImportedTheme(buildingsToImport, modTheme.name, stylePackage);
+            // For DLC-expansion themes, use the official DLC display name instead of the
+            // internal XML key (e.g. "After Dark" instead of "AfterDark").
+            string themeName = (!isEnvTheme && isBundledKnown && requiredExpansion != SteamHelper.ExpansionBitMask.None)
+                ? DlcNames.GetExpansionName(requiredExpansion)
+                : modTheme.name;
 
-            if (isEnvTheme)
+            var theme = AddImportedTheme(buildingsToImport, themeName, stylePackage);
+
+            if (isBundledKnown)
             {
                 theme.isDlc = requiredExpansion != SteamHelper.ExpansionBitMask.None;
             }
@@ -464,29 +478,31 @@ namespace BuildingThemes
 
         // Keep only buildings whose runtime prefab matches the env theme's single DLC source.
         // Modder-pack-tagged prefabs are always dropped (they belong to their pack's own
-        // DistrictStyle theme). For base-game themes (requiredExpansion == None) unloaded
-        // prefabs are also dropped — a truly vanilla building should always be present.
-        // For expansion themes (e.g. Snowfall) unloaded prefabs are kept: their buildings only
-        // load on the matching map type (Winter), so absence on other maps is expected.
+        // DistrictStyle theme). Unloaded prefabs are always kept regardless of expansion type:
+        // base-game buildings absent on the current map type (e.g. EU buildings on Sunny) should
+        // surface as missing assets rather than silently emptying the theme.
         private static List<Configuration.Building> FilterEnvThemeBuildings(
             List<Configuration.Building> input, SteamHelper.ExpansionBitMask requiredExpansion)
         {
-            bool isExpansion = requiredExpansion != SteamHelper.ExpansionBitMask.None;
             var result = new List<Configuration.Building>(input.Count);
+            int droppedModderPack = 0, droppedWrongExpansion = 0;
             foreach (var b in input)
             {
                 if (b == null || string.IsNullOrEmpty(b.name)) continue;
                 var prefab = PrefabCollection<BuildingInfo>.FindLoaded(b.name);
                 if (prefab == null)
                 {
-                    // Keep unresolved entries for expansion themes — they load on the correct env.
-                    if (isExpansion) result.Add(b);
+                    result.Add(b);
                     continue;
                 }
-                if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) continue;
-                if (prefab.m_requiredExpansion != requiredExpansion) continue;
+                if (prefab.m_requiredModderPack != SteamHelper.ModderPackBitMask.None) { droppedModderPack++; continue; }
+                if (prefab.m_requiredExpansion != requiredExpansion) { droppedWrongExpansion++; continue; }
                 result.Add(b);
             }
+            Debugger.LogFormat(
+                "FilterEnvThemeBuildings (expansion={0}): in={1} kept={2} | dropped: modderPack={3} wrongExpansion={4}",
+                requiredExpansion, input.Count, result.Count,
+                droppedModderPack, droppedWrongExpansion);
             return result;
         }
 
