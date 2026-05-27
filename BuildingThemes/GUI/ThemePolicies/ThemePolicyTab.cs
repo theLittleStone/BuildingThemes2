@@ -76,6 +76,8 @@ namespace BuildingThemes.GUI
                 lock (component)
                 {
                     var districtId1 = ToolsModifierControl.policiesPanel.targetDistrict;
+                    Debugger.LogFormat("[UserAction] Theme management {0} for district {1}.",
+                        isChecked ? "ENABLED" : "DISABLED", districtId1);
                     Singleton<BuildingThemesManager>.instance.ToggleThemeManagement(districtId1, isChecked);
                 }
             };

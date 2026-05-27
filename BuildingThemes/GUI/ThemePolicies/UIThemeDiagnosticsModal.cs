@@ -15,6 +15,7 @@ namespace BuildingThemes.GUI
         private UILabel m_text;
         private UIScrollablePanel m_scroll;
         private UIButton m_ok;
+        private UIButton m_copy;
 
         private static UIThemeDiagnosticsModal _instance;
 
@@ -89,9 +90,20 @@ namespace BuildingThemes.GUI
             m_text.textScale = 0.75f;
             m_text.relativePosition = Vector2.zero;
 
+            m_copy = UIUtils.CreateButton(this);
+            m_copy.text = "Copy to Clipboard";
+            m_copy.width = 160f;
+            m_copy.relativePosition = new Vector3((width / 2) - m_copy.width - 4, height - m_copy.height - 5);
+            m_copy.eventClick += (c, p) =>
+            {
+                GUIUtility.systemCopyBuffer = m_text.text;
+                m_copy.text = "Copied!";
+                Invoke("ResetCopyButtonText", 2f);
+            };
+
             m_ok = UIUtils.CreateButton(this);
             m_ok.text = "Close";
-            m_ok.relativePosition = new Vector3((width - m_ok.width) / 2, height - m_ok.height - 5);
+            m_ok.relativePosition = new Vector3((width / 2) + 4, height - m_ok.height - 5);
             m_ok.eventClick += (c, p) => { UIView.PopModal(); Hide(); };
         }
 
@@ -99,7 +111,22 @@ namespace BuildingThemes.GUI
         {
             if (m_text == null) return;
 
-            Debugger.LogFormat("DiagnosticsModal opened for district {0}.", districtId);
+            var mgr = BuildingThemesManager.instance;
+            bool managed = mgr != null && mgr.IsThemeManagementEnabled(districtId);
+            string themeList = "(theme management off)";
+            if (managed)
+            {
+                var themes = mgr.GetDistrictThemes(districtId, false);
+                if (themes == null || themes.Count == 0)
+                    themeList = "(no themes selected)";
+                else
+                {
+                    var names = new System.Collections.Generic.List<string>();
+                    foreach (var t in themes) names.Add(t.name);
+                    themeList = string.Join(", ", names.ToArray());
+                }
+            }
+            Debugger.LogFormat("[UserAction] DiagnosticsModal opened for district {0}. Enabled themes: {1}", districtId, themeList);
             string report = ThemeDiagnostics.FormatReport(districtId);
 
             // Append Skyve note if there are missing assets and Skyve is installed
@@ -137,6 +164,11 @@ namespace BuildingThemes.GUI
                     new AnimatedFloat(1f, 0f, 0.4f, EasingType.CubicEaseOut),
                     () => modalEffect.Hide());
             }
+        }
+
+        private void ResetCopyButtonText()
+        {
+            if (m_copy != null) m_copy.text = "Copy to Clipboard";
         }
 
         protected override void OnKeyDown(UIKeyEventParameter p)

@@ -251,10 +251,12 @@ namespace BuildingThemes
             }
 
             /// <summary>
-            /// Fallback lookup by Steam workshop ID prefix.
-            /// When an asset is renamed on the workshop its prefab name changes (the numeric
-            /// prefix stays the same). Returns the first theme building whose name shares the
-            /// same numeric prefix as <paramref name="prefabName"/>, e.g. "12345678".
+            /// Fallback lookup by Steam workshop ID prefix — rename recovery only.
+            /// When an asset is renamed on the workshop its prefab name changes but the numeric
+            /// prefix (Steam ID) stays the same. Returns the matching theme building ONLY when
+            /// exactly one theme entry shares the prefix, making the match unambiguous.
+            /// If the theme contains multiple buildings from the same workshop (multi-asset packs)
+            /// this returns null so those other pack buildings are not accidentally accepted.
             /// Returns null if <paramref name="prefabName"/> has no numeric prefix or no match is found.
             /// </summary>
             public Building getBuildingBySteamPrefix(string prefabName)
@@ -265,14 +267,18 @@ namespace BuildingThemes
                 string prefix = prefabName.Substring(0, dotIdx);
                 foreach (char c in prefix) if (!char.IsDigit(c)) return null;
 
+                Building match = null;
                 foreach (Building building in buildings)
                 {
                     if (building.name == null) continue;
                     int bDot = building.name.IndexOf('.');
                     if (bDot > 0 && building.name.Substring(0, bDot) == prefix)
-                        return building;
+                    {
+                        if (match != null) return null; // ambiguous — more than one entry with this prefix
+                        match = building;
+                    }
                 }
-                return null;
+                return match;
             }
         }
 

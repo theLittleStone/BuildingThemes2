@@ -111,7 +111,9 @@ namespace BuildingThemes.GUI
             m_blacklistCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
-                Singleton<BuildingThemesManager>.instance.ToggleBlacklistMode(GetDistrictId(), val);
+                byte districtId = GetDistrictId();
+                Debugger.LogFormat("[UserAction] district {0} — blacklist mode {1}.", districtId, val ? "ENABLED" : "DISABLED");
+                Singleton<BuildingThemesManager>.instance.ToggleBlacklistMode(districtId, val);
             };
             y += CHK_H + ROW_GAP;
 
@@ -141,6 +143,7 @@ namespace BuildingThemes.GUI
                 if (!BuildingThemesManager.instance.IsThemeManagementEnabled(districtId)) return;
                 var behavior = IndexToLevelBehavior(val);
                 if (BuildingThemesManager.instance.GetDistrictEmptyLevelBehavior(districtId) == behavior) return;
+                Debugger.LogFormat("[UserAction] district {0} — empty-level behavior set to '{1}'.", districtId, behavior);
                 BuildingThemesManager.instance.SetDistrictEmptyLevelBehavior(districtId, behavior);
             };
 
@@ -166,6 +169,7 @@ namespace BuildingThemes.GUI
                 byte districtId = GetDistrictId();
                 if (!BuildingThemesManager.instance.IsThemeManagementEnabled(districtId)) return;
                 if ((int)BuildingThemesManager.instance.GetDistrictMissingAssetMode(districtId) == val) return;
+                Debugger.LogFormat("[UserAction] district {0} — missing asset mode set to '{1}'.", districtId, (MissingAssetMode)val);
                 BuildingThemesManager.instance.SetDistrictMissingAssetMode(districtId, (MissingAssetMode)val);
             };
             y += DROP_H + ROW_GAP;
@@ -183,7 +187,9 @@ namespace BuildingThemes.GUI
             m_autoBulldozeCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
-                BuildingThemesManager.instance.SetDistrictAutoBulldoze(GetDistrictId(), val);
+                byte districtId = GetDistrictId();
+                Debugger.LogFormat("[UserAction] district {0} — auto-bulldoze {1}.", districtId, val ? "ENABLED" : "DISABLED");
+                BuildingThemesManager.instance.SetDistrictAutoBulldoze(districtId, val);
             };
             y += CHK_H + 4f;
 
@@ -207,7 +213,9 @@ namespace BuildingThemes.GUI
             m_enforceSpecializationCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
-                BuildingThemesManager.instance.SetDistrictEnforceSpecialization(GetDistrictId(), val);
+                byte districtId = GetDistrictId();
+                Debugger.LogFormat("[UserAction] district {0} — enforce specialization {1}.", districtId, val ? "ENABLED" : "DISABLED");
+                BuildingThemesManager.instance.SetDistrictEnforceSpecialization(districtId, val);
             };
             y += CHK_H + ROW_GAP;
 
@@ -227,7 +235,9 @@ namespace BuildingThemes.GUI
             m_preferElectricityCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
-                BuildingThemesManager.instance.SetDistrictPreferElectricity(GetDistrictId(), val);
+                byte districtId = GetDistrictId();
+                Debugger.LogFormat("[UserAction] district {0} — prefer electricity {1}.", districtId, val ? "ENABLED" : "DISABLED");
+                BuildingThemesManager.instance.SetDistrictPreferElectricity(districtId, val);
             };
             y += CHK_H + ROW_GAP;
 
