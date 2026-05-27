@@ -126,10 +126,12 @@ namespace BuildingThemes.GUI
         public bool showMissing = true;
         public bool showDLCLocked = true;
         public bool canSpawnOnly = false;
+        public bool wallToWallOnly = false;
         private UICheckBox m_showLoadedCb;
         private UICheckBox m_showMissingCb;
         private UICheckBox m_showDLCCb;
         private UICheckBox m_canSpawnCb;
+        private UICheckBox m_wallToWallCb;
 
         public bool IsZoneSelected(Category zone)
         {
@@ -509,6 +511,20 @@ namespace BuildingThemes.GUI
             m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 142, false);
             m_canSpawnCb.tooltip = "Show only buildings that are loaded, included in the theme,\nand have cell dimensions (1–4) valid for zone spawning";
             m_canSpawnCb.eventCheckChanged += (c, v) => { canSpawnOnly = v; eventFilteringChanged(this, 7); };
+
+            // "Wall-to-wall only" — filter by placement design (no side gaps)
+            m_wallToWallCb = MakeFilterCheckbox("Wall-to-wall", 630, 142, false);
+            m_wallToWallCb.tooltip =
+                "Show only buildings designed to be placed flush against their neighbours\n" +
+                "with no side gaps.\n\n" +
+                "Detected by two signals:\n" +
+                "• Corner placement mode (CornerLeft / CornerRight) — always wall-to-wall.\n" +
+                "• Straight buildings whose mesh fills ≥ 85 % of the lot width — no side\n" +
+                "  setback left by the creator.\n\n" +
+                "Workshop buildings are often tagged as ordinary residential/commercial even\n" +
+                "when they are wall-to-wall, so category filtering alone is not enough.\n" +
+                "This filter checks the mesh geometry directly.";
+            m_wallToWallCb.eventCheckChanged += (c, v) => { wallToWallOnly = v; eventFilteringChanged(this, 11); };
 
         }
 

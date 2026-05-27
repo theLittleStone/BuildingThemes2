@@ -275,8 +275,17 @@ namespace BuildingThemes.GUI
 
         public void ChangeBuildingStatus(BuildingItem item, bool include)
         {
-            if (include == item.included) return;
-            if (selectedTheme != null && selectedTheme.isBuiltIn) return;
+            if (!SetBuildingIncluded(item, include)) return;
+            m_themeSelection.Refresh();
+            m_buildingSelection.Refresh();
+        }
+
+        // Core state-change logic without triggering a UI refresh — use in tight loops,
+        // then call Refresh() once after the loop.
+        private bool SetBuildingIncluded(BuildingItem item, bool include)
+        {
+            if (include == item.included) return false;
+            if (selectedTheme != null && selectedTheme.isBuiltIn) return false;
 
             CreateBuilding(item);
             item.building.include = include;
@@ -287,9 +296,7 @@ namespace BuildingThemes.GUI
                 include);
 
             m_isDistrictThemesDirty = true;
-
-            m_themeSelection.Refresh();
-            m_buildingSelection.Refresh();
+            return true;
         }
 
         public void ChangeUpgradeBuilding(BuildingItem building)
@@ -731,22 +738,24 @@ namespace BuildingThemes.GUI
 
             m_includeAll.eventClick += (c, p) =>
             {
+                bool changed = false;
                 for (int i = 0; i < m_buildingSelection.rowsData.m_size; i++)
                 {
                     BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
-                    if (item != null) ChangeBuildingStatus(item, true);
+                    if (item != null) changed |= SetBuildingIncluded(item, true);
                 }
-                m_buildingSelection.Refresh();
+                if (changed) { m_themeSelection.Refresh(); m_buildingSelection.Refresh(); }
             };
 
             m_includeNone.eventClick += (c, p) =>
             {
+                bool changed = false;
                 for (int i = 0; i < m_buildingSelection.rowsData.m_size; i++)
                 {
                     BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
-                    if (item != null) ChangeBuildingStatus(item, false);
+                    if (item != null) changed |= SetBuildingIncluded(item, false);
                 }
-                m_buildingSelection.Refresh();
+                if (changed) { m_themeSelection.Refresh(); m_buildingSelection.Refresh(); }
             };
 
             m_excludeMissing.eventClick += (c, p) =>
@@ -767,9 +776,9 @@ namespace BuildingThemes.GUI
                         {
                             BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
                             if (item != null && item.prefab == null && item.included)
-                                ChangeBuildingStatus(item, false);
+                                SetBuildingIncluded(item, false);
                         }
-                        m_buildingSelection.Refresh();
+                        m_themeSelection.Refresh(); m_buildingSelection.Refresh();
                     });
             };
 
@@ -791,9 +800,9 @@ namespace BuildingThemes.GUI
                         {
                             BuildingItem item = m_buildingSelection.rowsData[i] as BuildingItem;
                             if (item != null && item.canSpawn && !item.included)
-                                ChangeBuildingStatus(item, true);
+                                SetBuildingIncluded(item, true);
                         }
-                        m_buildingSelection.Refresh();
+                        m_themeSelection.Refresh(); m_buildingSelection.Refresh();
                     });
             };
 
@@ -1091,6 +1100,9 @@ namespace BuildingThemes.GUI
 
                 // Can spawn only
                 if (m_filter.canSpawnOnly && !item.canSpawn) continue;
+
+                // Wall-to-wall only (mesh-based detection, works for untagged workshop buildings)
+                if (m_filter.wallToWallOnly && !item.isWallToWall) continue;
 
                 // Level
                 int level = (int)(m_filter.buildingLevel + 1);

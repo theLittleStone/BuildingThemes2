@@ -535,6 +535,8 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                         length      = buildingInfo.m_cellLength;
                         width       = buildingInfo.m_cellWidth;
                         zoningMode3 = zoningMode2;
+                        if (buildingInfo.m_cellWidth < width_B)
+                            num25_row += buildingInfo.m_cellWidth - width_B;
                     }
                 }
                 else if (buildingInfo != null)
@@ -543,10 +545,15 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                     length      = buildingInfo.m_cellLength;
                     width       = buildingInfo.m_cellWidth;
                     zoningMode3 = zoningMode;
+                    if (buildingInfo.m_cellWidth < width_A)
+                        num25_row += buildingInfo.m_cellWidth - width_A;
                 }
 
                 if (buildingInfo != null)
                 {
+                    if (Debugger.Enabled)
+                        Debugger.LogFormat("SIZEPREF-SPAWN: name={0} cellW={1} reqLotW_A={2} reqLotW_B={3} num25_row={4} num15={5} num16={6}",
+                            buildingInfo.name, buildingInfo.m_cellWidth, width_A, width_B, num25_row, num15, num16);
                     vector6 = m_position + VectorUtils.X_Y(
                         ((float)length * 0.5f - 4f) * xDirection +
                         ((float)num25_row * 0.5f + (float)spawnpointRow - 10f) * zDirection);
@@ -661,18 +668,11 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                         }
                         else break;
 
-                        if (width_alt == width_A)
-                        {
-                            num25_row = num15 + num16 + 1;
-                        }
-                        else if (width_A % 2 != width_alt % 2)
-                        {
-                            num25_row = num15 + num16;
-                        }
-                        else
-                        {
-                            num25_row = num15 + num16 + 1;
-                        }
+                        // Place the narrower building at the left (street-side) edge of the
+                        // original lot. For a building of width w starting at column num15:
+                        //   num25_row = num15 + (num15 + w - 1) + 1 = 2 * num15 + w
+                        // This is correct for any shrink amount, including multi-step shrinks.
+                        num25_row = 2 * num15 + width_alt;
 
                         length = depth_alt;
                         width = width_alt;
@@ -760,10 +760,33 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                             ((float)num25_row * 0.5f + (float)spawnpointRow - 10f) * zDirection);
                     }
 
+                    // When the building is narrower than the lot we searched, left-align it
+                    // at the lot edge instead of centering it (which causes visual gaps on
+                    // both sides). num25_row encodes the lot as 2*leftCol + lotWidth; subtracting
+                    // the width difference shifts the center left so the building starts at leftCol.
+                    if (buildingInfo.m_cellWidth < width)
+                    {
+                        int old25 = num25_row;
+                        num25_row += buildingInfo.m_cellWidth - width;
+                        width = buildingInfo.m_cellWidth;
+                        vector6 = m_position + VectorUtils.X_Y(
+                            ((float)length * 0.5f - 4f) * xDirection +
+                            ((float)num25_row * 0.5f + (float)spawnpointRow - 10f) * zDirection);
+                        if (Debugger.Enabled)
+                            Debugger.LogFormat("WIDTH-FIX: cellW={0} old_num25={1} new_num25={2} num15={3} num16={4}",
+                                buildingInfo.m_cellWidth, old25, num25_row, num15, num16);
+                    }
+                    else if (Debugger.Enabled)
+                    {
+                        Debugger.LogFormat("WIDTH-FIX: no fix needed cellW={0} == width={1}",
+                            buildingInfo.m_cellWidth, width);
+                    }
+
                     if (Debugger.Enabled)
                     {
-                        Debugger.LogFormat("Found prefab: {5} - {0}, {1}, {2}, {3} x {4}",
-                            service, subService, level, width, length, buildingInfo.name);
+                        Debugger.LogFormat("SPAWN: name={0} cellW={1} cellL={2} reqW={3} reqL={4} num25_row={5} num15={6} num16={7} num19={8} num20={9} num28={10}",
+                            buildingInfo.name, buildingInfo.m_cellWidth, buildingInfo.m_cellLength,
+                            width, length, num25_row, num15, num16, num19, num20, num28);
                     }
                     break;
                 }

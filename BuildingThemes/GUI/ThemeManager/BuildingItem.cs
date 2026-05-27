@@ -240,6 +240,202 @@ namespace BuildingThemes.GUI
             }
         }
 
+        // Cached result — computed once on first access, null until then.
+        private bool? m_isWallToWall;
+
+        /// <summary>
+        /// True when the building is designed to be placed flush against its neighbours
+        /// with no meaningful side gaps (wall-to-wall). Detected by three signals:
+        ///   1. Official DLC WTW sub-services (ResidentialWallToWall etc.) — authoritative.
+        ///   2. ZoningMode is CornerLeft or CornerRight — always wall-to-wall by design.
+        ///   3. Mesh vertex analysis for legacy straight buildings: sample the zone
+        ///      4–8 m (above typical garages and garden arches) and verify that every
+        ///      occupied 1 m band has both left and right gaps ≤ 0.3 m.
+        ///      In CS1 the lot is centred at origin:
+        ///        left  lot edge = -(m_cellWidth × 4) m
+        ///        right lot edge = +(m_cellWidth × 4) m
+        ///        left  gap = wallMinX + halfCellW   (0 = flush, >0 = inset)
+        ///        right gap = halfCellW − wallMaxX   (0 = flush, >0 = inset)
+        /// Result is cached after first evaluation.
+        /// </summary>
+        public bool isWallToWall
+        {
+            get
+            {
+                if (!m_isWallToWall.HasValue)
+                    m_isWallToWall = ComputeIsWallToWall();
+                return m_isWallToWall.Value;
+            }
+        }
+
+        private bool ComputeIsWallToWall()
+        {
+            if (prefab == null) return false;
+
+            // Official DLC wall-to-wall sub-services (Financial Districts+) are authoritative.
+            var sub = prefab.m_class.m_subService;
+            if (sub == ItemClass.SubService.ResidentialWallToWall
+             || sub == ItemClass.SubService.CommercialWallToWall
+             || sub == ItemClass.SubService.OfficeWallToWall)
+                return true;
+
+            if (prefab.m_zoningMode != BuildingInfo.ZoningMode.Straight) return true;
+            var mesh = prefab.m_mesh;
+            if (mesh == null) return false;
+
+            float halfCellW = prefab.m_cellWidth * 4f;
+            const float maxGap       = 0.3f;  // X proximity to lot edge
+            const float wallYMin     = 1.5f;  // above base slab; includes garage level
+            const float wallYMax     = 8.0f;
+            const float bandSize     = 1.0f;
+            const float minCubeDepth = 3.0f;  // Z-extent required for a "real wall" vs thin arch/post
+
+            bool log = Debugger.Enabled;
+
+            var verts = mesh.vertices;
+            if (verts == null || verts.Length == 0)
+            {
+                float leftGap  = mesh.bounds.min.x + halfCellW;
+                float rightGap = halfCellW - mesh.bounds.max.x;
+                bool r         = leftGap <= maxGap && rightGap <= maxGap;
+                if (log)
+                    Debugger.LogFormat("WTW [{0}] no verts, BOUNDS leftGap={1:F2} rightGap={2:F2} -> {3}",
+                        name, leftGap, rightGap, r ? "WTW" : "NOT-WTW");
+                return r;
+            }
+
+            if (log)
+            {
+                // Height profile: log minX/maxX in 1 m bands from 0 to meshTop.
+                float meshTop = mesh.bounds.max.y;
+                int bands = Mathf.CeilToInt(meshTop);
+                var sb = new System.Text.StringBuilder();
+                sb.AppendFormat("WTW-PROFILE [{0}] cellW={1} halfCellW={2} meshTop={3:F1}\n",
+                    name, prefab.m_cellWidth, halfCellW, meshTop);
+                for (int b = 0; b < bands; b++)
+                {
+                    float yLo = b, yHi = b + 1f;
+                    float bMinX = float.MaxValue, bMaxX = float.MinValue;
+                    bool bFound = false;
+                    for (int i = 0; i < verts.Length; i++)
+                    {
+                        float y = verts[i].y;
+                        if (y < yLo || y >= yHi) continue;
+                        float x = verts[i].x;
+                        if (x < bMinX) bMinX = x;
+                        if (x > bMaxX) bMaxX = x;
+                        bFound = true;
+                    }
+                    if (bFound)
+                        sb.AppendFormat("  y=[{0},{1}): minX={2:F2} maxX={3:F2}  leftGap={4:F2} rightGap={5:F2}\n",
+                            yLo, yHi, bMinX, bMaxX, bMinX + halfCellW, halfCellW - bMaxX);
+                    else
+                        sb.AppendFormat("  y=[{0},{1}): (no verts)\n", yLo, yHi);
+                }
+                Debugger.Log(sb.ToString());
+            }
+
+            // Per-band "cube wall" detection.
+            // For each 1 m band in [wallYMin, wallYMax] find vertices within maxGap of the
+            // left / right lot edges and measure their Z-extent (depth into the lot).
+            // A structural wall — garage side wall, party wall — spans the full building
+            // depth (≥ minCubeDepth). A thin decorative feature — arch post, pergola
+            // column, boundary gate — has a small Z-extent and is rejected.
+            // Track maximum Z-span seen for each side across ALL bands independently.
+            // L-shaped or stepped buildings have their left wall at one height range and
+            // right wall at a different range — we never require them to be in the same band.
+            // Also track the Y-restricted overall X-extent for the fallback below.
+            float maxLspan = 0f, maxRspan = 0f;
+            float restrictedMinX = float.MaxValue, restrictedMaxX = float.MinValue;
+            bool  anyBand  = false;
+            var   bandLog  = log ? new System.Text.StringBuilder() : null;
+
+            for (float bandLo = wallYMin; bandLo < wallYMax; bandLo += bandSize)
+            {
+                float bandHi = Mathf.Min(bandLo + bandSize, wallYMax);
+
+                float leftMinZ  = float.MaxValue, leftMaxZ  = float.MinValue;
+                float rightMinZ = float.MaxValue, rightMaxZ = float.MinValue;
+                bool  leftFound = false,          rightFound = false;
+
+                for (int i = 0; i < verts.Length; i++)
+                {
+                    float y = verts[i].y;
+                    if (y < bandLo || y >= bandHi) continue;
+                    float x = verts[i].x;
+                    float z = verts[i].z;
+
+                    // Track Y-restricted overall X-extent for the fallback.
+                    if (x < restrictedMinX) restrictedMinX = x;
+                    if (x > restrictedMaxX) restrictedMaxX = x;
+
+                    if (x >= -halfCellW - maxGap && x <= -halfCellW + maxGap)
+                    {
+                        leftFound = true;
+                        if (z < leftMinZ) leftMinZ = z;
+                        if (z > leftMaxZ) leftMaxZ = z;
+                    }
+                    if (x >= halfCellW - maxGap && x <= halfCellW + maxGap)
+                    {
+                        rightFound = true;
+                        if (z < rightMinZ) rightMinZ = z;
+                        if (z > rightMaxZ) rightMaxZ = z;
+                    }
+                }
+
+                if (!leftFound && !rightFound) continue;
+                anyBand = true;
+
+                float lSpan = leftFound  ? leftMaxZ  - leftMinZ  : 0f;
+                float rSpan = rightFound ? rightMaxZ - rightMinZ : 0f;
+                if (lSpan > maxLspan) maxLspan = lSpan;
+                if (rSpan > maxRspan) maxRspan = rSpan;
+
+                if (log)
+                    bandLog.AppendFormat(
+                        "  band y=[{0:F1},{1:F1}): L-span={2:F2}({3}) R-span={4:F2}({5})\n",
+                        bandLo, bandHi,
+                        lSpan, leftFound  ? (lSpan >= minCubeDepth ? "wall" : "thin") : "none",
+                        rSpan, rightFound ? (rSpan >= minCubeDepth ? "wall" : "thin") : "none");
+            }
+
+            if (anyBand)
+            {
+                bool result = maxLspan >= minCubeDepth && maxRspan >= minCubeDepth;
+                if (log)
+                {
+                    Debugger.Log(bandLog.ToString());
+                    Debugger.LogFormat("WTW [{0}] maxL={1:F2} maxR={2:F2} minDepth={3} -> {4}",
+                        name, maxLspan, maxRspan, minCubeDepth, result ? "WTW" : "NOT-WTW");
+                }
+                return result;
+            }
+
+            // No edge-proximate vertices in any band.
+            // Fall back to Y-restricted bounds (vertices only from [wallYMin, wallYMax)),
+            // which excludes the full-width ground slab at y=0-1 that fools the mesh.bounds
+            // approach. Use a more generous gap (1.3 m) to accept buildings whose walls are
+            // slightly inset from the lot edge due to thick masonry or modelling offset.
+            if (restrictedMinX == float.MaxValue)
+            {
+                // No geometry at wall height at all → not WTW.
+                if (log)
+                    Debugger.LogFormat("WTW [{0}] no verts in yRange=[{1},{2}] -> NOT-WTW",
+                        name, wallYMin, wallYMax);
+                return false;
+            }
+            {
+                const float fallbackMaxGap = 1.3f;
+                float leftGap  = restrictedMinX + halfCellW;
+                float rightGap = halfCellW - restrictedMaxX;
+                bool result    = leftGap <= fallbackMaxGap && rightGap <= fallbackMaxGap;
+                if (log)
+                    Debugger.LogFormat("WTW [{0}] no edge-verts in yRange=[{1},{2}], RESTRICTED-FALLBACK leftGap={3:F2} rightGap={4:F2} threshold={5} -> {6}",
+                        name, wallYMin, wallYMax, leftGap, rightGap, fallbackMaxGap, result ? "WTW" : "NOT-WTW");
+                return result;
+            }
+        }
+
         public bool isCustomAsset
         {
             get
