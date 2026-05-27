@@ -206,6 +206,7 @@ Open via the **District Options** button in the Themes tab.
 | --- | --- |
 | Allow buildings not in any theme | Blacklist mode — anything not explicitly excluded can spawn |
 | Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
+| ↳ Also remove non-specialized buildings | Sub-option (only active when auto-bulldoze is on): also removes themed buildings whose sub-service does not match the district's active specialization — e.g. generic industry in a farming district. Use this to fully transition a district to its specialization. Has no effect when no specialization policy is active. |
 | Prefer zones with electricity | Only spawn new buildings in zone cells that are already connected to the electricity grid. See [Prefer Zones With Electricity](#prefer-zones-with-electricity) below. |
 | Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default) or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
@@ -232,6 +233,28 @@ active themes. Replacements spawn according to the normal themed-spawn rules.
   whole city.
 - Use **Spawn Diagnostics** (District Options) to see which non-theme buildings are
   currently present in the district before and after enabling auto-bulldoze.
+
+### Enforce District Specialization
+
+Auto-bulldoze only checks theme membership — a building that *is* in your theme is never
+removed, even if it does not match the district's active specialization. This means a
+generic industrial building in a farming-specialized district will stay indefinitely if
+it is part of the active theme, because theme enforcement does not consider specialization.
+
+Enable **Also remove non-specialized buildings** (sub-option, only available when
+auto-bulldoze is on) to extend the scan: buildings in the theme whose sub-service does
+not match the active specialization are also gradually removed. Examples:
+
+- A farming district (Agriculture policy) → generic industrial buildings are removed,
+  replaced by farming industry from the theme.
+- A self-sufficient district (Green Cities policy) → non-eco residential buildings are
+  removed, replaced by eco residential from the theme.
+- A tourism district → non-tourist/leisure commercial buildings are removed.
+
+The sub-service match uses the same position-based resolver the game itself uses
+(`GetIndustryType` / `GetResidentialType` / `GetCommercialType`), so the result is
+consistent with what would actually spawn on an empty lot in that district. If no
+specialization policy is active the sub-option has no additional effect.
 
 **What auto-bulldoze considers valid:** a building is valid for a district if and only if
 its exact prefab appears in the active theme pool for its footprint and zone type. This

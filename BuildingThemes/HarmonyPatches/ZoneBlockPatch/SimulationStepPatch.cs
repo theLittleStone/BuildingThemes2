@@ -779,7 +779,14 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                     Debugger.LogFormat("No prefab found: {0}, {1}, {2}, {3} x {4}",
                         service, subService, level, width, length);
                 }
-                return false;
+                // Mirror the pattern used in GetUpgradeInfoPatch and GetRandomBuildingInfoPatch:
+                // s_intentionalNull=true means strict mode deliberately produced no result → leave
+                // lot empty. s_intentionalNull=false means vanilla fallback is configured → return
+                // true so the original ZoneBlock.SimulationStep runs and picks from vanilla's pool
+                // (which respects the active specialization, DLC ownership, etc.).
+                bool intentionalSpawnNull = RandomBuildings.s_intentionalNull;
+                RandomBuildings.s_intentionalNull = false;
+                return !intentionalSpawnNull;
             }
 
             float num29 = Singleton<TerrainManager>.instance.WaterLevel(VectorUtils.XZ(vector6));

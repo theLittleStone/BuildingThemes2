@@ -160,8 +160,9 @@ namespace BuildingThemes
                         themes = themesNames,
                         missingAssetMode   = (int)themesManager.GetDistrictMissingAssetMode(i),
                         emptyLevelBehavior = (int)themesManager.GetDistrictEmptyLevelBehavior(i),
-                        autoBulldoze       = themesManager.GetDistrictAutoBulldoze(i),
-                        preferElectricity  = themesManager.GetDistrictPreferElectricity(i),
+                        autoBulldoze            = themesManager.GetDistrictAutoBulldoze(i),
+                        preferElectricity       = themesManager.GetDistrictPreferElectricity(i),
+                        enforceSpecialization   = themesManager.GetDistrictEnforceSpecialization(i),
                         residentialSizePref = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Residential),
                         commercialSizePref  = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Commercial),
                         industrialSizePref  = (int)themesManager.GetDistrictSizePreference(i, ItemClass.Service.Industrial),
@@ -258,9 +259,10 @@ namespace BuildingThemes
                 if (configuration.version >= 2)
                     buildingThemesManager.RestoreDistrictBehavior(district.id, district.missingAssetMode, district.emptyLevelBehavior);
 
-                // autoBulldoze and preferElectricity default to false for old saves
+                // autoBulldoze, preferElectricity, enforceSpecialization default to false for old saves
                 buildingThemesManager.SetDistrictAutoBulldoze(district.id, district.autoBulldoze);
                 buildingThemesManager.SetDistrictPreferElectricity(district.id, district.preferElectricity);
+                buildingThemesManager.SetDistrictEnforceSpecialization(district.id, district.enforceSpecialization);
 
                 // Size preferences added in version 3; -1 means not saved → keep default
                 if (configuration.version >= 3)
@@ -293,9 +295,10 @@ namespace BuildingThemes
         // version 2 adds missingAssetMode + emptyLevelBehavior per district.
         // version 3 adds size-preference fields per district.
         // version 4 adds preferElectricity per district.
+        // version 5 adds enforceSpecialization per district.
         // Old saves deserialise version as 0 — those fields are ignored on load.
         [System.Xml.Serialization.XmlAttribute("version")]
-        public int version = 4;
+        public int version = 5;
 
         public class District
         {
@@ -314,6 +317,8 @@ namespace BuildingThemes
             public int strengthPref        = -1;
             // added in version 4; defaults to false for older saves
             public bool preferElectricity = false;
+            // added in version 5; defaults to false for older saves
+            public bool enforceSpecialization = false;
         }
 
         public List<District> Districts = new List<District>();

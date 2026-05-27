@@ -16,6 +16,7 @@ namespace BuildingThemes.GUI
         private UIDropDown m_levelDropdown;
         private UIDropDown m_missingDropdown;
         private UICheckBox m_autoBulldozeCheck;
+        private UICheckBox m_enforceSpecializationCheck;
         private UICheckBox m_preferElectricityCheck;
 
         // Size-preference controls
@@ -184,6 +185,30 @@ namespace BuildingThemes.GUI
                 if (_updating) return;
                 BuildingThemesManager.instance.SetDistrictAutoBulldoze(GetDistrictId(), val);
             };
+            y += CHK_H + 4f;
+
+            // ── Enforce specialization (sub-option of auto-bulldoze) ──────────
+            const float INDENT = 20f;
+            m_enforceSpecializationCheck = ThemePolicyTab.CreateCheckBox(this);
+            m_enforceSpecializationCheck.width            = CW - INDENT;
+            m_enforceSpecializationCheck.relativePosition = new Vector3(X + INDENT, y);
+            m_enforceSpecializationCheck.text             = "Also remove non-specialized buildings";
+            m_enforceSpecializationCheck.tooltip =
+                "When a district has an active specialization (Farming, Forestry, Self-Sufficient,\n" +
+                "Tourism, etc.), this option also removes themed buildings whose type does not\n" +
+                "match the specialization — for example, generic industry in a farming district.\n" +
+                "\n" +
+                "Use this to fully transition a district to its specialization: existing buildings\n" +
+                "of the wrong type are gradually replaced by correctly-specialised ones from the\n" +
+                "active themes.\n" +
+                "\n" +
+                "Only active when 'Auto-remove non-theme buildings' is also enabled.\n" +
+                "Has no effect if the district has no active specialization policy.";
+            m_enforceSpecializationCheck.eventCheckChanged += (c, val) =>
+            {
+                if (_updating) return;
+                BuildingThemesManager.instance.SetDistrictEnforceSpecialization(GetDistrictId(), val);
+            };
             y += CHK_H + ROW_GAP;
 
             // ── Prefer electricity ────────────────────────────────────────────
@@ -347,14 +372,26 @@ namespace BuildingThemes.GUI
                     }
                 }
 
+                bool autoBulldozeOn = false;
                 if (m_autoBulldozeCheck != null)
                 {
                     bool effectiveBlacklist = BuildingThemesManager.instance.IsBlacklistModeEnabled(districtId);
                     m_autoBulldozeCheck.isEnabled = managed && !effectiveBlacklist;
                     m_autoBulldozeCheck.opacity   = (managed && !effectiveBlacklist) ? 1f : 0.5f;
-                    bool bulldoze = BuildingThemesManager.instance.GetDistrictAutoBulldoze(districtId);
-                    if (m_autoBulldozeCheck.isChecked != bulldoze)
-                        m_autoBulldozeCheck.isChecked = bulldoze;
+                    autoBulldozeOn = BuildingThemesManager.instance.GetDistrictAutoBulldoze(districtId);
+                    if (m_autoBulldozeCheck.isChecked != autoBulldozeOn)
+                        m_autoBulldozeCheck.isChecked = autoBulldozeOn;
+                }
+
+                if (m_enforceSpecializationCheck != null)
+                {
+                    bool effectiveBlacklist = BuildingThemesManager.instance.IsBlacklistModeEnabled(districtId);
+                    bool canEnforce = managed && !effectiveBlacklist && autoBulldozeOn;
+                    m_enforceSpecializationCheck.isEnabled = canEnforce;
+                    m_enforceSpecializationCheck.opacity   = canEnforce ? 1f : 0.5f;
+                    bool enforce = BuildingThemesManager.instance.GetDistrictEnforceSpecialization(districtId);
+                    if (m_enforceSpecializationCheck.isChecked != enforce)
+                        m_enforceSpecializationCheck.isChecked = enforce;
                 }
 
                 if (m_preferElectricityCheck != null)

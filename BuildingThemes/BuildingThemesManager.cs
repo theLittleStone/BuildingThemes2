@@ -130,6 +130,22 @@ namespace BuildingThemes
             info.preferElectricity = enabled;
         }
 
+        public bool GetDistrictEnforceSpecialization(byte districtId)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info != null) return info.enforceSpecialization;
+            if (districtId != 0) { var c = districtThemeInfos[0]; if (c != null) return c.enforceSpecialization; }
+            return false;
+        }
+
+        public void SetDistrictEnforceSpecialization(byte districtId, bool enabled)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null || info.enforceSpecialization == enabled) return;
+            info.enforceSpecialization = enabled;
+            AutoBulldozeService.ResetCursor();
+        }
+
         public SizePreference GetDistrictSizePreference(byte districtId, ItemClass.Service service)
         {
             var info = districtThemeInfos[districtId];
@@ -223,6 +239,13 @@ namespace BuildingThemes
 
             /// <summary>When true, zone blocks without electricity conductivity are skipped during spawn.</summary>
             public bool preferElectricity = false;
+
+            /// <summary>
+            /// When true (and autoBulldoze is on), buildings that are in the active theme but whose
+            /// sub-service does not match the district's active specialization are also demolished.
+            /// e.g. a generic industrial building in a farming-specialised district gets removed.
+            /// </summary>
+            public bool enforceSpecialization = false;
 
             // Size preference per zone type
             public SizePreference residentialSizePref = SizePreference.Default;
@@ -1241,10 +1264,71 @@ namespace BuildingThemes
             }
 
             ushort prefab = (ushort)info.m_prefabDataIndex;
+            bool inTheme = false;
             for (int i = 0; i < valid.m_size; i++)
-                if (valid.m_buffer[i] == prefab) return true;
+                if (valid.m_buffer[i] == prefab) { inTheme = true; break; }
 
-            return false;
+            if (!inTheme) return false;
+
+            // Secondary check: if the district has specialization enforcement enabled, also
+            // verify that the building's sub-service matches what the game would spawn at
+            // this position given the district's active specialization policies.
+            if (GetDistrictEnforceSpecialization(districtId) && !IsCompatibleWithSpecialization(building, info))
+            {
+                Debugger.LogVerbose("[ValidCheck] district={0} building=\"{1}\" rejected: sub-service mismatch with active specialization.",
+                    districtId, info.name);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if the building's sub-service matches what the game's zone-type resolver
+        /// would choose at the building's world position given current district policies.
+        /// Used by IsBuildingValidForDistrict when enforceSpecialization is on.
+        /// </summary>
+        private static bool IsCompatibleWithSpecialization(Building building, BuildingInfo info)
+        {
+            var pos = building.m_position;
+            var sub = info.m_class.m_subService;
+            ItemClass.SubService expected;
+            ItemClass.Level dummy;
+
+            switch (info.m_class.m_service)
+            {
+                case ItemClass.Service.Industrial:
+                    ZoneBlock.GetIndustryType(pos, out expected, out dummy);
+                    return sub == expected;
+
+                case ItemClass.Service.Residential:
+                {
+                    var zone = (sub == ItemClass.SubService.ResidentialHigh ||
+                                sub == ItemClass.SubService.ResidentialHighEco)
+                        ? ItemClass.Zone.ResidentialHigh
+                        : ItemClass.Zone.ResidentialLow;
+                    ZoneBlock.GetResidentialType(pos, zone, info.m_cellWidth, info.m_cellLength, out expected, out dummy);
+                    return sub == expected;
+                }
+
+                case ItemClass.Service.Commercial:
+                {
+                    var zone = (sub == ItemClass.SubService.CommercialHigh ||
+                                sub == ItemClass.SubService.CommercialLeisure ||
+                                sub == ItemClass.SubService.CommercialTourist)
+                        ? ItemClass.Zone.CommercialHigh
+                        : ItemClass.Zone.CommercialLow;
+                    ZoneBlock.GetCommercialType(pos, zone, info.m_cellWidth, info.m_cellLength, out expected, out dummy);
+                    return sub == expected;
+                }
+
+                case ItemClass.Service.Office:
+                    ZoneBlock.GetOfficeType(pos, ItemClass.Zone.Office, info.m_cellWidth, info.m_cellLength, out expected, out dummy);
+                    return sub == expected;
+
+                default:
+                    return true;
+            }
         }
 
         /// <summary>
