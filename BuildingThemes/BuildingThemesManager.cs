@@ -1632,14 +1632,72 @@ namespace BuildingThemes
             Debugger.Log(sb.ToString());
         }
 
-        public Configuration.Theme GetThemeByName(string themeName)
+        // Local (user-created, editable) theme lookup by name. Built-in/tagged themes
+        // ([Vanilla]/[DLC]/[Custom]) are excluded, so a user may create a local theme that
+        // shares a display name with a tagged one — they are distinct entities and only the
+        // local one is editable. Used by the create/rename/copy name-uniqueness checks, which
+        // must only enforce uniqueness among local themes.
+        public Configuration.Theme GetLocalThemeByName(string themeName)
         {
-            return Configuration.themes.FirstOrDefault(theme => theme.name == themeName);
+            return Configuration.themes.FirstOrDefault(theme => !theme.isBuiltIn && theme.name == themeName);
         }
 
+        public Configuration.Theme GetThemeByName(string themeName)
+        {
+            var matches = Configuration.themes.Where(theme => theme.name == themeName).ToList();
+            if (matches.Count <= 1) return matches.FirstOrDefault();
+            // Name collision (e.g. a custom "European" plus the built-in DistrictStyle "European"):
+            // prefer the built-in default (the one backed by a stylePackage). It's the canonical
+            // theme that's always present when its DLC/style is active, so saved district
+            // references resolve to it rather than to a same-named custom theme that happened to
+            // load first.
+            return matches.FirstOrDefault(t => t.isBuiltIn && t.stylePackage != null) ?? matches[0];
+        }
+
+        // Compact discriminator saved alongside a district's enabled theme so a display name
+        // shared by several themes (e.g. a local "European" plus the built-in DistrictStyle
+        // "European") resolves back to the EXACT same theme on reload:
+        //   "L"        local / user-created (the only editable kind)
+        //   "C"        built-in but no style package ([Custom], imported from another mod)
+        //   "S:<pkg>"  built-in style / env theme, keyed by its unique stylePackage
+        public static string GetThemeTag(Configuration.Theme theme)
+        {
+            if (theme == null) return "";
+            if (!theme.isBuiltIn) return "L";
+            if (theme.stylePackage == null) return "C";
+            return "S:" + theme.stylePackage;
+        }
+
+        // Resolves a district's saved theme reference using the tag from GetThemeTag. Falls back
+        // to the name-only lookup when the tag is empty (old saves, which never wrote tags) or
+        // when the tagged target no longer exists (e.g. a DLC/style now disabled).
+        public Configuration.Theme GetThemeByNameAndTag(string themeName, string tag)
+        {
+            if (string.IsNullOrEmpty(tag)) return GetThemeByName(themeName);
+            if (tag == "L")
+                return Configuration.themes.FirstOrDefault(t => !t.isBuiltIn && t.name == themeName)
+                       ?? GetThemeByName(themeName);
+            if (tag == "C")
+                return Configuration.themes.FirstOrDefault(t => t.isBuiltIn && t.stylePackage == null && t.name == themeName)
+                       ?? GetThemeByName(themeName);
+            if (tag.StartsWith("S:"))
+            {
+                string sp = tag.Substring(2);
+                return Configuration.themes.FirstOrDefault(t => t.stylePackage == sp)
+                       ?? GetThemeByName(themeName);
+            }
+            return GetThemeByName(themeName);
+        }
+
+        // Built-in style/env themes are matched ONLY by their stylePackage. A custom or
+        // third-party theme that merely shares the display name (e.g. another mod's "European")
+        // has stylePackage == null and is intentionally left alone, so the built-in DistrictStyle
+        // import always produces its own unique [DLC]/[Vanilla] theme instead of being merged
+        // into the custom one.
         private Configuration.Theme GetThemeByStylePackage(string stylePackage)
         {
-            return Configuration.themes.FirstOrDefault(theme => (theme.stylePackage == stylePackage || (stylePackage == DistrictStyle.kEuropeanStyleName && theme.name == "European")));
+            if (stylePackage == null) return null;
+            return Configuration.themes.FirstOrDefault(theme => theme.stylePackage == stylePackage);
         }
 
         /// <summary>

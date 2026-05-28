@@ -56,7 +56,7 @@ namespace BuildingThemes.GUI
             m_name.Focus();
             m_name.eventTextChanged += (c, s) =>
             {
-                m_ok.isEnabled = !s.IsNullOrWhiteSpace() && BuildingThemesManager.instance.GetThemeByName(s) == null;
+                m_ok.isEnabled = !s.IsNullOrWhiteSpace() && BuildingThemesManager.instance.GetLocalThemeByName(s) == null;
             };
 
             m_name.eventTextSubmitted += (c, s) =>

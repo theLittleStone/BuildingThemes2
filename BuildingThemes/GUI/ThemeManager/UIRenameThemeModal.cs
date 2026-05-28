@@ -57,7 +57,7 @@ namespace BuildingThemes.GUI
             {
                 m_ok.isEnabled = !s.IsNullOrWhiteSpace()
                     && s != (m_theme != null ? m_theme.name : "")
-                    && BuildingThemesManager.instance.GetThemeByName(s) == null;
+                    && BuildingThemesManager.instance.GetLocalThemeByName(s) == null;
             };
 
             m_name.eventTextSubmitted += (c, s) =>

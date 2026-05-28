@@ -147,10 +147,12 @@ namespace BuildingThemes
                         continue; ;
                     }
                     var themesNames = new string[themes.Count];
+                    var themeTags = new string[themes.Count];
                     var j = 0;
                     foreach (var theme in themes)
                     {
                         themesNames[j] = theme.name;
+                        themeTags[j] = BuildingThemesManager.GetThemeTag(theme);
                         j++;
                     }
                     configuration.Districts.Add(new DistrictsConfiguration.District()
@@ -158,6 +160,7 @@ namespace BuildingThemes
                         id = i,
                         blacklistMode = themesManager.IsBlacklistModeEnabled(i),
                         themes = themesNames,
+                        themeTags = themeTags,
                         missingAssetMode   = (int)themesManager.GetDistrictMissingAssetMode(i),
                         emptyLevelBehavior = (int)themesManager.GetDistrictEmptyLevelBehavior(i),
                         autoBulldoze            = themesManager.GetDistrictAutoBulldoze(i),
@@ -238,9 +241,18 @@ namespace BuildingThemes
 
                 if (district.themes == null) continue;
 
-                foreach (var themeName in district.themes)
+                // Tags disambiguate same-named themes (added in save version 7). Only trusted
+                // when present and index-aligned with the names; older saves fall back to the
+                // name-only lookup, preserving their original behaviour exactly.
+                bool haveTags = district.themeTags != null
+                                && district.themeTags.Length == district.themes.Length;
+
+                for (int k = 0; k < district.themes.Length; k++)
                 {
-                    var theme = buildingThemesManager.GetThemeByName(themeName);
+                    string themeName = district.themes[k];
+                    var theme = haveTags
+                        ? buildingThemesManager.GetThemeByNameAndTag(themeName, district.themeTags[k])
+                        : buildingThemesManager.GetThemeByName(themeName);
                     if (theme == null)
                     {
                         Debugger.LogFormat("Theme {0} that was enabled in district {1} could not be found!", themeName, district.id);
@@ -299,15 +311,19 @@ namespace BuildingThemes
         // version 4 adds preferElectricity per district.
         // version 5 adds enforceSpecialization per district.
         // version 6 adds preferAdjacent per district.
+        // version 7 adds themeTags per district (disambiguates same-named themes).
         // Old saves deserialise version as 0 — those fields are ignored on load.
         [System.Xml.Serialization.XmlAttribute("version")]
-        public int version = 6;
+        public int version = 7;
 
         public class District
         {
             public byte id;
             public bool blacklistMode = false;
             public string[] themes;
+            // Per-theme discriminator, index-aligned with `themes` (save version 7+). null on
+            // older saves → loader falls back to name-only resolution. See GetThemeTag.
+            public string[] themeTags;
             // -1 = not saved (old save / version < 2); >= 0 = enum ordinal.
             public int missingAssetMode = -1;
             public int emptyLevelBehavior = -1;

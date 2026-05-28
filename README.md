@@ -127,10 +127,32 @@ A green **♦** badge is shown next to themes that contain only base-game
 buildings — no DLC or workshop assets required to use them. Hovering the
 badge shows a tooltip confirming this.
 
-Workshop mod themes imported via `BuildingThemes.xml` (e.g. the Japanese
-theme mod) show their plain name without any prefix. Built-in game district
-styles show a `[DLC]` prefix; non-DLC workshop-registered district styles
-show `[Custom]`.
+### Theme Prefixes — what's editable, and same-named themes
+
+Theme names carry a prefix that tells you where the theme comes from and whether
+you can edit it:
+
+| Prefix | Source | Editable? |
+| --- | --- | --- |
+| *(no prefix)* | **Local** theme you created or copied | **Yes** — rename, delete, change includes / spawn rates / upgrades |
+| `[Vanilla]` | Built-in base-game district style | No — read-only reference |
+| `[DLC]` | Built-in district style from a DLC / content pack (e.g. European) | No — read-only reference |
+| `[Custom]` | A theme registered by **another mod** (district style or `BuildingThemes.xml`) | No — read-only reference |
+
+Only **local** (un-prefixed) themes can be edited. The tagged themes are read-only
+**references** — they always reflect the game's own content, so they're never
+modified in place.
+
+**Want to tweak a built-in theme?** Select it and use **Copy Theme** to make a local,
+editable copy, then edit that.
+
+**Same name, different theme:** because the tagged themes are separate from your local
+ones, you can have a local theme with the **same name** as a tagged one — for example a
+local `European` alongside the built-in `[DLC] European`. They are distinct themes; the
+prefix is what tells them apart. Local theme names only need to be unique **among your
+own local themes**. District assignments remember exactly which one you picked (see
+[How Data Is Saved](#how-data-is-saved)), so a local theme stays selected after a reload
+even when a built-in theme shares its name.
 
 ### Spawn Weight
 
@@ -618,6 +640,30 @@ These Workshop mods provide ready-made themes:
   (key: `BuildingThemes-SaveData`).
 
 You do not need to edit these files — everything is configurable in-game.
+
+### For developers: district theme references and tags
+
+A district stores its enabled themes as a list of **names** (`District.themes`). Because a
+local theme may legitimately share a name with a built-in one (e.g. `European`), names
+alone are ambiguous. Since **save version 7** each district also stores an index-aligned
+`District.themeTags` array — a compact discriminator per theme:
+
+| Tag | Theme kind | Resolved by |
+| --- | --- | --- |
+| `L` | Local / user-created | `!isBuiltIn && name` |
+| `C` | Built-in `[Custom]` (other mod, no style package) | `isBuiltIn && stylePackage == null && name` |
+| `S:<pkg>` | Built-in `[Vanilla]`/`[DLC]` style theme | `stylePackage == <pkg>` (locale-name independent) |
+
+On load, `GetThemeByNameAndTag(name, tag)` resolves the exact theme, and **falls back to the
+name-only `GetThemeByName`** when the tag is empty or its target no longer exists (e.g. a DLC
+later disabled). `GetThemeByName` itself, on a name collision, prefers the built-in default
+(the one backed by a `stylePackage`).
+
+**Backward compatibility:** `themeTags` is purely additive. Saves written before version 7
+have no `themeTags` element, so it deserialises to `null`; the loader detects that and uses
+the original name-only path, loading exactly as before. Older mod builds reading a version-7
+save simply ignore the unknown element. The tag helpers live in
+`BuildingThemesManager` (`GetThemeTag` / `GetThemeByNameAndTag`).
 
 ---
 

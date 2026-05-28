@@ -134,7 +134,7 @@ namespace BuildingThemes.GUI
 
         public void CreateTheme(string themeName)
         {
-            if (BuildingThemesManager.instance.GetThemeByName(themeName) != null) return;
+            if (BuildingThemesManager.instance.GetLocalThemeByName(themeName) != null) return;
             var newTheme = new Configuration.Theme()
             {
                 name = themeName
@@ -168,7 +168,7 @@ namespace BuildingThemes.GUI
             string baseName = "Copy of " + sourceTheme.name;
             string candidate = baseName;
             int suffix = 2;
-            while (BuildingThemesManager.instance.GetThemeByName(candidate) != null)
+            while (BuildingThemesManager.instance.GetLocalThemeByName(candidate) != null)
             {
                 candidate = baseName + " (" + suffix + ")";
                 suffix++;
