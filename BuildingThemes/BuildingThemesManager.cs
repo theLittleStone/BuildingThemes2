@@ -130,6 +130,21 @@ namespace BuildingThemes
             info.preferElectricity = enabled;
         }
 
+        public bool GetDistrictPreferAdjacent(byte districtId)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info != null) return info.preferAdjacent;
+            if (districtId != 0) { var c = districtThemeInfos[0]; if (c != null) return c.preferAdjacent; }
+            return false;
+        }
+
+        public void SetDistrictPreferAdjacent(byte districtId, bool enabled)
+        {
+            var info = districtThemeInfos[districtId];
+            if (info == null || info.preferAdjacent == enabled) return;
+            info.preferAdjacent = enabled;
+        }
+
         public bool GetDistrictEnforceSpecialization(byte districtId)
         {
             var info = districtThemeInfos[districtId];
@@ -239,6 +254,10 @@ namespace BuildingThemes
 
             /// <summary>When true, zone blocks without electricity conductivity are skipped during spawn.</summary>
             public bool preferElectricity = false;
+
+            /// <summary>When true, spawn attempts at cells with no adjacent existing building are skipped
+            /// until a fallback threshold lapses — so new buildings cluster against existing ones.</summary>
+            public bool preferAdjacent = false;
 
             /// <summary>
             /// When true (and autoBulldoze is on), buildings that are in the active theme but whose

@@ -319,37 +319,6 @@ namespace BuildingThemes.GUI
                 return r;
             }
 
-            if (log)
-            {
-                // Height profile: log minX/maxX in 1 m bands from 0 to meshTop.
-                float meshTop = mesh.bounds.max.y;
-                int bands = Mathf.CeilToInt(meshTop);
-                var sb = new System.Text.StringBuilder();
-                sb.AppendFormat("WTW-PROFILE [{0}] cellW={1} halfCellW={2} meshTop={3:F1}\n",
-                    name, prefab.m_cellWidth, halfCellW, meshTop);
-                for (int b = 0; b < bands; b++)
-                {
-                    float yLo = b, yHi = b + 1f;
-                    float bMinX = float.MaxValue, bMaxX = float.MinValue;
-                    bool bFound = false;
-                    for (int i = 0; i < verts.Length; i++)
-                    {
-                        float y = verts[i].y;
-                        if (y < yLo || y >= yHi) continue;
-                        float x = verts[i].x;
-                        if (x < bMinX) bMinX = x;
-                        if (x > bMaxX) bMaxX = x;
-                        bFound = true;
-                    }
-                    if (bFound)
-                        sb.AppendFormat("  y=[{0},{1}): minX={2:F2} maxX={3:F2}  leftGap={4:F2} rightGap={5:F2}\n",
-                            yLo, yHi, bMinX, bMaxX, bMinX + halfCellW, halfCellW - bMaxX);
-                    else
-                        sb.AppendFormat("  y=[{0},{1}): (no verts)\n", yLo, yHi);
-                }
-                Debugger.Log(sb.ToString());
-            }
-
             // Two-pass approach: try a strict gap (walls flush against the lot edge) first,
             // then fall back to a lenient gap (walls inset by up to ~1.3 m) for buildings with
             // thick masonry or modelling offset. Both passes apply identical Z-span and
@@ -373,7 +342,6 @@ namespace BuildingThemes.GUI
             float leftYMin  = float.MaxValue, leftYMax  = float.MinValue;
             float rightYMin = float.MaxValue, rightYMax = float.MinValue;
             bool  anyEdge  = false;
-            var   bandLog  = log ? new System.Text.StringBuilder() : null;
 
             for (float bandLo = WTW_WallYMin; bandLo < WTW_WallYMax; bandLo += WTW_BandSize)
             {
@@ -415,13 +383,6 @@ namespace BuildingThemes.GUI
                 float rSpan = rightFound ? rightMaxZ - rightMinZ : 0f;
                 if (lSpan > maxLspan) maxLspan = lSpan;
                 if (rSpan > maxRspan) maxRspan = rSpan;
-
-                if (log)
-                    bandLog.AppendFormat(
-                        "  band y=[{0:F1},{1:F1}): L-span={2:F2}({3}) R-span={4:F2}({5})\n",
-                        bandLo, bandHi,
-                        lSpan, leftFound  ? (lSpan >= WTW_MinCubeDepth ? "wall" : "thin") : "none",
-                        rSpan, rightFound ? (rSpan >= WTW_MinCubeDepth ? "wall" : "thin") : "none");
             }
 
             if (!anyEdge)
@@ -439,11 +400,8 @@ namespace BuildingThemes.GUI
             bool result  = leftOk && rightOk;
 
             if (log)
-            {
-                Debugger.Log(bandLog.ToString());
                 Debugger.LogFormat("WTW [{0}] {1} gap={2:F1}: maxL={3:F2} maxR={4:F2} minDepth={5} leftYRange={6:F2} rightYRange={7:F2} minHeight={8} -> {9}",
                     name, tag, gap, maxLspan, maxRspan, WTW_MinCubeDepth, leftYRange, rightYRange, WTW_MinWallHeight, result ? "WTW" : "NOT-WTW");
-            }
             return result;
         }
 

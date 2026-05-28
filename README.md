@@ -208,6 +208,7 @@ Open via the **District Options** button in the Themes tab.
 | Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
 | ↳ Also remove non-specialized buildings | Sub-option (only active when auto-bulldoze is on): also removes themed buildings whose sub-service does not match the district's active specialization — e.g. generic industry in a farming district. Use this to fully transition a district to its specialization. Has no effect when no specialization policy is active. |
 | Prefer zones with electricity | Only spawn new buildings in zone cells that are already connected to the electricity grid. See [Prefer Zones With Electricity](#prefer-zones-with-electricity) below. |
+| Cluster against existing buildings (wall-to-wall) | Force new buildings to spawn next to existing ones and slide them along the road so their walls touch — closes the small mesh-vs-cell gaps you'd otherwise see between buildings. See [Cluster Against Existing Buildings](#cluster-against-existing-buildings-wall-to-wall) below. |
 | Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default) or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
 | Size preference (4 dropdowns) | Bias spawning toward a particular footprint size or height for each zone type — see [Size Preference](#size-preference) |
@@ -299,6 +300,67 @@ preference re-activates automatically.
 3. Enable **Prefer zones with electricity** in District Options.
 4. New buildings only appear where electricity reaches — extend power lines to grow the
    district further.
+
+---
+
+## Cluster Against Existing Buildings (wall-to-wall)
+
+Enable **Cluster against existing buildings (wall-to-wall)** in District Options to
+force new buildings to grow against existing ones and physically touch their neighbours
+— eliminating the small visible gaps that arise when a building's mesh is narrower than
+its 8 m lot allocation.
+
+The option does two things on every spawn attempt:
+
+1. **Cell adjacency filter.** The candidate spawn position is checked against the
+   270 × 270 building grid. If no existing building lies within 12 m of the lot, the
+   attempt is skipped and the game retries elsewhere. Growth radiates outward from
+   existing construction instead of dropping isolated buildings on far corners.
+2. **Position snap.** When a spawn is accepted, the new building is nudged along the
+   road (up to ½ cell = 4 m) so its mesh edge meets the nearest aligned neighbour's
+   mesh edge. The snap uses each prefab's actual `mesh.bounds` projected onto the road
+   direction — so buildings whose meshes are narrower than their cell footprint, and
+   buildings whose meshes aren't axis-aligned, both close their visible gap correctly.
+
+### How the snap stays safe
+
+- **Capped at 4 m.** A shift never moves the visible building past the next cell
+  boundary, so the underlying cell allocation stays exactly where the game placed it
+  and the neighbour's footprint is never invaded.
+- **Same-road only.** A candidate neighbour must face within ~17° of the new
+  building's road direction (either side flip is OK). Buildings on perpendicular
+  roads or at intersections are ignored.
+- **Same lot row only.** Candidates further than the combined building widths
+  perpendicular to the road are rejected — only the immediate neighbour along the
+  street is considered.
+- **No-shift fallback.** If no candidate is found within tolerance the building
+  spawns at its cell-aligned position as usual.
+
+### What it works with
+
+- **Wall-to-wall themes** are the prime use case — the snap closes the residual
+  mesh gap that wall-to-wall walls were always supposed to hide.
+- **Mixed themes work too.** The option is independent of the theme contents and is
+  applied to whatever building the spawn pool produces, base-game, DLC, or Workshop.
+- **Non-grid-aligned meshes** (rotated facades, prefabs with a slight visual offset)
+  are handled by projecting the mesh bounding box onto the road direction rather than
+  assuming the cell-allocation size.
+
+### Empty-district fallback
+
+When you first enable theme management on a district with no buildings yet there's
+nothing to cluster against. To avoid permanently blocking growth, the adjacency
+filter suspends itself after **40 consecutive skipped spawns** so the first building
+can land anywhere. Once it appears, subsequent attempts find it within 12 m and the
+filter re-engages automatically — every later building clusters against the growing
+footprint.
+
+### Typical workflow
+
+1. Build a couple of seed buildings in the district (zone normally, or plop one).
+2. Enable **Cluster against existing buildings** in District Options.
+3. As demand spawns new buildings they appear adjacent to the seed and slide flush
+   against it. Growth expands outward in a continuous wall.
 
 ---
 

@@ -87,6 +87,157 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
         private static readonly int[] s_electricityMissCount = new int[128];
         private const int ELECTRICITY_FALLBACK_THRESHOLD = 40;
 
+        // Per-district count of consecutive zone blocks skipped because the spawn position had
+        // no adjacent existing building. When this reaches the fallback threshold the adjacency
+        // filter is suspended for that district — so the first building in an empty area lands
+        // anywhere, then subsequent ones cluster against it.
+        private static readonly int[] s_adjacentMissCount = new int[128];
+        private const int ADJACENT_FALLBACK_THRESHOLD = 40;
+        // Buildings in CS1 are bucketed in a 270×270 grid with 64 m cells.
+        private const int BUILDING_GRID_RES = 270;
+        private const float BUILDING_GRID_CELL = 64f;
+        private const int BUILDING_GRID_HALF = BUILDING_GRID_RES / 2;
+
+        // Maximum metres we'll shift the new building along the road to make it touch its
+        // neighbour. Large enough to pull a building across one empty cell (8 m) plus the
+        // typical mesh inset, so a building that spawned a cell away still snaps flush.
+        private const float SNAP_MAX_SHIFT = 10f;
+        // Buildings whose along-road centre is further than this are not candidates — they're
+        // too far away to be the "next building" on the same lot row.
+        private const float SNAP_ALONG_MAX = 40f;
+        // Tolerance (rad) for considering two buildings aligned with the same road. ~17°.
+        private const float SNAP_ANGLE_TOL = 0.30f;
+
+        // Finds the nearest aligned, same-lot-row building along the road and slides vector6 so
+        // the new building's bounding-box edge meets it (closing the visible gap). Bounding
+        // boxes come from each prefab's mesh (capped at the cell allocation) rotated into world
+        // space, so the snap works for meshes narrower than their lot and for non-grid-aligned
+        // models.
+        //
+        // RETURNS true when a snappable same-row neighbour was found (whether or not a shift was
+        // needed) — the caller uses this as the "is this spawn adjacent?" signal. Returns false
+        // when there's no aligned neighbour within range, i.e. the building would spawn isolated.
+        private static bool SnapToAdjacentBuilding(
+            ref Vector3 vector6, float roadAngle, Vector2 xDirection, Vector2 zDirection,
+            BuildingInfo newInfo, int newLengthCells, int newWidthCells)
+        {
+            if (newInfo == null) return false;
+
+            var bm = Singleton<BuildingManager>.instance;
+            // CORRECTED AXES: in CS1's ZoneBlock, xDirection is PERPENDICULAR to the road (the
+            // depth into the lot) and zDirection runs ALONG the road. Buildings in a row are
+            // separated along the road, so the snap shifts along `alongUnit` (= zDirection); the
+            // same-row test uses `acrossUnit` (= xDirection, depth). Moving along xDirection was
+            // the bug that pushed buildings into the road / into the park behind.
+            Vector2 alongUnit  = zDirection / 8f;  // along the road
+            Vector2 acrossUnit = xDirection / 8f;  // perpendicular, into the lot (depth)
+            bool log = Debugger.Enabled;
+
+            // Same-road buildings store Building.m_angle == roadAngle + π/2 (the num30 we pass to
+            // CreateBuilding). Used only to reject buildings on perpendicular roads.
+            float newAngle = roadAngle + Mathf.PI * 0.5f;
+            // Frontage (along road) is the mesh.x / m_cellWidth axis — that's the side the WtW
+            // filter checks for walls. Depth (perpendicular) is mesh.z / m_cellLength.
+            GetBuildingExtents(newInfo, out float newFrontHalf, out float newDepthHalf);
+
+            int gx = Mathf.Clamp((int)(vector6.x / BUILDING_GRID_CELL + BUILDING_GRID_HALF), 0, BUILDING_GRID_RES - 1);
+            int gz = Mathf.Clamp((int)(vector6.z / BUILDING_GRID_CELL + BUILDING_GRID_HALF), 0, BUILDING_GRID_RES - 1);
+
+            float bestShift = 0f;
+            float bestAbs   = float.MaxValue;
+            ushort bestId   = 0;
+            int considered = 0;
+
+            for (int z = Mathf.Max(0, gz - 1); z <= Mathf.Min(BUILDING_GRID_RES - 1, gz + 1); z++)
+            {
+                for (int x = Mathf.Max(0, gx - 1); x <= Mathf.Min(BUILDING_GRID_RES - 1, gx + 1); x++)
+                {
+                    ushort id = bm.m_buildingGrid[z * BUILDING_GRID_RES + x];
+                    int safety = 0;
+                    while (id != 0)
+                    {
+                        var b = bm.m_buildings.m_buffer[id];
+                        if ((b.m_flags & Building.Flags.Created) != 0 && b.Info != null)
+                        {
+                            considered++;
+                            // Same road, either side OK (π flip allowed). Reject perpendicular roads.
+                            float diff = Mathf.Repeat(b.m_angle - newAngle, Mathf.PI);
+                            if (diff > Mathf.PI * 0.5f) diff = Mathf.PI - diff;
+                            if (diff > SNAP_ANGLE_TOL) { id = b.m_nextGridBuilding; if (++safety >= 49152) break; continue; }
+
+                            Vector2 d = new Vector2(b.m_position.x - vector6.x, b.m_position.z - vector6.z);
+                            float along  = Vector2.Dot(d, alongUnit);   // separation along the road
+                            float across = Vector2.Dot(d, acrossUnit);  // separation perpendicular (depth)
+
+                            GetBuildingExtents(b.Info, out float exFrontHalf, out float exDepthHalf);
+
+                            // Same lot row: the perpendicular (depth) gap must be ~0 (negative for
+                            // buildings fronting the same road; positive across the street / back row).
+                            float perpGap = Mathf.Abs(across) - newDepthHalf - exDepthHalf;
+                            if (perpGap > 2f) { id = b.m_nextGridBuilding; if (++safety >= 49152) break; continue; }
+
+                            float alongAbs = Mathf.Abs(along);
+                            if (alongAbs > SNAP_ALONG_MAX) { id = b.m_nextGridBuilding; if (++safety >= 49152) break; continue; }
+
+                            // Along-road gap from frontage edge to frontage edge.
+                            float gap = alongAbs - newFrontHalf - exFrontHalf;
+                            if (gap < 0f || gap > SNAP_MAX_SHIFT) { id = b.m_nextGridBuilding; if (++safety >= 49152) break; continue; }
+
+                            float shift = along > 0f ? gap : -gap;  // toward the neighbour, along road
+                            float absShift = Mathf.Abs(shift);
+                            if (absShift < bestAbs)
+                            {
+                                bestAbs   = absShift;
+                                bestShift = shift;
+                                bestId    = id;
+                            }
+                        }
+                        id = b.m_nextGridBuilding;
+                        if (++safety >= 49152) break;
+                    }
+                }
+            }
+
+            bool found = bestId != 0;
+            if (found && bestAbs > 0.05f)
+            {
+                Vector2 shift2 = alongUnit * bestShift;  // shift ALONG the road
+                vector6.x += shift2.x;
+                vector6.z += shift2.y;
+                // Single concise line per actual snap — the routine "no neighbour / skip" cases
+                // are intentionally silent so the log stays readable with debug output on.
+                if (log)
+                    Debugger.LogFormat("[ADJ-SNAP] {0}: snapped {1:F2} m along road to building #{2} (scanned {3})",
+                        newInfo.name, bestShift, bestId, considered);
+            }
+            return found;
+        }
+
+        // Returns a building's half-extents in its own frame, with no rotation maths needed:
+        //   frontHalf — half the frontage (the mesh.x / m_cellWidth axis, which the WtW filter
+        //               checks for side walls). This is the extent ALONG the road, so two
+        //               neighbours touch when their centres are frontHalf+frontHalf apart.
+        //   depthHalf — half the depth (mesh.z / m_cellLength axis), the extent PERPENDICULAR
+        //               to the road, used only for the same-row test.
+        // Each axis is capped at the cell allocation (m_cellWidth/m_cellLength × 8 m) so garden
+        // or landscape props that spill past the lot don't bloat the extent and make every
+        // building read as "overlapping". For a WtW building whose wall is slightly inset, the
+        // mesh extent is below the cap and is used as-is, so the snap can close that small gap.
+        private static void GetBuildingExtents(BuildingInfo info, out float frontHalf, out float depthHalf)
+        {
+            float capX = info.m_cellWidth  * 8f;
+            float capZ = info.m_cellLength * 8f;
+            float sizeX = capX, sizeZ = capZ;
+            if (info.m_mesh != null && info.m_mesh.bounds.size.x > 0f)
+            {
+                var sz = info.m_mesh.bounds.size;
+                sizeX = Mathf.Min(sz.x, capX);
+                sizeZ = Mathf.Min(sz.z, capZ);
+            }
+            frontHalf = sizeX * 0.5f;  // along road (frontage / wall axis)
+            depthHalf = sizeZ * 0.5f;  // perpendicular (depth)
+        }
+
         public static bool Prefix(ref ZoneBlock __instance, ushort blockID)
         {
             if (Debugger.Enabled && debugCount < 10)
@@ -269,6 +420,11 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                         return false;
                 }
             }
+
+            // Adjacency preference is enforced later, at vector6 (the actual building position),
+            // because the decision and the wall-to-wall snap must use the SAME same-row neighbour
+            // search — otherwise this early check would green-light spawns the snap can't reach.
+            // See the SnapToAdjacentBuilding call just before CreateBuilding.
 
             if (Singleton<SimulationManager>.instance.m_randomizer.Int32(100u) >= num4)
             {
@@ -816,6 +972,34 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
             if (num29 > vector6.y || Singleton<DisasterManager>.instance.IsEvacuating(vector6))
             {
                 return false;
+            }
+
+            // Adjacency + wall-to-wall snap (preferAdjacent). One same-row neighbour search drives
+            // BOTH decisions: if a snappable neighbour exists, slide vector6 so the new building's
+            // mesh edge meets it; if none exists, the building would spawn isolated, so skip this
+            // tick (with a miss-counter fallback so the first building in an empty district can
+            // still land and seed the cluster).
+            byte snapDistrict = instance2.GetDistrict(vector6);
+            if (BuildingThemesManager.instance.GetDistrictPreferAdjacent(snapDistrict))
+            {
+                bool found = SnapToAdjacentBuilding(
+                    ref vector6, m_angle, xDirection, zDirection,
+                    buildingInfo, length, width);
+                if (found)
+                {
+                    s_adjacentMissCount[snapDistrict] = 0;
+                }
+                else
+                {
+                    s_adjacentMissCount[snapDistrict]++;
+                    bool suspending = s_adjacentMissCount[snapDistrict] >= ADJACENT_FALLBACK_THRESHOLD;
+                    // Routine skips are silent; only log the (rare) fallback that lets an isolated
+                    // building seed a new cluster.
+                    if (suspending && Debugger.Enabled)
+                        Debugger.LogFormat("[ADJ] district={0}: no neighbour after {1} tries — allowing isolated spawn of {2} to seed a cluster",
+                            snapDistrict, ADJACENT_FALLBACK_THRESHOLD, buildingInfo.name);
+                    if (!suspending) return false;
+                }
             }
 
             float num30 = m_angle + (float)Math.PI / 2f;

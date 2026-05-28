@@ -18,6 +18,7 @@ namespace BuildingThemes.GUI
         private UICheckBox m_autoBulldozeCheck;
         private UICheckBox m_enforceSpecializationCheck;
         private UICheckBox m_preferElectricityCheck;
+        private UICheckBox m_preferAdjacentCheck;
 
         // Size-preference controls
         private UIDropDown m_resSizePref;
@@ -241,6 +242,40 @@ namespace BuildingThemes.GUI
             };
             y += CHK_H + ROW_GAP;
 
+            // ── Cluster against existing buildings (wall-to-wall snap) ────────
+            m_preferAdjacentCheck = ThemePolicyTab.CreateCheckBox(this);
+            m_preferAdjacentCheck.width            = CW;
+            m_preferAdjacentCheck.relativePosition = new Vector3(X, y);
+            m_preferAdjacentCheck.text             = "Cluster against existing buildings (wall-to-wall)";
+            m_preferAdjacentCheck.tooltip =
+                "Forces new buildings to spawn next to existing ones and slides them\n" +
+                "along the road so their visible walls touch, eliminating the small\n" +
+                "gaps that arise when a building's mesh is narrower than its lot.\n" +
+                "\n" +
+                "How it works:\n" +
+                "  • Cell adjacency — spawn attempts at lots with no neighbouring\n" +
+                "    building are skipped, so growth radiates outward from existing\n" +
+                "    construction instead of dropping random isolated buildings.\n" +
+                "  • Position snap — when a spawn is accepted, the new building is\n" +
+                "    nudged along the road (up to ½ cell, 4 m) so its mesh edge meets\n" +
+                "    the neighbour's mesh edge. Works for buildings whose model is\n" +
+                "    smaller than its 8 m cell allocation, and respects rotated /\n" +
+                "    non-grid-aligned meshes via projected bounding boxes.\n" +
+                "\n" +
+                "Fallback: when no neighbour is found anywhere after 40 attempts,\n" +
+                "the filter suspends so the first building in an empty district can\n" +
+                "land normally — subsequent buildings then cluster against it.\n" +
+                "\n" +
+                "Best paired with wall-to-wall themes, but works with any theme.";
+            m_preferAdjacentCheck.eventCheckChanged += (c, val) =>
+            {
+                if (_updating) return;
+                byte districtId = GetDistrictId();
+                Debugger.LogFormat("[UserAction] district {0} — prefer adjacent {1}.", districtId, val ? "ENABLED" : "DISABLED");
+                BuildingThemesManager.instance.SetDistrictPreferAdjacent(districtId, val);
+            };
+            y += CHK_H + ROW_GAP;
+
             // ── Size preference section ───────────────────────────────────────
             AddLabel(X, y, CW, LBL_H, TS, "Building size preference per zone type  (Default = original game behaviour):");
             y += LBL_H + SEC_GAP;
@@ -411,6 +446,15 @@ namespace BuildingThemes.GUI
                     bool prefElec = BuildingThemesManager.instance.GetDistrictPreferElectricity(districtId);
                     if (m_preferElectricityCheck.isChecked != prefElec)
                         m_preferElectricityCheck.isChecked = prefElec;
+                }
+
+                if (m_preferAdjacentCheck != null)
+                {
+                    m_preferAdjacentCheck.isEnabled = managed;
+                    m_preferAdjacentCheck.opacity   = managed ? 1f : 0.5f;
+                    bool prefAdj = BuildingThemesManager.instance.GetDistrictPreferAdjacent(districtId);
+                    if (m_preferAdjacentCheck.isChecked != prefAdj)
+                        m_preferAdjacentCheck.isChecked = prefAdj;
                 }
 
                 SyncSizeDrop(m_resSizePref, managed, BuildingThemesManager.instance.GetDistrictSizePreference(districtId, ItemClass.Service.Residential));

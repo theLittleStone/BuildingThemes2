@@ -20,8 +20,10 @@ namespace BuildingThemes.GUI
         private UILabel m_height;
         private UILabel m_size;
         private UILabel m_origin;
+        private UILabel m_wallToWall;
 
         private static readonly Color32 OriginTextColor = new Color32(180, 180, 180, 255);
+        private static readonly Color32 WallToWallTextColor = new Color32(140, 190, 230, 255);
 
         public override void Start()
         {
@@ -77,6 +79,17 @@ namespace BuildingThemes.GUI
             m_origin.autoSize = false;
             m_origin.height = 14f;
             m_origin.isVisible = false;
+
+            // Wall-to-wall label — BT2's own classification, shown just below the origin line
+            m_wallToWall = AddUIComponent<UILabel>();
+            m_wallToWall.textScale = 0.65f;
+            m_wallToWall.textColor = WallToWallTextColor;
+            m_wallToWall.useDropShadow = true;
+            m_wallToWall.dropShadowColor = new Color32(0, 0, 0, 200);
+            m_wallToWall.dropShadowOffset = new Vector2(1, -1);
+            m_wallToWall.autoSize = false;
+            m_wallToWall.height = 14f;
+            m_wallToWall.isVisible = false;
 
             // Category icon
             m_categoryIcon = AddUIComponent<UISprite>();
@@ -144,6 +157,7 @@ namespace BuildingThemes.GUI
 
             m_buildingName.isVisible = false;
             m_origin.isVisible = false;
+            m_wallToWall.isVisible = false;
             m_categoryIcon.isVisible = false;
             m_level.isVisible = false;
             m_height.isVisible = false;
@@ -158,14 +172,24 @@ namespace BuildingThemes.GUI
             m_buildingName.autoHeight = true;
 
             // Origin label (DLC / workshop source) — positioned just below the building name
+            float infoBottom = m_buildingName.relativePosition.y + m_buildingName.height;
             string originText = BuildingItem.GetOriginTextForName(m_item.name);
             if (!string.IsNullOrEmpty(originText))
             {
                 m_origin.text = originText;
                 m_origin.width = width - 10;
                 m_origin.isVisible = true;
-                float nameBottom = m_buildingName.relativePosition.y + m_buildingName.height;
-                m_origin.relativePosition = new Vector3(5, nameBottom + 2);
+                m_origin.relativePosition = new Vector3(5, infoBottom + 2);
+                infoBottom = m_origin.relativePosition.y + m_origin.height;
+            }
+
+            // Wall-to-wall classification (BT2's own mesh-based catalog) — just below the origin
+            if (m_item.isWallToWall)
+            {
+                m_wallToWall.text = "Wall to wall";
+                m_wallToWall.width = width - 10;
+                m_wallToWall.isVisible = true;
+                m_wallToWall.relativePosition = new Vector3(5, infoBottom + 2);
             }
 
             // Category icon
