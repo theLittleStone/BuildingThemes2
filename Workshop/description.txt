@@ -23,7 +23,7 @@ Apply building themes to districts — only buildings in the selected themes wil
 [*][b]Missing asset handling[/b] — Skip / Fill with vanilla / Fall back to vanilla (global default + per-district override)
 [*][b]Level behavior[/b] — Vanilla fallback (default) or Strict freeze when a theme has no buildings for the next level
 [*][b]Auto-bulldoze[/b] — gradually replace non-theme buildings in a district with themed ones; optional sub-option also removes buildings that don't match the district's active specialization (farming, eco, tourism…) so a district fully transitions to its new specialization; configurable pace (Gentle / Normal / Aggressive)
-[*][b]Cluster against existing buildings[/b] — force new buildings to spawn next to existing ones and slide them along the road so their walls touch, eliminating the small gaps that arise when a building's mesh is narrower than its lot allocation; ideal for wall-to-wall row-house looks but works with any theme
+[*][b]Cluster against existing buildings[/b] — force new buildings to spawn next to existing ones and slide them along the road so their walls touch, eliminating the small gaps that arise when a building's mesh is narrower than its lot allocation; handles corners on both streets and never pushes a building across a road; ideal for wall-to-wall row-house looks but works with any theme
 [*][b]Asset Cloning[/b] — duplicate a building and assign a different wealth level (experimental)
 [*][b]Spawn weight[/b] — control how often a building appears relative to same-type peers
 [*][b]Size preference[/b] — bias spawning toward Biggest / Widest / Deepest / Smallest / Tallest / Shortest / Random footprints per zone type, with Gentle / Moderate / Strong / Absolute strength

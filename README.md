@@ -355,35 +355,45 @@ preference re-activates automatically.
 ## Cluster Against Existing Buildings (wall-to-wall)
 
 Enable **Cluster against existing buildings (wall-to-wall)** in District Options to
-force new buildings to grow against existing ones and physically touch their neighbours
-- eliminating the small visible gaps that arise when a building's mesh is narrower than
+force new buildings to grow against existing ones and physically touch their neighbours,
+eliminating the small visible gaps that arise when a building's mesh is narrower than
 its 8 m lot allocation.
 
 The option does two things on every spawn attempt:
 
-1. **Cell adjacency filter.** The candidate spawn position is checked against the
-   270 × 270 building grid. If no existing building lies within 12 m of the lot, the
-   attempt is skipped and the game retries elsewhere. Growth radiates outward from
-   existing construction instead of dropping isolated buildings on far corners.
-2. **Position snap.** When a spawn is accepted, the new building is nudged along the
-   road (up to ½ cell = 4 m) so its mesh edge meets the nearest aligned neighbour's
-   mesh edge. The snap uses each prefab's actual `mesh.bounds` projected onto the road
-   direction: so buildings whose meshes are narrower than their cell footprint, and
-   buildings whose meshes aren't axis-aligned, both close their visible gap correctly.
+1. **Adjacency filter.** A building only spawns where it has a neighbour on the same
+   street frontage to cluster against. Spawns that would land isolated are skipped and
+   the game retries elsewhere, so growth radiates outward from existing construction
+   instead of dropping lone buildings on far corners.
+2. **Position snap.** When a spawn is accepted, the new building is slid **along the
+   road it faces** until its wall meets the neighbour's wall. The slide distance is
+   capped (roughly one cell) so it only closes real gaps, never makes large jumps. The
+   snap measures each prefab's actual `mesh.bounds`, so buildings whose meshes are
+   narrower than their cell footprint close their visible gap correctly.
+
+### Corners
+
+Corner buildings are clustered on **both** streets they front: the building is nudged
+toward its neighbour down each road independently. A straight building next to a corner
+also snaps flush to it. So intersections form continuous wall-to-wall blocks rather than
+leaving a gap on one side.
 
 ### How the snap stays safe
 
-- **Capped at 4 m.** A shift never moves the visible building past the next cell
-  boundary, so the underlying cell allocation stays exactly where the game placed it
-  and the neighbour's footprint is never invaded.
-- **Same-road only.** A candidate neighbour must face within ~17° of the new
-  building's road direction (either side flip is OK). Buildings on perpendicular
-  roads or at intersections are ignored.
-- **Same lot row only.** Candidates further than the combined building widths
-  perpendicular to the road are rejected: only the immediate neighbour along the
-  street is considered.
-- **No-shift fallback.** If no candidate is found within tolerance the building
-  spawns at its cell-aligned position as usual.
+- **Always moves along the building's own frontage.** Because the slide is parallel to
+  the road the building faces, it can never push the building sideways into that road,
+  and the capped distance keeps it from over-reaching.
+- **Same frontage line only.** A candidate counts as a neighbour only when it sits on
+  the same street frontage (overlapping perpendicular to the road). Buildings across the
+  street or in a back row are ignored. A neighbour's own facing does not matter, which is
+  what lets a building snap to a perpendicular corner.
+- **Never snaps across a road.** Before committing, the snapped position is validated
+  against the road network. If closing the gap would push the building into a
+  perpendicular road or pedestrian street, the snap is reverted and the building stays at
+  its normal position. (This covers the narrow wall-to-wall pedestrian streets from
+  Plazas & Promenades.)
+- **No-shift fallback.** If no qualifying neighbour is found, the building spawns at its
+  normal cell-aligned position.
 
 ### What it works with
 
@@ -391,18 +401,15 @@ The option does two things on every spawn attempt:
   mesh gap that wall-to-wall walls were always supposed to hide.
 - **Mixed themes work too.** The option is independent of the theme contents and is
   applied to whatever building the spawn pool produces, base-game, DLC, or Workshop.
-- **Non-grid-aligned meshes** (rotated facades, prefabs with a slight visual offset)
-  are handled by projecting the mesh bounding box onto the road direction rather than
-  assuming the cell-allocation size.
+- **Diagonal and curved roads** are handled: the snap works along the actual road
+  direction, not just north–south / east–west streets.
 
 ### Empty-district fallback
 
-When you first enable theme management on a district with no buildings yet there's
-nothing to cluster against. To avoid permanently blocking growth, the adjacency
-filter suspends itself after **40 consecutive skipped spawns** so the first building
-can land anywhere. Once it appears, subsequent attempts find it within 12 m and the
-filter re-engages automatically: every later building clusters against the growing
-footprint.
+When you first enable theme management on a district with no buildings yet, there's
+nothing to cluster against. To avoid permanently blocking growth, the adjacency filter
+suspends itself after a run of skipped spawns so the first building can land anywhere.
+Once it appears, later spawns cluster against the growing footprint automatically.
 
 ### Typical workflow
 
