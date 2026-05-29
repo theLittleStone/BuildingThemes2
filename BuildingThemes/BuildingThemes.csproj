@@ -71,6 +71,8 @@
         <Compile Include="HarmonyPatches\BuildingManagerPatch\GetRandomBuildingInfoPatch.cs" />
         <Compile Include="HarmonyPatches\DistrictManagerPatch\ReleaseDistrictImplementationPatch.cs" />
         <Compile Include="HarmonyPatches\ZoneBlockPatch\SimulationStepPatch.cs" />
+        <Compile Include="HarmonyPatches\ZoneBlockPatch\SimulationStepPatch.Prefix.cs" />
+        <Compile Include="HarmonyPatches\ZoneBlockPatch\SimulationStepPatch.WallToWall.cs" />
         <Compile Include="HarmonyPatches\PrivateBuildingAIPatch\GetUpgradeInfoPatch.cs" />
         <Compile Include="HarmonyPatches\ImmaterialResourceManagerPatch\AddResourcePatch.cs" />
         <Compile Include="HarmonyPatches\DistrictWorldInfoPanelPatch\OnPoliciesClickPatch.cs" />
