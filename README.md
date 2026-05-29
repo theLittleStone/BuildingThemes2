@@ -1,6 +1,6 @@
 # Building Themes 2
 
-Apply building themes to districts — only buildings in the selected themes will grow in a
+Apply building themes to districts: only buildings in the selected themes will grow in a
 zone. Subscribe to theme mods from the Workshop, or create and manage your own themes
 entirely in-game.
 
@@ -17,13 +17,13 @@ Cities: Skylines with Harmony 2.x.
 > Bug reports and feature requests are read and appreciated, but fixes may take weeks or
 > months depending on availability. If you hit a problem, please
 > [open an issue](https://github.com/roberto-naharro/BuildingThemes2/issues) so it is
-> tracked — nothing gets forgotten, just worked on when time allows.
+> tracked: nothing gets forgotten, just worked on when time allows.
 
 ---
 
 ## Requirements
 
-- **[Harmony (Mod Dependency)](https://steamcommunity.com/sharedfiles/filedetails/?id=2040656402)** —
+- **[Harmony (Mod Dependency)](https://steamcommunity.com/sharedfiles/filedetails/?id=2040656402)**:
   subscribe and enable this first. The mod silently does nothing if Harmony is not installed.
 
 ---
@@ -34,7 +34,7 @@ Cities: Skylines with Harmony 2.x.
 2. Click **Theme Manager** → select a theme and include buildings (or import a style).
 3. Back in the **Themes** tab, check **Enable Theme Management for this district**.
 4. Enable one or more themes using the checkboxes.
-5. Zone the area — only buildings in the active themes will grow.
+5. Zone the area: only buildings in the active themes will grow.
 
 If no theme is active for a district, any growable building can spawn (vanilla behavior).
 
@@ -42,28 +42,35 @@ If no theme is active for a district, any growable building can spawn (vanilla b
 
 ## Features
 
-- **Per-district themes** — assign different building sets to each district.
-- **Theme Manager** — full UI to browse, filter, include/exclude individual buildings.
-- **DLC & CCP filter** — filter the building list by installed DLC or Content Creator Pack.
-- **Workshop Dependencies modal** — see exactly which assets are missing, copy their IDs,
+- **Per-district themes**: assign different building sets to each district.
+- **Theme Manager**: full UI to browse, filter, include/exclude individual buildings.
+- **DLC & CCP filter**: filter the building list by installed DLC or Content Creator Pack.
+- **Workshop Dependencies modal**: see exactly which assets are missing, copy their IDs,
   or subscribe to them directly via the Steam overlay.
-- **Spawn Diagnostics** — see accepted/rejected building counts, missing-asset lists,
+- **Spawn Diagnostics**: see accepted/rejected building counts, missing-asset lists,
   and a live count of non-theme buildings currently placed in the district.
-- **Auto-bulldoze** — gradually demolish growable buildings that don't belong to the
-  district's active themes, replacing them with themed buildings over time.
-- **Asset Cloning** — duplicate a building and assign a different wealth level to it.
-- **Missing asset handling** — three modes for how to respond when a subscribed building
+- **Auto-bulldoze**: gradually demolish growable buildings that don't belong to the
+  district's active themes, replacing them with themed buildings over time. An optional
+  sub-mode also removes themed buildings that don't match the district's active
+  specialization (farming, eco, tourism, and so on).
+- **Cluster against existing buildings (wall-to-wall)**: force new buildings to spawn next
+  to existing ones and slide them along the road so their walls touch, removing the small
+  gaps that appear when a building's mesh is narrower than its lot.
+- **Prefer zones with electricity**: only spawn new buildings in zone cells already
+  connected to the power grid, so growth follows your electricity network.
+- **Asset Cloning**: duplicate a building and assign a different wealth level to it.
+- **Missing asset handling**: three modes for how to respond when a subscribed building
   isn't loaded.
-- **Level behavior** — control what happens when a building tries to level up but your
+- **Level behavior**: control what happens when a building tries to level up but your
   theme has no building for that level.
-- **Blacklist mode** — invert the theme: everything spawns except what you explicitly
+- **Blacklist mode**: invert the theme: everything spawns except what you explicitly
   exclude.
-- **Spawn weight** — control how often a building appears relative to others in the same
+- **Spawn weight**: control how often a building appears relative to others in the same
   zone, level, and footprint slot.
-- **Size preference** — bias spawning toward larger, smaller, widest, or deepest footprints
+- **Size preference**: bias spawning toward larger, smaller, widest, or deepest footprints
   per zone type, with adjustable strength.
-- **Rename themes** — rename any custom theme directly from the Theme Manager.
-- **Import from District Styles Plus** — convert District Styles Plus styles into Building
+- **Rename themes**: rename any custom theme directly from the Theme Manager.
+- **Import from District Styles Plus**: convert District Styles Plus styles into Building
   Themes 2 themes with one click (see [District Styles Plus](#district-styles-plus)).
 
 ---
@@ -80,35 +87,39 @@ Open from the **Themes** tab in the district policy panel.
 | Display (Origin) | All / Default (vanilla/DLC) / Custom (Workshop) / Cloned |
 | Display (Status) | All / Included / Excluded |
 | Level | Filter by building level (1–5) |
-| Size | Filter by footprint (width × depth); each axis is independent — set one to All and the other to a specific value |
+| Size | Filter by footprint (width × depth); each axis is independent: set one to All and the other to a specific value |
 | Height | Filter by building height in metres (min / max); unloaded assets are excluded when the filter is active |
 | DLC / CCP | Filter by installed expansion or Content Creator Pack |
 | Name | Filter by name or Steam Workshop ID |
-| Show loaded / missing / DLC-locked | Toggle visibility of asset groups |
-| Spawnable only | Show only fully spawnable buildings |
+| Show loaded / missing / DLC/Env | Toggle visibility of asset groups (loaded, not-loaded workshop assets, and DLC/environment-gated assets) |
+| Spawnable only | Show only buildings that are loaded, included, and have zone-valid dimensions |
+| Wall-to-wall | Show only buildings the mod classifies as wall-to-wall (flush against neighbours) |
 
 ### Theme Actions
 
-- **New Theme** — create a blank theme with a custom name.
-- **Rename Theme** — rename the selected theme. Disabled for built-in (vanilla/DLC) themes.
-- **Delete Theme** — permanently remove a custom theme.
-- **Workshop Dependencies** — lists all workshop assets in the selected theme (loaded /
+- **New Theme**: create a blank theme with a custom name.
+- **Copy Theme**: duplicate the selected theme (including a read-only built-in one) into a
+  new local, editable theme.
+- **Rename Theme**: rename the selected theme. Disabled for built-in themes
+  (`[Vanilla]` / `[DLC]` / `[Custom]`); only local themes can be renamed.
+- **Delete Theme**: permanently remove a local theme.
+- **Workshop Dependencies**: lists all workshop assets in the selected theme (loaded /
   missing), with copy-to-clipboard and one-click Steam subscribe buttons.
 
 ### Bulk Actions
 
-- **Include All / None** — include or exclude everything in the current filtered view.
-- **Include Valid** — include all loaded, in-bounds-dimension buildings in the view.
-- **Exclude Missing** — remove all unloaded assets from the current filtered view.
+- **Include All / None**: include or exclude everything in the current filtered view.
+- **Include Valid**: include all loaded, in-bounds-dimension buildings in the view.
+- **Exclude Missing**: remove all unloaded assets from the current filtered view.
 
 ### Per-Building Options
 
-- **Spawn weight** (1–100, default 10) — see [Spawn Weight](#spawn-weight) below.
-- **Upgrade building** — forces a specific building when this one levels up.
-- **Clone Building** — creates a copy with a different wealth level.
-- **Asset name** — the internal prefab name (read-only, click to select and copy). For Workshop assets the Steam ID is shown in the label.
-- **Plop** — immediately places one instance of the building anywhere in the city (useful for testing).
-- **Bulldoze All** — removes every placed instance of this building from the entire city at once.
+- **Spawn weight** (1–100, default 10): see [Spawn Weight](#spawn-weight) below.
+- **Upgrade building**: forces a specific building when this one levels up.
+- **Clone Building**: creates a copy with a different wealth level.
+- **Asset name**: the internal prefab name (read-only, click to select and copy). For Workshop assets the Steam ID is shown in the label.
+- **Plop**: immediately places one instance of the building anywhere in the city (useful for testing).
+- **Bulldoze All**: removes every placed instance of this building from the entire city at once.
 
 ### Building List Indicators
 
@@ -118,37 +129,53 @@ Each row uses text colour to signal asset status:
 | --- | --- |
 | White | Asset loaded and available |
 | Yellow | Workshop asset not loaded (unsubscribed, disabled, or failed to load) |
-| Grey | Asset unavailable — DLC not owned or wrong map environment |
+| Grey | Asset unavailable (DLC not owned or wrong map environment) |
 | Cyan | Cloned building (generated at level load) |
 
 ### Theme List Indicators
 
-A green **♦** badge is shown next to themes that contain only base-game
-buildings — no DLC or workshop assets required to use them. Hovering the
-badge shows a tooltip confirming this.
+A **♦** badge next to a theme summarises what it needs to be usable (hover it for a
+tooltip):
 
-### Theme Prefixes — what's editable, and same-named themes
+| Badge | Meaning |
+| --- | --- |
+| Green **♦** | Vanilla-only theme. No DLC or workshop assets required. |
+| Red **♦** | Needs DLC, but no workshop subscriptions. (Owning the DLC is enough.) |
+| *(no badge)* | The theme contains at least one workshop asset. |
+
+The red badge is informational, not an error: it simply means the theme relies on DLC
+content. If a theme that needs DLC you don't own would otherwise appear, it is hidden
+instead, so a visible `[DLC]` theme always means you own that DLC.
+
+### Building Preview Panel
+
+Selecting a building shows a preview with its name, category, level, height, and footprint.
+Below the name it also lists the building's **origin** (`Vanilla asset`, `Workshop`, or
+`Included in <DLC name>`) and, when the building is classified as **wall-to-wall** by the
+mod's mesh analysis, a **Wall to wall** label.
+
+### Theme Prefixes: what's editable, and same-named themes
 
 Theme names carry a prefix that tells you where the theme comes from and whether
 you can edit it:
 
 | Prefix | Source | Editable? |
 | --- | --- | --- |
-| *(no prefix)* | **Local** theme you created or copied | **Yes** — rename, delete, change includes / spawn rates / upgrades |
-| `[Vanilla]` | Built-in base-game district style | No — read-only reference |
-| `[DLC]` | Built-in district style from a DLC / content pack (e.g. European) | No — read-only reference |
-| `[Custom]` | A theme registered by **another mod** (district style or `BuildingThemes.xml`) | No — read-only reference |
+| *(no prefix)* | **Local** theme you created or copied | **Yes**: rename, delete, change includes / spawn rates / upgrades |
+| `[Vanilla]` | Built-in base-game district style | No (read-only reference) |
+| `[DLC]` | Built-in district style from a DLC / content pack (e.g. European) | No (read-only reference) |
+| `[Custom]` | A theme registered by **another mod** (district style or `BuildingThemes.xml`) | No (read-only reference) |
 
 Only **local** (un-prefixed) themes can be edited. The tagged themes are read-only
-**references** — they always reflect the game's own content, so they're never
+**references**: they always reflect the game's own content, so they're never
 modified in place.
 
 **Want to tweak a built-in theme?** Select it and use **Copy Theme** to make a local,
 editable copy, then edit that.
 
 **Same name, different theme:** because the tagged themes are separate from your local
-ones, you can have a local theme with the **same name** as a tagged one — for example a
-local `European` alongside the built-in `[DLC] European`. They are distinct themes; the
+ones, you can have a local theme with the **same name** as a tagged one (for example a
+local `European` alongside the built-in `[DLC] European`). They are distinct themes; the
 prefix is what tells them apart. Local theme names only need to be unique **among your
 own local themes**. District assignments remember exactly which one you picked (see
 [How Data Is Saved](#how-data-is-saved)), so a local theme stays selected after a reload
@@ -157,7 +184,7 @@ even when a built-in theme shares its name.
 ### Spawn Weight
 
 Spawn weight controls how often a building is chosen relative to the other buildings
-competing for the same **slot** — same zone type, level, and footprint size.
+competing for the same **slot**: same zone type, level, and footprint size.
 
 **How the selection works:**
 
@@ -168,9 +195,9 @@ as one at weight 10 and is picked roughly twice as often.
 | Weight | Effect |
 | --- | --- |
 | 1 | Appears very rarely relative to buildings with higher weight |
-| 10 *(default)* | Baseline — all buildings at the default weight spawn with equal frequency |
+| 10 *(default)* | Baseline: all buildings at the default weight spawn with equal frequency |
 | 20 | Appears roughly twice as often as a weight-10 building |
-| 100 | Maximum — appears ten times as often as the default |
+| 100 | Maximum: appears ten times as often as the default |
 
 **Important:** weight is only meaningful when two or more buildings share the same slot.
 A building that is alone in its slot always spawns regardless of its weight value.
@@ -188,7 +215,7 @@ from a theme without deleting it, uncheck **Include** instead of setting weight 
 
 ### How Spawning Works
 
-A new zone always spawns a Level 1 building first — include one in your theme. It upgrades
+A new zone always spawns a Level 1 building first: include one in your theme. It upgrades
 when the zone's requirements are met. The Level 2 building must have the same width and
 equal or smaller length than the Level 1.
 
@@ -205,8 +232,8 @@ smaller, if the shrink fallback can reach it).
 
 When a lot has **no matching theme building**, the mod tries progressively narrower
 footprints (the shrink loop). If a smaller-width theme building is found, it is placed and
-the plot is trimmed. If nothing fits — because your theme simply has no buildings for any
-reachable footprint — **the lot stays empty**. Vanilla buildings are not used to fill
+the plot is trimmed. If nothing fits (because your theme simply has no buildings for any
+reachable footprint), **the lot stays empty**. Vanilla buildings are not used to fill
 uncovered footprints; they are only used for missing workshop assets (see Missing Assets)
 and for level-up behaviour when Level Behavior is set to Vanilla fallback.
 
@@ -226,15 +253,15 @@ Open via the **District Options** button in the Themes tab.
 
 | Option | Description |
 | --- | --- |
-| Allow buildings not in any theme | Blacklist mode — anything not explicitly excluded can spawn |
+| Allow buildings not in any theme | Blacklist mode: anything not explicitly excluded can spawn |
 | Auto-bulldoze non-theme buildings | Gradually demolishes growable buildings in the district that are not valid for the active themes. Replacements follow the normal themed spawn rules. |
-| ↳ Also remove non-specialized buildings | Sub-option (only active when auto-bulldoze is on): also removes themed buildings whose sub-service does not match the district's active specialization — e.g. generic industry in a farming district. Use this to fully transition a district to its specialization. Has no effect when no specialization policy is active. |
+| ↳ Also remove non-specialized buildings | Sub-option (only active when auto-bulldoze is on): also removes themed buildings whose sub-service does not match the district's active specialization (e.g. generic industry in a farming district). Use this to fully transition a district to its specialization. Has no effect when no specialization policy is active. |
 | Prefer zones with electricity | Only spawn new buildings in zone cells that are already connected to the electricity grid. See [Prefer Zones With Electricity](#prefer-zones-with-electricity) below. |
-| Cluster against existing buildings (wall-to-wall) | Force new buildings to spawn next to existing ones and slide them along the road so their walls touch — closes the small mesh-vs-cell gaps you'd otherwise see between buildings. See [Cluster Against Existing Buildings](#cluster-against-existing-buildings-wall-to-wall) below. |
+| Cluster against existing buildings (wall-to-wall) | Force new buildings to spawn next to existing ones and slide them along the road so their walls touch, closing the small mesh-vs-cell gaps you'd otherwise see between buildings. See [Cluster Against Existing Buildings](#cluster-against-existing-buildings-wall-to-wall) below. |
 | Level behavior | What happens when a building levels up but the theme has no building for that level: **Vanilla fallback** (default) or **Strict** (freeze upgrades) |
 | Missing asset handling | Per-district override of the global missing-asset mode |
-| Size preference (4 dropdowns) | Bias spawning toward a particular footprint size or height for each zone type — see [Size Preference](#size-preference) |
-| Preference strength | How strongly size preference overrides spawn weight — Gentle / Moderate / Strong |
+| Size preference (4 dropdowns) | Bias spawning toward a particular footprint size or height for each zone type: see [Size Preference](#size-preference) |
+| Preference strength | How strongly size preference overrides spawn weight: Gentle / Moderate / Strong |
 | Spawn Diagnostics | Accepted/rejected counts, missing-asset list, and a live list of non-theme buildings currently placed in the district |
 
 ---
@@ -245,7 +272,7 @@ Enable **Auto-bulldoze non-theme buildings** in District Options to have the mod
 gradually demolish any growable zone building in that district that is not part of the
 active themes. Replacements spawn according to the normal themed-spawn rules.
 
-- The scan runs in the background — buildings are removed a batch at a time so performance
+- The scan runs in the background: buildings are removed a batch at a time so performance
   impact is minimal. The pace can be configured in **Mod Options → Building Themes →
   Auto-bulldoze pace**: Gentle (~26 s full pass), Normal (~6.5 s, default), or Aggressive
   (~1.6 s).
@@ -259,7 +286,7 @@ active themes. Replacements spawn according to the normal themed-spawn rules.
 
 ### Enforce District Specialization
 
-Auto-bulldoze only checks theme membership — a building that *is* in your theme is never
+Auto-bulldoze only checks theme membership: a building that *is* in your theme is never
 removed, even if it does not match the district's active specialization. This means a
 generic industrial building in a farming-specialized district will stay indefinitely if
 it is part of the active theme, because theme enforcement does not consider specialization.
@@ -281,7 +308,7 @@ specialization policy is active the sub-option has no additional effect.
 
 **What auto-bulldoze considers valid:** a building is valid for a district if and only if
 its exact prefab appears in the active theme pool for its footprint and zone type. This
-applies to all buildings regardless of origin — base-game, DLC, or Workshop. If you remove
+applies to all buildings regardless of origin (base-game, DLC, or Workshop). If you remove
 a building from your theme, any placed copy of that building will be demolished the next
 time the scan reaches it, even if it is a DLC or vanilla building.
 
@@ -290,12 +317,12 @@ that lot spawns empty (or a smaller theme building via the shrink loop). Auto-bu
 will demolish any building standing on such a lot that is no longer in the theme. Once
 demolished, the lot stays empty until the game re-evaluates the zone layout or you add a
 theme building that covers that footprint. Vanilla buildings do **not** fill uncovered
-footprints — they are only used for missing workshop assets (see Missing Assets below).
+footprints: they are only used for missing workshop assets (see Missing Assets below).
 
 **"Fill with vanilla" mode and auto-bulldoze:** when Missing Asset handling is set to
 *Fill with vanilla*, vanilla buildings are added to the spawn pool to supplement slots
 where theme buildings are missing. Those supplemented vanilla buildings are considered
-valid by auto-bulldoze and will not be removed — they exist to replace the missing
+valid by auto-bulldoze and will not be removed: they exist to replace the missing
 workshop asset, not as a sign of an uncovered footprint.
 
 ---
@@ -320,7 +347,7 @@ preference re-activates automatically.
 1. Lay out roads and power lines first.
 2. Zone the area.
 3. Enable **Prefer zones with electricity** in District Options.
-4. New buildings only appear where electricity reaches — extend power lines to grow the
+4. New buildings only appear where electricity reaches: extend power lines to grow the
    district further.
 
 ---
@@ -329,7 +356,7 @@ preference re-activates automatically.
 
 Enable **Cluster against existing buildings (wall-to-wall)** in District Options to
 force new buildings to grow against existing ones and physically touch their neighbours
-— eliminating the small visible gaps that arise when a building's mesh is narrower than
+- eliminating the small visible gaps that arise when a building's mesh is narrower than
 its 8 m lot allocation.
 
 The option does two things on every spawn attempt:
@@ -341,7 +368,7 @@ The option does two things on every spawn attempt:
 2. **Position snap.** When a spawn is accepted, the new building is nudged along the
    road (up to ½ cell = 4 m) so its mesh edge meets the nearest aligned neighbour's
    mesh edge. The snap uses each prefab's actual `mesh.bounds` projected onto the road
-   direction — so buildings whose meshes are narrower than their cell footprint, and
+   direction: so buildings whose meshes are narrower than their cell footprint, and
    buildings whose meshes aren't axis-aligned, both close their visible gap correctly.
 
 ### How the snap stays safe
@@ -353,14 +380,14 @@ The option does two things on every spawn attempt:
   building's road direction (either side flip is OK). Buildings on perpendicular
   roads or at intersections are ignored.
 - **Same lot row only.** Candidates further than the combined building widths
-  perpendicular to the road are rejected — only the immediate neighbour along the
+  perpendicular to the road are rejected: only the immediate neighbour along the
   street is considered.
 - **No-shift fallback.** If no candidate is found within tolerance the building
   spawns at its cell-aligned position as usual.
 
 ### What it works with
 
-- **Wall-to-wall themes** are the prime use case — the snap closes the residual
+- **Wall-to-wall themes** are the prime use case: the snap closes the residual
   mesh gap that wall-to-wall walls were always supposed to hide.
 - **Mixed themes work too.** The option is independent of the theme contents and is
   applied to whatever building the spawn pool produces, base-game, DLC, or Workshop.
@@ -374,7 +401,7 @@ When you first enable theme management on a district with no buildings yet there
 nothing to cluster against. To avoid permanently blocking growth, the adjacency
 filter suspends itself after **40 consecutive skipped spawns** so the first building
 can land anywhere. Once it appears, subsequent attempts find it within 12 m and the
-filter re-engages automatically — every later building clusters against the growing
+filter re-engages automatically: every later building clusters against the growing
 footprint.
 
 ### Typical workflow
@@ -390,7 +417,7 @@ footprint.
 
 **Missing asset handling** controls what happens when a workshop building in your theme is
 not loaded (unsubscribed, disabled in Skyve, or failed to load). This setting applies to
-**initial spawning only** — it has no effect on how existing buildings level up.
+**initial spawning only**: it has no effect on how existing buildings level up.
 
 Set the default in **Mod Options → Building Themes**, or override per district in
 **District Options**.
@@ -407,7 +434,7 @@ Set the default in **Mod Options → Building Themes**, or override per district
 
 **Level behavior** controls what happens when a building tries to level up but your theme
 has **no buildings at all** for the target level. This setting applies to **upgrades only**
-— it does not affect which buildings spawn on new zones.
+- it does not affect which buildings spawn on new zones.
 
 Set the default in **Mod Options → Building Themes**, or override per district in
 **District Options**.
@@ -430,7 +457,7 @@ Set the default in **Mod Options → Building Themes**, or override per district
 ## Size Preference
 
 **Size preference** lets you bias which building footprint sizes spawn in a district, per
-zone type. Set it in **District Options** — one dropdown each for Residential, Commercial,
+zone type. Set it in **District Options**: one dropdown each for Residential, Commercial,
 Industrial, and Office.
 
 | Mode | Effect |
@@ -439,13 +466,13 @@ Industrial, and Office.
 | **Biggest first** | Prefers buildings with the largest total footprint (width × depth) |
 | **Widest first** | Prefers widest buildings; tie-break by shallowest depth |
 | **Deepest first** | Prefers deepest buildings; tie-break by narrowest width |
-| **Random (weight only)** | No size bias — selection is purely by spawn weight |
+| **Random (weight only)** | No size bias: selection is purely by spawn weight |
 | **Smallest first** | Prefers buildings with the smallest total footprint (width × depth) |
 | **Tallest first** | Prefers the tallest buildings by mesh height |
 | **Shortest first** | Prefers the shortest buildings by mesh height |
 
 When any mode other than **Default** is active, all theme buildings that fit the available
-lot are considered at once in a single weighted roll — the game's original shrink loop is
+lot are considered at once in a single weighted roll: the game's original shrink loop is
 replaced by this selection.
 
 ### How the selection formula works
@@ -456,21 +483,21 @@ For each candidate building that fits the lot:
 score = spawn_weight / rank ^ α
 ```
 
-- **rank** — position in the size ordering (rank 1 = most preferred). Buildings with the
+- **rank**: position in the size ordering (rank 1 = most preferred). Buildings with the
   same size key share the same rank.
-- **α** — set by **Preference strength**: Gentle = 0.5, Moderate = 1.0, Strong = 2.0. **Absolute** bypasses the formula entirely (see below).
+- **α**: set by **Preference strength**: Gentle = 0.5, Moderate = 1.0, Strong = 2.0. **Absolute** bypasses the formula entirely (see below).
 - A single weighted random roll over all scores selects the building.
 
 **Preference strength** controls how dominant the size preference is relative to spawn weight:
 
 | Strength | α | Effect |
 | --- | --- | --- |
-| Gentle | 0.5 | Size gives a mild boost — spawn weight still matters a lot |
-| Moderate *(default)* | 1.0 | Balanced — size and spawn weight both influence the result |
-| Strong | 2.0 | Size strongly dominates — only top-ranked sizes appear regularly |
-| Absolute | — | Only the highest-ranked size is ever chosen; spawn weight breaks ties within that size group |
+| Gentle | 0.5 | Size gives a mild boost: spawn weight still matters a lot |
+| Moderate *(default)* | 1.0 | Balanced: size and spawn weight both influence the result |
+| Strong | 2.0 | Size strongly dominates: only top-ranked sizes appear regularly |
+| Absolute | n/a | Only the highest-ranked size is ever chosen; spawn weight breaks ties within that size group |
 
-**Example — Biggest first, Moderate strength, three candidates:**
+**Example (Biggest first, Moderate strength, three candidates):**
 
 | Building | Footprint | Spawn weight | Rank | Score |
 | --- | --- | --- | --- | --- |
@@ -486,7 +513,7 @@ higher spawn weight compensates.
 - **"Random (weight only)"** assigns every candidate rank 1, so α has no effect and selection
   is identical to pure spawn weight. This is useful when you want weighted variety without any
   size bias.
-- **Lots with no matching theme building** stay empty regardless of the preference mode — the
+- **Lots with no matching theme building** stay empty regardless of the preference mode: the
   size preference only affects which building is chosen among those that fit, not whether a
   building spawns at all.
 - Preference settings are saved per district in the save game and survive mod updates.
@@ -495,7 +522,7 @@ higher spawn weight compensates.
 
 ## Asset Cloning
 
-Clone a building and assign a different wealth level — useful when you don't have enough
+Clone a building and assign a different wealth level: useful when you don't have enough
 assets for every level, or to add variety.
 
 To clone: select a building in the Theme Manager → **Clone Building** → enter a name and
@@ -524,7 +551,7 @@ import those styles as fully editable themes.
 3. Click **Import from District Styles Plus**.
 
 Each imported style becomes a theme named **`[DSP] <style name>`**. Only growable
-(zone-compatible) buildings are included — service buildings, parks, and unique buildings are
+(zone-compatible) buildings are included: service buildings, parks, and unique buildings are
 skipped automatically.
 
 Running the import a second time is safe: styles already imported under the same `[DSP] …`
@@ -534,7 +561,7 @@ After importing, use **Rename Theme** in the Theme Manager to remove the `[DSP]`
 give the theme a name that fits your workflow.
 
 > **Compatibility note:** Do not enable BT2 theme management and assign a DSP style to the
-> **same district** — the two mods filter the same spawning call and will interfere with each
+> **same district**: the two mods filter the same spawning call and will interfere with each
 > other, causing empty lots or unexpected vanilla spawns. Use one system per district. The
 > recommended migration path is to import your DSP styles into BT2 (see above), then
 > disable DSP and manage everything through BT2.
@@ -552,24 +579,24 @@ give the theme a name that fits your workflow.
 
 **Not compatible with:**
 
-- **81 Tiles (original)** — use [81 Tiles 2](https://steamcommunity.com/sharedfiles/filedetails/?id=2862121823) instead (fully supported)
-- **Building Themes (original)** — unsubscribe the original before enabling this fork
+- **81 Tiles (original)**: use [81 Tiles 2](https://steamcommunity.com/sharedfiles/filedetails/?id=2862121823) instead (fully supported)
+- **Building Themes (original)**: unsubscribe the original before enabling this fork
 - **Building Simulation Overhaul**
-- **Runways and Taxiways** — use [Airport Roads](http://steamcommunity.com/sharedfiles/filedetails/?id=465127441) instead
+- **Runways and Taxiways**: use [Airport Roads](http://steamcommunity.com/sharedfiles/filedetails/?id=465127441) instead
 
-**Partially compatible — per-district rule:**
+**Partially compatible (per-district rule):**
 
-- **District Styles Plus** — both mods patch `BuildingManager.GetRandomBuildingInfo`. BT2
+- **District Styles Plus**: both mods patch `BuildingManager.GetRandomBuildingInfo`. BT2
   runs a prefix that selects a themed building; DSP runs a postfix that rejects any building
-  not in the district's assigned style. When both are active on the **same district** — BT2
-  theme management enabled *and* a DSP style assigned — DSP will silently null out BT2's
+  not in the district's assigned style. When both are active on the **same district**: BT2
+  theme management enabled *and* a DSP style assigned: DSP will silently null out BT2's
   chosen buildings, causing empty lots or vanilla spawns. They are safe when used on
   **different districts**: disable BT2 theme management for districts managed by DSP, and
   do not assign a DSP style to districts managed by BT2. The [import feature](#district-styles-plus)
   is specifically designed to help you migrate styles from DSP into BT2 so you can manage
   everything through BT2 and drop DSP afterwards.
 
-Save games made with the original Building Themes are **fully compatible** — district
+Save games made with the original Building Themes are **fully compatible**: district
 assignments load normally.
 
 For broader mod-compatibility diagnostics (conflicts, disabled assets, missing
@@ -579,7 +606,7 @@ your playset and give you IDs to re-enable them.
 
 ---
 
-## Troubleshooting — Buildings Not Spawning
+## Troubleshooting: Buildings Not Spawning
 
 Work through this list in order:
 
@@ -603,13 +630,13 @@ checked and your theme has a checkmark.
 
 **5. Empty lots appearing after auto-bulldoze**
 Auto-bulldoze removed buildings from lots that your theme does not cover (no theme building
-exists for that exact footprint size). Vanilla buildings do not fill uncovered footprints —
+exists for that exact footprint size). Vanilla buildings do not fill uncovered footprints:
 those lots stay empty until the game re-evaluates zone demand or you add theme buildings for
 that size. Open **Spawn Diagnostics** to see which footprint pools are active, then add
 buildings for the missing sizes in the Theme Manager.
 
 **6. DLC or vanilla buildings being demolished unexpectedly**
-Auto-bulldoze checks whether a building's exact prefab is in the active theme pool —
+Auto-bulldoze checks whether a building's exact prefab is in the active theme pool:
 origin (base-game, DLC, Workshop) does not matter. If you previously included a DLC
 building in your theme and later removed it, auto-bulldoze will demolish it. Re-add it
 to the theme to keep it.
@@ -639,14 +666,14 @@ These Workshop mods provide ready-made themes:
 - **District theme assignments** are stored inside each save game
   (key: `BuildingThemes-SaveData`).
 
-You do not need to edit these files — everything is configurable in-game.
+You do not need to edit these files: everything is configurable in-game.
 
 ### For developers: district theme references and tags
 
 A district stores its enabled themes as a list of **names** (`District.themes`). Because a
 local theme may legitimately share a name with a built-in one (e.g. `European`), names
 alone are ambiguous. Since **save version 7** each district also stores an index-aligned
-`District.themeTags` array — a compact discriminator per theme:
+`District.themeTags` array, a compact discriminator per theme:
 
 | Tag | Theme kind | Resolved by |
 | --- | --- | --- |
@@ -682,12 +709,12 @@ Please open an issue on GitHub with:
 
 ## Credits
 
-**boformer (Sebastian Schöner)** — original mod concept, architecture, and all game logic.
+**boformer (Sebastian Schöner)**: original mod concept, architecture, and all game logic.
 Building Themes 2 would not exist without his work.
 
-**BloodyPenguin** — prior compatibility fixes and contributions to the original mod.
+**BloodyPenguin**: prior compatibility fixes and contributions to the original mod.
 
-**roberto-naharro** — Harmony 2.x migration, new features, and community maintenance of
+**roberto-naharro**: Harmony 2.x migration, new features, and community maintenance of
 this fork.
 
 ---
@@ -767,7 +794,7 @@ Write commits using [Conventional Commits](https://www.conventionalcommits.org/)
 
 **Release flow:**
 
-1. Commit your changes using the prefixes above — Release Please opens a Release PR
+1. Commit your changes using the prefixes above: Release Please opens a Release PR
    automatically and keeps it up to date.
 2. Run `./deploy.sh --release` locally and commit `dist/` to `master`.
 3. Merge the Release PR → tag `vX.Y.Z` is created → Workshop deploy fires automatically.
@@ -781,7 +808,7 @@ Write commits using [Conventional Commits](https://www.conventionalcommits.org/)
 ```
 
 `publish.sh` requires `steamcmd` to be installed and reads `STEAM_USERNAME` from `.env`.
-SteamCMD will prompt for your password and Steam Guard code interactively — no secrets
+SteamCMD will prompt for your password and Steam Guard code interactively: no secrets
 are stored.
 
 For automated publishing via GitHub Actions, see
@@ -791,5 +818,5 @@ For automated publishing via GitHub Actions, see
 
 - C# language version set to 7.2 (Mono compiler compatible).
 - Windows-only `PostBuildEvent` is guarded with an OS condition in the `.csproj`.
-- Game DLL references point to `/mnt/cities_skylines/Cities_Data/Managed` — do not commit
+- Game DLL references point to `/mnt/cities_skylines/Cities_Data/Managed`: do not commit
   these files (copyright).
