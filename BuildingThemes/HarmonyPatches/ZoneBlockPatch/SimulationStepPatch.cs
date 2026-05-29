@@ -651,11 +651,23 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
 
             // Size-preference path: replaces the 8-candidate while loop when the district has
             // a non-Default preference for the current zone's service type.
+            //
+            // CORNER LOTS ARE EXCLUDED ON PURPOSE. Corner geometry (handedness, the swapped-
+            // dimension bucket in GetAreaIndex that lets one corner asset serve both corners,
+            // and the 90° rotate-flip below) is handled correctly only by the vanilla
+            // 8-candidate loop further down. Bolting size preference onto corners caused
+            // wrong-handedness rejections AND empty corners (the strict `return false` here has
+            // no corner→straight fallback). Size preference is conceptually a straight-lot
+            // feature anyway, so any corner lot defers to the vanilla loop, which reproduces the
+            // default corner behaviour (corner-first selection, then straight fallback).
             SizePreference sizePref = BuildingThemesManager.instance != null
                 ? BuildingThemesManager.instance.GetDistrictSizePreference(district, service)
                 : SizePreference.Default;
 
-            if (sizePref != SizePreference.Default)
+            bool straightLot = zoningMode  == BuildingInfo.ZoningMode.Straight
+                            && zoningMode2 == BuildingInfo.ZoningMode.Straight;
+
+            if (sizePref != SizePreference.Default && straightLot)
             {
                 // Compute a real spawn position for GetIndustryType / GetCommercialType
                 // (vector6 is still zero here — use the primary lot center as approximation).
@@ -673,50 +685,30 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                 else if (zone == ItemClass.Zone.Office)
                     ZoneBlock.GetOfficeType(prefSpawnPos, zone, width_A, depth_A, out subService, out level);
 
-                // Try primary lot (A), then secondary lot (B) for corner lots.
                 buildingInfo = BuildingThemesManager.instance.GetRandomBuildingInfoWithPreference(
                     district, service, subService, level,
-                    width_A, depth_A, zoningMode,
+                    width_A, depth_A, BuildingInfo.ZoningMode.Straight,
                     ref Singleton<SimulationManager>.instance.m_randomizer);
 
-                if (buildingInfo == null && zoningMode2 != BuildingInfo.ZoningMode.Straight)
-                {
-                    buildingInfo = BuildingThemesManager.instance.GetRandomBuildingInfoWithPreference(
-                        district, service, subService, level,
-                        width_B, depth_B, zoningMode2,
-                        ref Singleton<SimulationManager>.instance.m_randomizer);
-                    if (buildingInfo != null)
-                    {
-                        num25_row   = num19 + num20 + 1;
-                        length      = buildingInfo.m_cellLength;
-                        width       = buildingInfo.m_cellWidth;
-                        zoningMode3 = zoningMode2;
-                        if (buildingInfo.m_cellWidth < width_B)
-                            num25_row += buildingInfo.m_cellWidth - width_B;
-                    }
-                }
-                else if (buildingInfo != null)
+                if (buildingInfo != null)
                 {
                     num25_row   = num15 + num16 + 1;
                     length      = buildingInfo.m_cellLength;
                     width       = buildingInfo.m_cellWidth;
-                    zoningMode3 = zoningMode;
+                    zoningMode3 = BuildingInfo.ZoningMode.Straight;
                     if (buildingInfo.m_cellWidth < width_A)
                         num25_row += buildingInfo.m_cellWidth - width_A;
-                }
 
-                if (buildingInfo != null)
-                {
                     if (Debugger.Enabled)
-                        Debugger.LogFormat("SIZEPREF-SPAWN: name={0} cellW={1} reqLotW_A={2} reqLotW_B={3} num25_row={4} num15={5} num16={6}",
-                            buildingInfo.name, buildingInfo.m_cellWidth, width_A, width_B, num25_row, num15, num16);
+                        Debugger.LogFormat("SIZEPREF-SPAWN: name={0} cellW={1} reqLotW_A={2} num25_row={3} num15={4} num16={5}",
+                            buildingInfo.name, buildingInfo.m_cellWidth, width_A, num25_row, num15, num16);
                     vector6 = m_position + VectorUtils.X_Y(
                         ((float)length * 0.5f - 4f) * xDirection +
                         ((float)num25_row * 0.5f + (float)spawnpointRow - 10f) * zDirection);
                     goto IL_AfterLoop;
                 }
 
-                return false; // no theme building fits → leave lot empty
+                return false; // no theme building fits this straight lot → leave empty (strict size-pref)
             }
 
             while (num28 < 8)
