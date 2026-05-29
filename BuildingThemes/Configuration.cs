@@ -249,37 +249,6 @@ namespace BuildingThemes
                 }
                 return null;
             }
-
-            /// <summary>
-            /// Fallback lookup by Steam workshop ID prefix — rename recovery only.
-            /// When an asset is renamed on the workshop its prefab name changes but the numeric
-            /// prefix (Steam ID) stays the same. Returns the matching theme building ONLY when
-            /// exactly one theme entry shares the prefix, making the match unambiguous.
-            /// If the theme contains multiple buildings from the same workshop (multi-asset packs)
-            /// this returns null so those other pack buildings are not accidentally accepted.
-            /// Returns null if <paramref name="prefabName"/> has no numeric prefix or no match is found.
-            /// </summary>
-            public Building getBuildingBySteamPrefix(string prefabName)
-            {
-                int dotIdx = prefabName == null ? -1 : prefabName.IndexOf('.');
-                if (dotIdx <= 0) return null;
-
-                string prefix = prefabName.Substring(0, dotIdx);
-                foreach (char c in prefix) if (!char.IsDigit(c)) return null;
-
-                Building match = null;
-                foreach (Building building in buildings)
-                {
-                    if (building.name == null) continue;
-                    int bDot = building.name.IndexOf('.');
-                    if (bDot > 0 && building.name.Substring(0, bDot) == prefix)
-                    {
-                        if (match != null) return null; // ambiguous — more than one entry with this prefix
-                        match = building;
-                    }
-                }
-                return match;
-            }
         }
 
         public class Building

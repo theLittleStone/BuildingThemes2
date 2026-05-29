@@ -1040,8 +1040,12 @@ namespace BuildingThemes
                             {
                                 foreach (var theme in enabledThemes)
                                 {
-                                    var building = theme.getBuilding(prefab.name)
-                                        ?? theme.getBuildingBySteamPrefix(prefab.name);
+                                    // Exact-name match only. The Steam-prefix fallback was removed:
+                                    // a workshop ID identifies a PACK, not a building, so it leaked
+                                    // sibling assets (e.g. "Small mediterranean 4" matching a theme
+                                    // that only includes "…3"). A renamed asset now surfaces as a
+                                    // visible "missing" row instead, which is correct and re-addable.
+                                    var building = theme.getBuilding(prefab.name);
 
                                     if (building != null && building.include)
                                     {
@@ -1086,8 +1090,8 @@ namespace BuildingThemes
 
                                 foreach (var theme in blacklistedThemes)
                                 {
-                                    var building = theme.getBuilding(prefab.name)
-                                        ?? theme.getBuildingBySteamPrefix(prefab.name);
+                                    // Exact-name match only (see note on the enabled-themes loop above).
+                                    var building = theme.getBuilding(prefab.name);
 
                                     if (building != null && building.include)
                                     {
