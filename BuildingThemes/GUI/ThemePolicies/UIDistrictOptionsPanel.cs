@@ -227,17 +227,19 @@ namespace BuildingThemes.GUI
             m_useVanillaFootprintCheck = ThemePolicyTab.CreateCheckBox(this);
             m_useVanillaFootprintCheck.width            = CW;
             m_useVanillaFootprintCheck.relativePosition = new Vector3(X, y);
-            m_useVanillaFootprintCheck.text             = "Allow buildings to fill larger lots (original game behavior)";
+            m_useVanillaFootprintCheck.text             = "Allow smaller building models to occupy larger lots (original game behavior)";
             m_useVanillaFootprintCheck.tooltip =
-                "When enabled, buildings claim the full zone area even when their 3D model is\n" +
-                "smaller — exactly as the original (unmodded) game does.\n" +
+                "When enabled: if no building model exactly matches the zone size, the\n" +
+                "game selects a slightly smaller model as a substitute — but the spawned\n" +
+                "building still occupies the full zone area. This is the original game logic.\n" +
                 "\n" +
-                "When disabled (default), the plot shrinks to match the model's actual size.\n" +
-                "This is the Building Themes behaviour — more land-efficient, but may leave\n" +
-                "narrow gaps that are hard to fill later.\n" +
+                "When disabled (default): the plot shrinks to the model's actual dimensions;\n" +
+                "the remaining space is left unoccupied and available for other buildings.\n" +
+                "This is Building Themes 2's behaviour — more land-efficient, but may leave\n" +
+                "narrow gaps that are difficult to fill later.\n" +
                 "\n" +
                 "For example: a 3x3 model placed in a 3x4 zone. Enabled -> fills all\n" +
-                "4 cells (model stays 3x3, the extra 1x3 becomes yard). Disabled ->\n" +
+                "4 cells (model stays 3x3, the extra 1x3 becomes a yard). Disabled ->\n" +
                 "occupies only 3 cells, leaving a 1x3 strip that other buildings can\n" +
                 "later grow into.";
             m_useVanillaFootprintCheck.eventCheckChanged += (c, val) =>
