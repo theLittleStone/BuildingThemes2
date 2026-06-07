@@ -473,6 +473,18 @@ namespace BuildingThemes.HarmonyPatches.ZoneBlockPatch
                 else if (zone == ItemClass.Zone.Office)
                     ZoneBlock.GetOfficeType(prefSpawnPos, zone, width_A, depth_A, out subService, out level);
 
+                // Give building-extension mods (e.g. Advanced Building Level Control) a chance to
+                // adjust service/subService/level/style before we pick a building. The default
+                // 8-candidate path below already does this; the size-preference path must too,
+                // otherwise ABLC's spawn-level override never fires and every lot stays Level 1.
+                byte prefDistrict = instance2.GetDistrict(prefSpawnPos);
+                ushort prefStyle = instance2.m_districts.m_buffer[(int)prefDistrict].m_Style;
+                if (Singleton<BuildingManager>.instance.m_BuildingWrapper != null)
+                {
+                    Singleton<BuildingManager>.instance.m_BuildingWrapper
+                        .OnCalculateSpawn(prefSpawnPos, ref service, ref subService, ref level, ref prefStyle);
+                }
+
                 buildingInfo = BuildingThemesManager.instance.GetRandomBuildingInfoWithPreference(
                     district, service, subService, level,
                     width_A, depth_A, BuildingInfo.ZoningMode.Straight,
