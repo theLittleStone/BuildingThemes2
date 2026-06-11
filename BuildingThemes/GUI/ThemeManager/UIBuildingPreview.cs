@@ -21,9 +21,11 @@ namespace BuildingThemes.GUI
         private UILabel m_size;
         private UILabel m_origin;
         private UILabel m_wallToWall;
+        private UILabel m_corner;
 
         private static readonly Color32 OriginTextColor = new Color32(180, 180, 180, 255);
         private static readonly Color32 WallToWallTextColor = new Color32(140, 190, 230, 255);
+        private static readonly Color32 CornerTextColor = new Color32(235, 180, 110, 255);
 
         public override void Start()
         {
@@ -90,6 +92,18 @@ namespace BuildingThemes.GUI
             m_wallToWall.autoSize = false;
             m_wallToWall.height = 14f;
             m_wallToWall.isVisible = false;
+
+            // Corner label — the building's actual zoning mode (CornerLeft/CornerRight). Only
+            // buildings authored with corner zoning can fill corner lots; this makes that visible.
+            m_corner = AddUIComponent<UILabel>();
+            m_corner.textScale = 0.65f;
+            m_corner.textColor = CornerTextColor;
+            m_corner.useDropShadow = true;
+            m_corner.dropShadowColor = new Color32(0, 0, 0, 200);
+            m_corner.dropShadowOffset = new Vector2(1, -1);
+            m_corner.autoSize = false;
+            m_corner.height = 14f;
+            m_corner.isVisible = false;
 
             // Category icon
             m_categoryIcon = AddUIComponent<UISprite>();
@@ -158,6 +172,7 @@ namespace BuildingThemes.GUI
             m_buildingName.isVisible = false;
             m_origin.isVisible = false;
             m_wallToWall.isVisible = false;
+            m_corner.isVisible = false;
             m_categoryIcon.isVisible = false;
             m_level.isVisible = false;
             m_height.isVisible = false;
@@ -190,6 +205,22 @@ namespace BuildingThemes.GUI
                 m_wallToWall.width = width - 10;
                 m_wallToWall.isVisible = true;
                 m_wallToWall.relativePosition = new Vector3(5, infoBottom + 2);
+                infoBottom = m_wallToWall.relativePosition.y + m_wallToWall.height;
+            }
+
+            // Corner zoning — only true CornerLeft/CornerRight assets can fill corner lots.
+            // Shown so users can tell a real corner building from a straight one that merely
+            // looks like a corner piece. (ZoningMode also has a NotZoning=3 value, which is NOT
+            // a corner, so we check the two corner values explicitly rather than "!= Straight".)
+            BuildingInfo.ZoningMode zm = m_item.prefab != null
+                ? m_item.prefab.m_zoningMode : BuildingInfo.ZoningMode.Straight;
+            if (zm == BuildingInfo.ZoningMode.CornerLeft || zm == BuildingInfo.ZoningMode.CornerRight)
+            {
+                m_corner.text = zm == BuildingInfo.ZoningMode.CornerLeft
+                    ? "Corner (left)" : "Corner (right)";
+                m_corner.width = width - 10;
+                m_corner.isVisible = true;
+                m_corner.relativePosition = new Vector3(5, infoBottom + 2);
             }
 
             // Category icon

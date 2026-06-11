@@ -1145,6 +1145,17 @@ namespace BuildingThemes
                             }
 
                             int areaIndex = GetAreaIndex(prefab.m_class.m_service, prefab.m_class.m_subService, prefab.m_class.m_level, prefab.m_cellWidth, prefab.m_cellLength, prefab.m_zoningMode);
+
+                            // Corner census: log every CornerLeft/CornerRight building that enters
+                            // the pool, so we can confirm a theme's "corner buildings" actually have
+                            // corner zoning (only those can fill corner lots). If this prints nothing
+                            // for a district, the theme has no true corner-zoned assets and corners
+                            // will always fall back to straight buildings.
+                            if (recordDiagnostics && prefab.m_zoningMode != BuildingInfo.ZoningMode.Straight)
+                                Debugger.LogFormat("[CornerPool] district {0}: {1} zoning={2} size={3}x{4} sub={5} -> areaIndex={6}",
+                                    diagnosticsDistrictId, prefab.name, prefab.m_zoningMode,
+                                    prefab.m_cellWidth, prefab.m_cellLength, prefab.m_class.m_subService, areaIndex);
+
                             if (m_areaBuildings[areaIndex] == null)
                             {
                                 m_areaBuildings[areaIndex] = new FastList<ushort>();
