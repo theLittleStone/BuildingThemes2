@@ -38,13 +38,13 @@ namespace BuildingThemes.GUI
             width = 250;
 
             m_title = AddUIComponent<UITitleBar>();
-            m_title.title = "Rename Theme";
+            m_title.title = Localization.Get("THEME_MANAGER_RENAME_THEME");
             m_title.iconSprite = "ToolbarIconZoomOutCity";
             m_title.isModal = true;
 
             UILabel label = AddUIComponent<UILabel>();
             label.height = 30;
-            label.text = "New name:";
+            label.text = Localization.Get("RENAME_THEME_NAME_LABEL");
             label.relativePosition = new Vector3(5, m_title.height);
 
             m_name = UIUtils.CreateTextField(this);
@@ -66,7 +66,7 @@ namespace BuildingThemes.GUI
             };
 
             m_ok = UIUtils.CreateButton(this);
-            m_ok.text = "Rename";
+            m_ok.text = Localization.Get("MODAL_RENAME");
             m_ok.isEnabled = false;
             m_ok.relativePosition = new Vector3(5, m_name.relativePosition.y + m_name.height + 5);
 
@@ -78,7 +78,7 @@ namespace BuildingThemes.GUI
             };
 
             m_cancel = UIUtils.CreateButton(this);
-            m_cancel.text = "Cancel";
+            m_cancel.text = Localization.Get("MODAL_CANCEL");
             m_cancel.relativePosition = new Vector3(width - m_cancel.width - 5, m_ok.relativePosition.y);
 
             m_cancel.eventClick += (c, p) =>

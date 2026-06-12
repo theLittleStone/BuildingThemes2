@@ -16,14 +16,7 @@ namespace BuildingThemes.GUI
         private UICheckBox m_markCorner;
         private bool m_updatingCorner;  // suppress the corner checkbox event during Show()
 
-        private const string CornerHelpTooltip =
-            "Also offer this building for corner lots (intersections).\n\n" +
-            "Use this for straight buildings that should fill corners. The building keeps\n" +
-            "spawning on normal lots too. Note: a straight building can't physically wrap the\n" +
-            "corner like a purpose-built corner asset — it fronts the main street and its side\n" +
-            "wall faces the cross street.\n\n" +
-            "True corner assets (shown as 'Corner (left/right)' in the preview) already fill\n" +
-            "corners, so this option has no effect on them.";
+        private static string CornerHelpTooltip => Localization.Get("OPTIONS_CORNER_TOOLTIP");
 
         private UILabel m_assetIdLabel;
         private UITextField m_assetName;
@@ -69,11 +62,11 @@ namespace BuildingThemes.GUI
             // No option available
             m_noOption = AddUIComponent<UILabel>();
             m_noOption.textScale = 0.8f;
-            m_noOption.text = "No option available";
+            m_noOption.text = Localization.Get("OPTIONS_NO_OPTION");
 
             // Include
             m_include = UIUtils.CreateCheckBox(this);
-            m_include.text = "Include";
+            m_include.text = Localization.Get("OPTIONS_INCLUDE");
             m_include.label.textScale = 0.8f;
             m_include.isVisible = false;
 
@@ -90,18 +83,13 @@ namespace BuildingThemes.GUI
 
             UILabel spawnRateLabel = spawnRatePanel.AddUIComponent<UILabel>();
             spawnRateLabel.textScale = 0.8f;
-            spawnRateLabel.text = "Spawn weight (1\u2013100):";
+            spawnRateLabel.text = Localization.Get("OPTIONS_SPAWN_WEIGHT_LABEL");
             spawnRateLabel.relativePosition = new Vector3(0, 5);
 
             m_spawnRate = UIUtils.CreateTextField(spawnRatePanel);
             m_spawnRate.size = new Vector2(60, 25);
             m_spawnRate.padding = new RectOffset(6, 6, 6, 0);
-            m_spawnRate.tooltip =
-                "Relative spawn weight compared to other buildings of the same zone, level, and size.\n\n" +
-                "Example: two buildings at weight 10 each spawn 50 % of the time.\n" +
-                "A building at weight 20 is twice as likely as one at weight 10 in the same slot.\n\n" +
-                "A building alone in its slot always spawns (100 %), regardless of its weight.\n\n" +
-                "Min: 1  |  Default: 10  |  Max: 100";
+            m_spawnRate.tooltip = Localization.Get("OPTIONS_SPAWN_WEIGHT_TOOLTIP");
             m_spawnRate.relativePosition = new Vector3(width - 70, 0);
 
             m_spawnRate.eventTextSubmitted += (c, s) =>
@@ -115,7 +103,7 @@ namespace BuildingThemes.GUI
 
             // Mark as corner — lets a straight-zoned building also fill corner lots
             m_markCorner = UIUtils.CreateCheckBox(this);
-            m_markCorner.text = "Use on corner lots";
+            m_markCorner.text = Localization.Get("OPTIONS_CORNER_LABEL");
             m_markCorner.label.textScale = 0.8f;
             m_markCorner.isVisible = false;
             m_markCorner.tooltip = CornerHelpTooltip;
@@ -132,13 +120,13 @@ namespace BuildingThemes.GUI
 
             UILabel upgradeNameLabel = upgradeNamePanel.AddUIComponent<UILabel>();
             upgradeNameLabel.textScale = 0.8f;
-            upgradeNameLabel.text = "Upgrade:";
+            upgradeNameLabel.text = Localization.Get("OPTIONS_UPGRADE_LABEL");
             upgradeNameLabel.relativePosition = new Vector3(0, 5);
 
             m_upgradeName = UIUtils.CreateTextField(upgradeNamePanel);
             m_upgradeName.size = new Vector2(width - 10, 25);
             m_upgradeName.padding = new RectOffset(6, 6, 6, 0);
-            m_upgradeName.tooltip = "Name of the building to spawn when upgraded.\nLeave empty for random spawn.";
+            m_upgradeName.tooltip = Localization.Get("OPTIONS_UPGRADE_TOOLTIP");
             m_upgradeName.relativePosition = new Vector3(0, 25);
 
             m_upgradeName.eventMouseEnter += (c, p) =>
@@ -181,14 +169,14 @@ namespace BuildingThemes.GUI
 
             m_assetIdLabel = assetNamePanel.AddUIComponent<UILabel>();
             m_assetIdLabel.textScale = 0.8f;
-            m_assetIdLabel.text = "Asset name:";
+            m_assetIdLabel.text = Localization.Get("OPTIONS_ASSET_NAME_LABEL");
             m_assetIdLabel.relativePosition = new Vector3(0, 5);
 
             m_assetName = UIUtils.CreateTextField(assetNamePanel);
             m_assetName.size = new Vector2(width - 10, 25);
             m_assetName.padding = new RectOffset(6, 6, 6, 0);
             m_assetName.isEnabled = true;
-            m_assetName.tooltip = "Full internal prefab name. For workshop assets this includes the Steam Workshop ID.\nClick to select and copy.";
+            m_assetName.tooltip = Localization.Get("OPTIONS_ASSET_NAME_TOOLTIP");
             m_assetName.relativePosition = new Vector3(0, 25);
 
             // Keep field read-only: restore original name on any edit or focus loss
@@ -208,7 +196,7 @@ namespace BuildingThemes.GUI
             
             m_plop = UIUtils.CreateButton(constructionPanel);
             m_plop.width = 60;
-            m_plop.text = "Plop";
+            m_plop.text = Localization.Get("OPTIONS_PLOP");
             m_plop.relativePosition = new Vector3(0, 0); ;
 
             m_plop.eventClick += (c, p) =>
@@ -218,7 +206,7 @@ namespace BuildingThemes.GUI
 
             m_destroy = UIUtils.CreateButton(constructionPanel);
             m_destroy.width = 120;
-            m_destroy.text = "Bulldoze All";
+            m_destroy.text = Localization.Get("OPTIONS_BULLDOZE_ALL");
             m_destroy.relativePosition = new Vector3(m_plop.width + 10f, 0);
             m_destroy.eventClick += (c, p) =>
             {
@@ -232,14 +220,14 @@ namespace BuildingThemes.GUI
 
             UILabel baseNameLabel = baseNamePanel.AddUIComponent<UILabel>();
             baseNameLabel.textScale = 0.8f;
-            baseNameLabel.text = "Base:";
+            baseNameLabel.text = Localization.Get("OPTIONS_BASE_LABEL");
             baseNameLabel.relativePosition = new Vector3(0, 5);
 
             m_baseName = UIUtils.CreateTextField(baseNamePanel);
             m_baseName.size = new Vector2(width - 10, 25);
             m_baseName.padding = new RectOffset(6, 6, 6, 0);
             m_baseName.isEnabled = false;
-            m_baseName.tooltip = "Name of the original building.";
+            m_baseName.tooltip = Localization.Get("OPTIONS_BASE_TOOLTIP");
             m_baseName.relativePosition = new Vector3(0, 25);
 
             m_baseName.eventMouseEnter += (c, p) => UIThemeManager.instance.buildingPreview.Show(m_baseBuilding);
@@ -312,13 +300,13 @@ namespace BuildingThemes.GUI
             // Always show the raw asset name
             m_assetName.text = m_item.name;
             if (m_item.steamID != null)
-                m_assetIdLabel.text = "Asset name (Workshop " + m_item.steamID + "):";
+                m_assetIdLabel.text = Localization.Get("OPTIONS_ASSET_NAME_WORKSHOP_LABEL", m_item.steamID);
             else
-                m_assetIdLabel.text = "Asset name:";
+                m_assetIdLabel.text = Localization.Get("OPTIONS_ASSET_NAME_LABEL");
             m_assetName.parent.isVisible = true;
 
             bool builtIn = UIThemeManager.instance.selectedTheme?.isBuiltIn ?? false;
-            string readOnlyTip = builtIn ? "Built-in themes are read-only.\nUse 'Copy Theme' to create an editable copy." : null;
+            string readOnlyTip = builtIn ? Localization.Get("THEME_MANAGER_READONLY_TOOLTIP") : null;
 
             m_include.isVisible = true;
             m_include.isChecked = m_item.included;
@@ -354,7 +342,7 @@ namespace BuildingThemes.GUI
             m_upgradeBuilding = null;
             m_upgradeName.parent.isVisible = m_item.level < m_item.maxLevel;
             m_upgradeName.isEnabled = !builtIn;
-            m_upgradeName.tooltip = builtIn ? readOnlyTip : "Name of the building to spawn when upgraded.\nLeave empty for random spawn.";
+            m_upgradeName.tooltip = builtIn ? readOnlyTip : Localization.Get("OPTIONS_UPGRADE_TOOLTIP");
 
             if (m_item.building != null)
             {
@@ -499,7 +487,7 @@ namespace BuildingThemes.GUI
 
             // Tooltip: show workshop ID explicitly when available
             tooltip = m_building.steamID != null
-                ? "Workshop ID: " + m_building.steamID
+                ? Localization.Get("OPTIONS_WORKSHOP_ID_TOOLTIP", m_building.steamID)
                 : null;
 
             UIUtils.TruncateLabel(m_name, width - 65);

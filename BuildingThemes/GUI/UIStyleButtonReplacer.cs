@@ -17,7 +17,7 @@ namespace BuildingThemes.GUI
             var themesButton = policiesButton.parent.AddUIComponent<UIButton>();
             themesButton.name = "ReplacementThemesButton";
             themesButton.size = policiesButton.size;
-            themesButton.text = "THEMES";
+            themesButton.text = Localization.Get("THEMES_BUTTON");
             themesButton.relativePosition = uiDropDown.relativePosition;
             themesButton.pressedBgSprite = policiesButton.pressedBgSprite;
             themesButton.disabledBgSprite = policiesButton.disabledBgSprite;

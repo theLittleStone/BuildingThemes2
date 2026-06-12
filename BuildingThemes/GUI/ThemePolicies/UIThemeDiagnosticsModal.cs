@@ -47,7 +47,7 @@ namespace BuildingThemes.GUI
                 Mathf.Floor((GetUIView().fixedHeight - height) / 2));
 
             m_title = AddUIComponent<UITitleBar>();
-            m_title.title = "District Theme Diagnostics";
+            m_title.title = Localization.Get("DIAG_TITLE");
             m_title.iconSprite = "InfoPanelIconFreetime";
             m_title.isModal = true;
 
@@ -91,18 +91,18 @@ namespace BuildingThemes.GUI
             m_text.relativePosition = Vector2.zero;
 
             m_copy = UIUtils.CreateButton(this);
-            m_copy.text = "Copy to Clipboard";
+            m_copy.text = Localization.Get("DIAG_COPY");
             m_copy.width = 160f;
             m_copy.relativePosition = new Vector3((width / 2) - m_copy.width - 4, height - m_copy.height - 5);
             m_copy.eventClick += (c, p) =>
             {
                 GUIUtility.systemCopyBuffer = m_text.text;
-                m_copy.text = "Copied!";
+                m_copy.text = Localization.Get("DIAG_COPIED");
                 Invoke("ResetCopyButtonText", 2f);
             };
 
             m_ok = UIUtils.CreateButton(this);
-            m_ok.text = "Close";
+            m_ok.text = Localization.Get("MODAL_CLOSE");
             m_ok.relativePosition = new Vector3((width / 2) + 4, height - m_ok.height - 5);
             m_ok.eventClick += (c, p) => { UIView.PopModal(); Hide(); };
         }
@@ -132,8 +132,7 @@ namespace BuildingThemes.GUI
             // Append Skyve note if there are missing assets and Skyve is installed
             if (SkyveDetector.IsInstalled && report.Contains("Missing"))
             {
-                report += "\n\nSkyve is installed — use 'Workshop Dependencies' in the Theme Manager\n" +
-                          "to copy missing asset IDs and manage activation in Skyve.";
+                report += "\n\n" + Localization.Get("DIAG_SKYVE_NOTE");
             }
 
             m_text.text = report;
@@ -168,7 +167,7 @@ namespace BuildingThemes.GUI
 
         private void ResetCopyButtonText()
         {
-            if (m_copy != null) m_copy.text = "Copy to Clipboard";
+            if (m_copy != null) m_copy.text = Localization.Get("DIAG_COPY");
         }
 
         protected override void OnKeyDown(UIKeyEventParameter p)

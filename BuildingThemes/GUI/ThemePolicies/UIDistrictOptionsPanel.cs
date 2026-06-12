@@ -96,7 +96,7 @@ namespace BuildingThemes.GUI
                 Mathf.Floor((GetUIView().fixedHeight - 480f)  / 2));
 
             var titleBar = AddUIComponent<UITitleBar>();
-            titleBar.title       = "District Theme Options";
+            titleBar.title       = Localization.Get("DISTRICT_OPTIONS_TITLE");
             titleBar.iconSprite  = "ToolbarIconZoomOutDistrict";
             titleBar.isModal     = false;
 
@@ -104,11 +104,8 @@ namespace BuildingThemes.GUI
             m_blacklistCheck = ThemePolicyTab.CreateCheckBox(this);
             m_blacklistCheck.width            = CW;
             m_blacklistCheck.relativePosition = new Vector3(X, y);
-            m_blacklistCheck.text             = "Allow buildings not in any theme (blacklist mode)";
-            m_blacklistCheck.tooltip =
-                "When enabled, all vanilla/theme buildings can spawn — the themes become a blacklist\n" +
-                "(only explicitly excluded buildings are blocked).\n" +
-                "When disabled, only buildings included in an active theme for this district can spawn.";
+            m_blacklistCheck.text             = Localization.Get("DISTRICT_BLACKLIST_LABEL");
+            m_blacklistCheck.tooltip = Localization.Get("DISTRICT_BLACKLIST_TOOLTIP");
             m_blacklistCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -119,8 +116,8 @@ namespace BuildingThemes.GUI
             y += CHK_H + ROW_GAP;
 
             // ── Level behavior  |  Missing asset  (two columns) ─────────────
-            AddLabel(X,          y, HW, LBL_H, TS, "Level up — no buildings for that level:");
-            AddLabel(X + HW + GAP, y, HW, LBL_H, TS, "Subscribed building not loaded:");
+            AddLabel(X,          y, HW, LBL_H, TS, Localization.Get("DISTRICT_LEVEL_UP_LABEL"));
+            AddLabel(X + HW + GAP, y, HW, LBL_H, TS, Localization.Get("DISTRICT_NOT_LOADED_LABEL"));
             y += LBL_H + SEC_GAP;
 
             m_levelDropdown = UIUtils.CreateDropDown(this);
@@ -128,15 +125,10 @@ namespace BuildingThemes.GUI
             m_levelDropdown.size             = new Vector2(HW, DROP_H);
             m_levelDropdown.relativePosition = new Vector3(X, y);
             m_levelDropdown.items            = new string[] {
-                "Vanilla fallback — game picks a vanilla building",
-                "Strict — freeze upgrades at current level"
+                Localization.Get("DISTRICT_LEVEL_VANILLA"),
+                Localization.Get("DISTRICT_LEVEL_STRICT")
             };
-            m_levelDropdown.tooltip =
-                "Vanilla fallback: the game picks a vanilla building for the higher level.\n\n" +
-                "Strict: upgrades are blocked when the theme has no buildings at the target level.\n" +
-                "The building stays at its current level indefinitely.\n\n" +
-                "To control exactly which building a level-up produces, use the 'Upgrade to' field\n" +
-                "in the Theme Manager for that building.";
+            m_levelDropdown.tooltip = Localization.Get("DISTRICT_LEVEL_TOOLTIP");
             m_levelDropdown.eventSelectedIndexChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -153,17 +145,11 @@ namespace BuildingThemes.GUI
             m_missingDropdown.size             = new Vector2(HW, DROP_H);
             m_missingDropdown.relativePosition = new Vector3(X + HW + GAP, y);
             m_missingDropdown.items            = new string[] {
-                "Skip — theme-only, slots may be sparse",
-                "Fill with vanilla — supplement missing slots",
-                "Fall back to vanilla — use vanilla if sparse"
+                Localization.Get("DISTRICT_MISSING_SKIP"),
+                Localization.Get("DISTRICT_MISSING_FILL"),
+                Localization.Get("DISTRICT_MISSING_FALLBACK")
             };
-            m_missingDropdown.tooltip =
-                "Skip: missing buildings are quietly dropped. The theme still applies using\n" +
-                "only loaded assets — slots may be sparse if many are missing.\n\n" +
-                "Fill with vanilla: vanilla buildings supplement each missing slot.\n" +
-                "Your loaded theme buildings still appear; vanilla fills the gaps.\n\n" +
-                "Fall back to vanilla: if any building in a slot is missing, that entire\n" +
-                "slot falls back to vanilla only. No sparse areas, but less theme coverage.";
+            m_missingDropdown.tooltip = Localization.Get("DISTRICT_MISSING_TOOLTIP");
             m_missingDropdown.eventSelectedIndexChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -179,12 +165,8 @@ namespace BuildingThemes.GUI
             m_autoBulldozeCheck = ThemePolicyTab.CreateCheckBox(this);
             m_autoBulldozeCheck.width            = CW;
             m_autoBulldozeCheck.relativePosition = new Vector3(X, y);
-            m_autoBulldozeCheck.text             = "Auto-remove non-theme buildings";
-            m_autoBulldozeCheck.tooltip =
-                "Gradually demolishes existing buildings in this district that are not\n" +
-                "part of any active theme. Only affects growable residential, commercial,\n" +
-                "industrial, and office buildings — service buildings are never touched.\n" +
-                "Has no effect when 'Allow buildings not in any theme' is enabled.";
+            m_autoBulldozeCheck.text             = Localization.Get("DISTRICT_AUTO_BULLDOZE_LABEL");
+            m_autoBulldozeCheck.tooltip = Localization.Get("DISTRICT_AUTO_BULLDOZE_TOOLTIP");
             m_autoBulldozeCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -199,18 +181,8 @@ namespace BuildingThemes.GUI
             m_enforceSpecializationCheck = ThemePolicyTab.CreateCheckBox(this);
             m_enforceSpecializationCheck.width            = CW - INDENT;
             m_enforceSpecializationCheck.relativePosition = new Vector3(X + INDENT, y);
-            m_enforceSpecializationCheck.text             = "Also remove non-specialized buildings";
-            m_enforceSpecializationCheck.tooltip =
-                "When a district has an active specialization (Farming, Forestry, Self-Sufficient,\n" +
-                "Tourism, etc.), this option also removes themed buildings whose type does not\n" +
-                "match the specialization — for example, generic industry in a farming district.\n" +
-                "\n" +
-                "Use this to fully transition a district to its specialization: existing buildings\n" +
-                "of the wrong type are gradually replaced by correctly-specialised ones from the\n" +
-                "active themes.\n" +
-                "\n" +
-                "Only active when 'Auto-remove non-theme buildings' is also enabled.\n" +
-                "Has no effect if the district has no active specialization policy.";
+            m_enforceSpecializationCheck.text             = Localization.Get("DISTRICT_ENFORCE_SPEC_LABEL");
+            m_enforceSpecializationCheck.tooltip = Localization.Get("DISTRICT_ENFORCE_SPEC_TOOLTIP");
             m_enforceSpecializationCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -224,15 +196,8 @@ namespace BuildingThemes.GUI
             m_preferElectricityCheck = ThemePolicyTab.CreateCheckBox(this);
             m_preferElectricityCheck.width            = CW;
             m_preferElectricityCheck.relativePosition = new Vector3(X, y);
-            m_preferElectricityCheck.text             = "Prefer zones with electricity";
-            m_preferElectricityCheck.tooltip =
-                "Only spawn new buildings in zone cells that are already connected to\n" +
-                "the electricity grid. Cells without power are skipped and retried later.\n" +
-                "\n" +
-                "⚠ Spawning can be significantly slower while large parts of the district\n" +
-                "are not yet electrified. After 40 consecutive skips the filter is\n" +
-                "suspended automatically so growth is never blocked permanently — it\n" +
-                "re-activates as soon as an electrified cell is found again.";
+            m_preferElectricityCheck.text             = Localization.Get("DISTRICT_PREFER_ELECTRICITY_LABEL");
+            m_preferElectricityCheck.tooltip = Localization.Get("DISTRICT_PREFER_ELECTRICITY_TOOLTIP");
             m_preferElectricityCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -246,27 +211,8 @@ namespace BuildingThemes.GUI
             m_preferAdjacentCheck = ThemePolicyTab.CreateCheckBox(this);
             m_preferAdjacentCheck.width            = CW;
             m_preferAdjacentCheck.relativePosition = new Vector3(X, y);
-            m_preferAdjacentCheck.text             = "Cluster against existing buildings (wall-to-wall)";
-            m_preferAdjacentCheck.tooltip =
-                "Forces new buildings to spawn next to existing ones and slides them\n" +
-                "along the road so their visible walls touch, eliminating the small\n" +
-                "gaps that arise when a building's mesh is narrower than its lot.\n" +
-                "\n" +
-                "How it works:\n" +
-                "  • Cell adjacency — spawn attempts at lots with no neighbouring\n" +
-                "    building are skipped, so growth radiates outward from existing\n" +
-                "    construction instead of dropping random isolated buildings.\n" +
-                "  • Position snap — when a spawn is accepted, the new building is\n" +
-                "    nudged along the road (up to ½ cell, 4 m) so its mesh edge meets\n" +
-                "    the neighbour's mesh edge. Works for buildings whose model is\n" +
-                "    smaller than its 8 m cell allocation, and respects rotated /\n" +
-                "    non-grid-aligned meshes via projected bounding boxes.\n" +
-                "\n" +
-                "Fallback: when no neighbour is found anywhere after 40 attempts,\n" +
-                "the filter suspends so the first building in an empty district can\n" +
-                "land normally — subsequent buildings then cluster against it.\n" +
-                "\n" +
-                "Best paired with wall-to-wall themes, but works with any theme.";
+            m_preferAdjacentCheck.text             = Localization.Get("DISTRICT_CLUSTER_LABEL");
+            m_preferAdjacentCheck.tooltip = Localization.Get("DISTRICT_CLUSTER_TOOLTIP");
             m_preferAdjacentCheck.eventCheckChanged += (c, val) =>
             {
                 if (_updating) return;
@@ -277,27 +223,19 @@ namespace BuildingThemes.GUI
             y += CHK_H + ROW_GAP;
 
             // ── Size preference section ───────────────────────────────────────
-            AddLabel(X, y, CW, LBL_H, TS, "Building size preference per zone type  (Default = original game behaviour):");
+            AddLabel(X, y, CW, LBL_H, TS, Localization.Get("DISTRICT_SIZE_PREF_LABEL"));
             y += LBL_H + SEC_GAP;
 
             string[] sizePrefItems = new string[] {
-                "Default", "Biggest first", "Widest first",
-                "Deepest first", "Random (weight only)", "Smallest first",
-                "Tallest first", "Shortest first"
+                Localization.Get("DISTRICT_SIZE_DEFAULT"), Localization.Get("DISTRICT_SIZE_BIGGEST"), Localization.Get("DISTRICT_SIZE_WIDEST"),
+                Localization.Get("DISTRICT_SIZE_DEEPEST"), Localization.Get("DISTRICT_SIZE_RANDOM"), Localization.Get("DISTRICT_SIZE_SMALLEST"),
+                Localization.Get("DISTRICT_SIZE_TALLEST"), Localization.Get("DISTRICT_SIZE_SHORTEST")
             };
-            string sizePrefTooltip =
-                "Default: original game behaviour — tries widest lot first, shrinks until a theme building fits.\n" +
-                "Biggest first: prefers widest × deepest footprint.\n" +
-                "Widest first: prefers widest buildings, tie-break by shallowest depth.\n" +
-                "Deepest first: prefers deepest buildings, tie-break by narrowest width.\n" +
-                "Random (weight only): no size bias — purely by spawn weight.\n" +
-                "Smallest first: prefers narrowest × shallowest footprint.\n" +
-                "Tallest first: prefers tallest buildings (by mesh height).\n" +
-                "Shortest first: prefers shortest buildings (by mesh height).";
+            string sizePrefTooltip = Localization.Get("DISTRICT_SIZE_PREF_TOOLTIP");
 
             // Row 1: Residential | Commercial
-            AddLabel(X,            y, HW, LBL_H, TS, "Residential:");
-            AddLabel(X + HW + GAP, y, HW, LBL_H, TS, "Commercial:");
+            AddLabel(X,            y, HW, LBL_H, TS, Localization.Get("DISTRICT_RESIDENTIAL_LABEL"));
+            AddLabel(X + HW + GAP, y, HW, LBL_H, TS, Localization.Get("DISTRICT_COMMERCIAL_LABEL"));
             y += LBL_H + SEC_GAP;
 
             m_resSizePref = MakeSizePrefDrop(X,            y, HW, DROP_H, sizePrefItems, sizePrefTooltip);
@@ -313,8 +251,8 @@ namespace BuildingThemes.GUI
             y += DROP_H + SEC_GAP;
 
             // Row 2: Industrial | Office
-            AddLabel(X,            y, HW, LBL_H, TS, "Industrial:");
-            AddLabel(X + HW + GAP, y, HW, LBL_H, TS, "Office:");
+            AddLabel(X,            y, HW, LBL_H, TS, Localization.Get("DISTRICT_INDUSTRIAL_LABEL"));
+            AddLabel(X + HW + GAP, y, HW, LBL_H, TS, Localization.Get("DISTRICT_OFFICE_LABEL"));
             y += LBL_H + SEC_GAP;
 
             m_indSizePref = MakeSizePrefDrop(X,            y, HW, DROP_H, sizePrefItems, sizePrefTooltip);
@@ -330,7 +268,7 @@ namespace BuildingThemes.GUI
             y += DROP_H + ROW_GAP;
 
             // ── Preference strength (half width, left) ────────────────────────
-            AddLabel(X, y, HW, LBL_H, TS, "Preference strength:");
+            AddLabel(X, y, HW, LBL_H, TS, Localization.Get("DISTRICT_STRENGTH_LABEL"));
             y += LBL_H + SEC_GAP;
 
             m_strengthPref = UIUtils.CreateDropDown(this);
@@ -338,17 +276,12 @@ namespace BuildingThemes.GUI
             m_strengthPref.size             = new Vector2(HW, DROP_H);
             m_strengthPref.relativePosition = new Vector3(X, y);
             m_strengthPref.items = new string[] {
-                "Gentle",
-                "Moderate",
-                "Strong",
-                "Absolute (always pick preferred size)"
+                Localization.Get("DISTRICT_STRENGTH_GENTLE"),
+                Localization.Get("DISTRICT_STRENGTH_MODERATE"),
+                Localization.Get("DISTRICT_STRENGTH_STRONG"),
+                Localization.Get("DISTRICT_STRENGTH_ABSOLUTE")
             };
-            m_strengthPref.tooltip =
-                "Controls how strongly size preference overrides spawn weight.\n\n" +
-                "Gentle (α=0.5): size gives a mild boost — spawn weight still matters a lot.\n" +
-                "Moderate (α=1.0): balanced — size and weight both influence selection.\n" +
-                "Strong (α=2.0): size strongly dominates — top-ranked sizes appear most of the time.\n" +
-                "Absolute: only the highest-ranked size spawns; spawn weight breaks ties within that size.";
+            m_strengthPref.tooltip = Localization.Get("DISTRICT_STRENGTH_TOOLTIP");
             m_strengthPref.eventSelectedIndexChanged += (c, val) => {
                 if (_updating) return;
                 BuildingThemesManager.instance.SetDistrictPreferenceStrength(GetDistrictId(), (PreferenceStrength)val);
@@ -360,10 +293,8 @@ namespace BuildingThemes.GUI
             diagnosticsBtn.width            = CW;
             diagnosticsBtn.size             = new Vector2(CW, BTN_H);
             diagnosticsBtn.relativePosition = new Vector3(X, y);
-            diagnosticsBtn.text             = "Spawn Diagnostics";
-            diagnosticsBtn.tooltip =
-                "Show why buildings are or are not spawning in this district.\n" +
-                "Enable 'Generate Debug Output' in mod settings for detailed data.";
+            diagnosticsBtn.text             = Localization.Get("DISTRICT_DIAGNOSTICS_BUTTON");
+            diagnosticsBtn.tooltip = Localization.Get("DISTRICT_DIAGNOSTICS_TOOLTIP");
             diagnosticsBtn.eventClick += (c, p) =>
             {
                 try { UIThemeDiagnosticsModal.instance.ShowForDistrict(GetDistrictId()); }

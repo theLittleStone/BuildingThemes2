@@ -110,7 +110,7 @@ namespace BuildingThemes.GUI
         {
             if(showWarning && m_policyCheckBox.isChecked && tooltip != null)
             {
-                UIWarningModal.instance.message = "This theme might not work like expected:\n\n" + tooltip;
+                UIWarningModal.instance.message = Localization.Get("POLICY_THEME_WARNING") + "\n\n" + tooltip;
                 UIView.PushModal(UIWarningModal.instance);
                 UIWarningModal.instance.Show(true);
             }

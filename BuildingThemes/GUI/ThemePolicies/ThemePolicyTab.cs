@@ -30,7 +30,7 @@ namespace BuildingThemes.GUI
             if (tabstrip == null) return;
 
             // Add a custom tab
-            tab = tabstrip.AddTab("Themes");
+            tab = tabstrip.AddTab(Localization.Get("POLICY_TAB_THEMES"));
             tab.stringUserData = "Themes";
             tab.textScale = 0.875f;
             // SetParentButton iterates all tabs looking for TutorialUITag; add a dummy
@@ -68,7 +68,7 @@ namespace BuildingThemes.GUI
             UICheckBox enableThemeManagementCheckBox = CreateCheckBox(controls);
             enableThemeManagementCheckBox.name = "Theme Management Checkbox";
             enableThemeManagementCheckBox.gameObject.AddComponent<ThemeManagementCheckboxContainer>();
-            enableThemeManagementCheckBox.text = "Enable Theme Management for this district";
+            enableThemeManagementCheckBox.text = Localization.Get("POLICY_ENABLE_MANAGEMENT_DISTRICT");
             enableThemeManagementCheckBox.isChecked = false;
 
             enableThemeManagementCheckBox.eventCheckChanged += delegate(UIComponent component, bool isChecked)
@@ -85,7 +85,7 @@ namespace BuildingThemes.GUI
             // Button: open the Building Theme Manager window
             UIButton showThemeManager = GUI.UIUtils.CreateButton(controls);
             showThemeManager.width = controls.width;
-            showThemeManager.text = "Theme Manager";
+            showThemeManager.text = Localization.Get("THEME_MANAGER_TITLE");
 
             showThemeManager.eventClick += (c, p) =>
             {
@@ -102,10 +102,8 @@ namespace BuildingThemes.GUI
             showDistrictOptions.name = "District Options Button";
             showDistrictOptions.gameObject.AddComponent<DistrictOptionsButtonContainer>();
             showDistrictOptions.width = controls.width;
-            showDistrictOptions.text = "District Options";
-            showDistrictOptions.tooltip =
-                "Configure blacklist mode, level behaviour,\n" +
-                "missing asset handling and spawn diagnostics for this district.";
+            showDistrictOptions.text = Localization.Get("POLICY_DISTRICT_OPTIONS");
+            showDistrictOptions.tooltip = Localization.Get("POLICY_DISTRICT_OPTIONS_TOOLTIP");
 
             showDistrictOptions.eventClick += (c, p) =>
             {

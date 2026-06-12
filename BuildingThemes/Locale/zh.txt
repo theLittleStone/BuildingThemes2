@@ -1,0 +1,223 @@
+MOD_DESCRIPTION 创建建筑主题并将其应用于城市和分区。由社区维护的 boformer（Sebastian Schöner）原版 Building Themes 分支。Harmony 2.x 迁移：roberto-naharro。
+SETTINGS_GROUP_BEHAVIOUR 行为
+SETTINGS_MISSING_ASSETS_LABEL 默认：缺失的创意工坊建筑
+SETTINGS_MISSING_ASSETS_SKIP 跳过（地块稀疏，仅主题）
+SETTINGS_MISSING_ASSETS_FILL 用原版补充（填补缺失的地块）
+SETTINGS_MISSING_ASSETS_FALLBACK 回退到原版（建筑不足时使用原版）
+SETTINGS_EMPTY_LEVEL_LABEL 默认：当主题没有某等级的建筑时
+SETTINGS_EMPTY_LEVEL_VANILLA 原版回退（游戏为该等级选择原版建筑）
+SETTINGS_EMPTY_LEVEL_STRICT 严格（冻结升级；建筑停留在当前等级）
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL 自动拆除速度
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE 温和（慢）
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL 正常
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE 激进（快）
+SETTINGS_INVALID_THEME_WARNING 选择无效主题时显示警告
+SETTINGS_GROUP_DEBUGGING 调试
+SETTINGS_DEBUG_OUTPUT 生成调试输出
+SETTINGS_GROUP_MAINTENANCE 维护
+SETTINGS_UNLOCK_POLICIES 从一开始就解锁政策面板
+SETTINGS_PREFAB_CLONING 启用预制体克隆（实验性 — 请阅读下方警告）
+SETTINGS_PREFAB_CLONING_WARNING ⚠ 存档风险：克隆建筑在加载时生成\n并保存在你的存档中。\n如果你关闭此功能或取消订阅本模组，\n所有克隆建筑将在下次加载时消失。\n存档不会损坏，但这些建筑\n将永久丢失。\n仅在你接受该风险时才启用。
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION 将 District Styles Plus 的风格导入为 BT2 主题。\n每个主题命名为“[DSP] <风格名称>”。\n请先加载城市 — 已导入的风格会被跳过。
+SETTINGS_DSP_IMPORT_BUTTON 从 District Styles Plus 导入
+SETTINGS_DSP_NEEDS_GAME 此操作需要处于游戏中。\n请先加载城市，再点击此按钮。
+SETTINGS_DSP_RESULT_NONE 未找到 District Styles Plus 自定义风格。请确认当前城市中已创建 District Styles Plus 自定义风格。
+SETTINGS_DSP_RESULT_ALL_SKIPPED 全部 {0} 个风格均已导入（前缀“{1}”）。没有新内容可添加。
+SETTINGS_DSP_RESULT_IMPORTED 已将 {0} 个风格导入为 Building Themes 主题（前缀“{1}”）。
+SETTINGS_DSP_RESULT_MIXED 已导入 {0} 个风格（前缀“{1}”）。{2} 个已存在，已跳过。
+SETTINGS_RESET_DEFAULTS 恢复默认设置
+SETTINGS_XML_CORRUPT BuildingThemes 无法读取保存你的设置和主题的\nBuildingThemes.xml 文件！\n要修复，请删除该文件并重启游戏：
+THEME_MANAGER_TITLE 主题管理器
+THEME_MANAGER_COPY_OF {0} 的副本
+THEME_MANAGER_THEME_NOT_FOUND 未找到主题
+THEME_MANAGER_VALIDITY_EMPTY 未包含任何建筑。
+THEME_MANAGER_VALIDITY_NO_L1 未包含任何 1 级建筑。
+THEME_MANAGER_VALIDITY_NOT_LOADED 已加载 {0}/{1} 个建筑。
+THEME_MANAGER_READONLY_TOOLTIP 内置主题为只读。\n请使用“复制主题”创建可编辑副本。
+THEME_MANAGER_NEW_THEME 新建主题
+THEME_MANAGER_DELETE_THEME 删除主题
+THEME_MANAGER_DELETE_CONFIRM 确定要删除主题“{0}”吗？
+THEME_MANAGER_DEPENDENCIES 创意工坊依赖
+THEME_MANAGER_DEPENDENCIES_TOOLTIP 列出本主题的所有创意工坊资产，按“已加载 / 缺失”状态分组
+THEME_MANAGER_RENAME_THEME 重命名主题
+THEME_MANAGER_COPY_THEME 复制主题
+THEME_MANAGER_BTN_ALL 全部
+THEME_MANAGER_BTN_NONE 全不
+THEME_MANAGER_BTN_VALID 有效
+THEME_MANAGER_BTN_MISSING 缺失
+THEME_MANAGER_INCLUDE_LABEL 包含：
+THEME_MANAGER_EXCLUDE_LABEL 排除：
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP 将当前筛选视图中的所有建筑加入本主题
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP 将当前筛选视图中的所有建筑从本主题中排除
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP 加入当前筛选视图中所有可生成的建筑\n（已加载 + 有效的单元尺寸 1–4）
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP 将当前筛选视图中所有缺失/未加载的建筑从本主题中排除
+THEME_MANAGER_EXCLUDE_MISSING_TITLE 排除缺失
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM 将当前筛选视图中的 {0} 个缺失建筑从本主题中排除？
+THEME_MANAGER_INCLUDE_VALID_TITLE 包含有效
+THEME_MANAGER_INCLUDE_VALID_CONFIRM 将当前筛选视图中的 {0} 个可生成建筑加入本主题？
+THEME_MANAGER_CLONE_BUILDING 克隆建筑
+THEME_MANAGER_RESIZE_TOOLTIP 拖动以调整大小
+THEME_MANAGER_COUNTER_SHOWN 可生成 {0} / 显示 {1}
+THEME_MANAGER_COUNTER_MISSING 缺失 {0}
+THEME_MANAGER_COUNTER_DLC DLC/环境 {0}
+FILTER_ALL 全部
+FILTER_NONE 全不
+FILTER_ALL_DLC 全部 DLC
+FILTER_DISPLAY_LABEL 显示：
+FILTER_ORIGIN_DEFAULT 原版
+FILTER_ORIGIN_CUSTOM 自定义
+FILTER_ORIGIN_CLONED 克隆
+FILTER_STATUS_INCLUDED 已包含
+FILTER_STATUS_EXCLUDED 已排除
+FILTER_LEVEL_LABEL 等级：
+FILTER_SIZE_LABEL 尺寸：
+FILTER_DLC_TOOLTIP 按 DLC / 内容创作者包筛选。\n仅显示已安装且在本主题中有建筑的 DLC。
+FILTER_HEIGHT_LABEL 高度：
+FILTER_HEIGHT_MIN_TOOLTIP 建筑最低高度（米），留空表示不限
+FILTER_HEIGHT_MAX_TOOLTIP 建筑最高高度（米），留空表示不限
+FILTER_NAME_LABEL 名称：
+FILTER_ALSO_IN_LABEL 也属于：
+FILTER_ALSO_IN_TOOLTIP 仅显示同时包含在所选主题中的建筑。\n便于比较或合并主题。
+FILTER_IN_ANY_THEME 任意主题
+FILTER_SHOW_LOADED 显示已加载
+FILTER_SHOW_LOADED_TOOLTIP 显示预制体已加载且可用的建筑
+FILTER_SHOW_MISSING 显示缺失
+FILTER_SHOW_MISSING_TOOLTIP 显示当前未加载的创意工坊/自定义资产\n（未订阅、被 Skyve 禁用或加载出错）
+FILTER_SHOW_DLC 显示 DLC/环境
+FILTER_SHOW_DLC_TOOLTIP 显示不可用的原版/DLC 资产\n（未拥有 DLC，或资产被此地图环境排除）
+FILTER_SPAWNABLE_ONLY 仅可生成
+FILTER_SPAWNABLE_ONLY_TOOLTIP 仅显示已加载、包含在主题中\n且单元尺寸（1–4）适合在区域中生成的建筑
+FILTER_WALL_TO_WALL 毗连建筑
+FILTER_WALL_TO_WALL_TOOLTIP 仅显示设计为与相邻建筑紧贴、两侧无间隙的建筑。\n\n通过两种信号检测：\n• 转角放置模式（CornerLeft / CornerRight）— 一定是毗连建筑。\n• 模型填满地块宽度 85 % 以上的直排建筑 — 作者没有\n  留出侧面退距。\n\n创意工坊建筑即使是毗连建筑，也常被标记为普通住宅/商业，\n因此仅按类别筛选并不够。\n本筛选器直接检查模型几何形状。
+OPTIONS_NO_OPTION 没有可用选项
+OPTIONS_INCLUDE 包含
+OPTIONS_SPAWN_WEIGHT_LABEL 生成权重 (1–100)：
+OPTIONS_SPAWN_WEIGHT_TOOLTIP 相对于同区域、同等级、同尺寸其他建筑的生成权重。\n\n示例：两个权重为 10 的建筑各有 50 % 的出现概率。\n同一槽位中权重 20 的建筑出现概率是权重 10 的两倍。\n\n槽位中只有一个建筑时，无论权重如何都必定出现（100 %）。\n\n最小：1  |  默认：10  |  最大：100
+OPTIONS_CORNER_LABEL 用于转角地块
+OPTIONS_CORNER_TOOLTIP 让此建筑也可出现在转角地块（路口）。\n\n适用于需要填充转角的直排建筑。该建筑仍会在普通地块上\n生成。注意：直排建筑无法像专门的转角资产那样真正包住\n转角 — 它面向主街，侧墙朝向横街。\n\n真正的转角资产（预览中显示为“转角（左/右）”）本来就能填充\n转角，此选项对它们无效。
+OPTIONS_UPGRADE_LABEL 升级：
+OPTIONS_UPGRADE_TOOLTIP 升级时生成的建筑名称。\n留空则随机生成。
+OPTIONS_ASSET_NAME_LABEL 资产名称：
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL 资产名称（创意工坊 {0}）：
+OPTIONS_ASSET_NAME_TOOLTIP 预制体的完整内部名称。创意工坊资产包含 Steam 创意工坊 ID。\n点击以选中并复制。
+OPTIONS_PLOP 放置
+OPTIONS_BULLDOZE_ALL 全部拆除
+OPTIONS_BASE_LABEL 原型：
+OPTIONS_BASE_TOOLTIP 原始建筑的名称。
+OPTIONS_WORKSHOP_ID_TOOLTIP 创意工坊 ID：{0}
+THEME_ITEM_BADGE_VANILLA 纯原版主题：无需 DLC 或创意工坊资产。
+THEME_ITEM_BADGE_DLC 需要 DLC。无需订阅创意工坊。
+THEME_ITEM_MISSING_FILL 缺失 {0} 个：用原版补充。
+THEME_ITEM_MISSING_FALLBACK 缺失 {0} 个：受影响的槽位回退到原版。
+PREVIEW_WALL_TO_WALL 毗连建筑
+PREVIEW_CORNER_LEFT 转角（左）
+PREVIEW_CORNER_RIGHT 转角（右）
+PREVIEW_LEVEL 等级 {0}
+BUILDING_ITEM_NOT_LOADED （未加载）
+ORIGIN_WORKSHOP 创意工坊
+ORIGIN_VANILLA 原版资产
+ORIGIN_INCLUDED_IN 收录于 {0}
+CATEGORY_RESIDENTIAL_LOW 低密度住宅
+CATEGORY_RESIDENTIAL_HIGH 高密度住宅
+CATEGORY_RESIDENTIAL_ECO 自给自足住宅
+CATEGORY_COMMERCIAL_LOW 低密度商业
+CATEGORY_COMMERCIAL_HIGH 高密度商业
+CATEGORY_COMMERCIAL_LEISURE 休闲商业
+CATEGORY_COMMERCIAL_TOURISM 旅游商业
+CATEGORY_COMMERCIAL_ECO 有机与本地产品商业
+CATEGORY_INDUSTRIAL 通用工业
+CATEGORY_FARMING 农业
+CATEGORY_FORESTRY 林业
+CATEGORY_OIL 石油工业
+CATEGORY_ORE 矿石工业
+CATEGORY_OFFICE 办公
+CATEGORY_OFFICE_HIGHTECH IT 办公
+CATEGORY_RESIDENTIAL_W2W 毗连住宅
+CATEGORY_COMMERCIAL_W2W 毗连商业
+CATEGORY_OFFICE_W2W 毗连办公
+CATEGORY_OFFICE_FINANCIAL 金融办公
+MODAL_OK 确定
+MODAL_CANCEL 取消
+MODAL_CLOSE 关闭
+MODAL_CREATE 创建
+MODAL_RENAME 重命名
+MODAL_CLONE 克隆
+NEW_THEME_TITLE 创建新主题
+NEW_THEME_NAME_LABEL 主题名称：
+RENAME_THEME_NAME_LABEL 新名称：
+CLONE_TITLE 克隆建筑
+CLONE_NAME_LABEL 建筑名称：
+CLONE_EXISTS_TOOLTIP 该等级的建筑已存在
+CLONE_ENTER_NAME_TOOLTIP 请输入名称
+WARNING_TITLE 警告
+DEPS_COPY_MISSING 复制缺失 ID
+DEPS_COPY_MISSING_TOOLTIP 将所有缺失资产的 Steam 创意工坊 ID 复制到剪贴板（每行一个）
+DEPS_COPY_ALL 复制全部 ID
+DEPS_COPY_ALL_TOOLTIP 将本主题所有资产的 Steam 创意工坊 ID 复制到剪贴板（每行一个）\n便于在 Skyve 中管理启用状态
+DEPS_SUBSCRIBE_MISSING 订阅缺失项
+DEPS_SUBSCRIBE_MISSING_TOOLTIP 在 Steam 上订阅所有缺失的创意工坊资产\n需重启游戏才能加载新订阅的资产
+DEPS_REQUESTED 已请求（{0}）
+DEPS_NO_THEME 未选择主题。
+DEPS_SUMMARY 共 {0} 个创意工坊资产 — 已加载 {1}，缺失 {2}。
+DEPS_SECTION_MISSING 缺失 — 未加载（{0}）
+DEPS_SECTION_LOADED 已加载（{0}）
+DEPS_NO_WORKSHOP_ASSETS 本主题没有创意工坊资产。
+DEPS_STEAM_ID_TOOLTIP Steam 创意工坊 ID：{0}
+DEPS_OPEN 打开
+DEPS_OPEN_TOOLTIP 在 Steam 创意工坊中打开
+POLICY_TAB_THEMES 主题
+POLICY_ENABLE_MANAGEMENT_CITY 为本城市启用主题管理
+POLICY_ENABLE_MANAGEMENT_DISTRICT 为本分区启用主题管理
+POLICY_DISTRICT_OPTIONS 分区选项
+POLICY_DISTRICT_OPTIONS_TOOLTIP 为本分区配置黑名单模式、等级行为、\n缺失资产处理和生成诊断。
+POLICY_THEME_WARNING 此主题可能无法按预期工作：
+DIAG_TITLE 分区主题诊断
+DIAG_COPY 复制到剪贴板
+DIAG_COPIED 已复制！
+DIAG_SKYVE_NOTE 检测到已安装 Skyve — 请使用主题管理器中的“创意工坊依赖”\n复制缺失资产的 ID，并在 Skyve 中管理启用状态。
+DISTRICT_OPTIONS_TITLE 分区主题选项
+DISTRICT_BLACKLIST_LABEL 允许不属于任何主题的建筑（黑名单模式）
+DISTRICT_BLACKLIST_TOOLTIP 启用后，所有原版/主题建筑都可生成 — 主题变为黑名单\n（仅明确排除的建筑会被阻止）。\n禁用后，只有本分区激活主题中包含的建筑才能生成。
+DISTRICT_LEVEL_UP_LABEL 升级 — 该等级没有建筑时：
+DISTRICT_NOT_LOADED_LABEL 已订阅但未加载的建筑：
+DISTRICT_LEVEL_VANILLA 原版回退 — 游戏选择原版建筑
+DISTRICT_LEVEL_STRICT 严格 — 冻结升级，保持当前等级
+DISTRICT_LEVEL_TOOLTIP 原版回退：游戏为更高等级选择一个原版建筑。\n\n严格：当主题没有目标等级的建筑时，升级会被阻止。\n建筑将无限期停留在当前等级。\n\n要精确控制升级产生哪个建筑，请在主题管理器中\n使用该建筑的“升级”字段。
+DISTRICT_MISSING_SKIP 跳过 — 仅主题，地块可能稀疏
+DISTRICT_MISSING_FILL 用原版补充 — 填补缺失的地块
+DISTRICT_MISSING_FALLBACK 回退到原版 — 建筑不足时使用原版
+DISTRICT_MISSING_TOOLTIP 跳过：缺失的建筑被直接丢弃。主题仍然只用已加载的资产\n生效 — 如果缺失较多，地块可能稀疏。\n\n用原版补充：原版建筑补充每个缺失的槽位。\n已加载的主题建筑仍会出现，原版填补空缺。\n\n回退到原版：如果某个槽位有任何建筑缺失，整个槽位\n将只使用原版。不会出现稀疏区域，但主题覆盖率降低。
+DISTRICT_AUTO_BULLDOZE_LABEL 自动移除非主题建筑
+DISTRICT_AUTO_BULLDOZE_TOOLTIP 逐步拆除本分区中不属于任何激活主题的现有建筑。\n仅影响可成长的住宅、商业、工业和办公建筑 —\n绝不会动公共服务建筑。\n启用“允许不属于任何主题的建筑”时无效。
+DISTRICT_ENFORCE_SPEC_LABEL 同时移除不符合特化的建筑
+DISTRICT_ENFORCE_SPEC_TOOLTIP 当分区有激活的特化（农业、林业、自给自足、旅游等）时，\n此选项还会移除类型与特化不符的主题建筑 —\n例如农业分区中的通用工业。\n\n用它来让分区完全转向其特化：类型不符的现有建筑\n会逐步被激活主题中正确特化的建筑替换。\n\n仅在同时启用“自动移除非主题建筑”时生效。\n如果分区没有激活的特化政策则无效。
+DISTRICT_PREFER_ELECTRICITY_LABEL 优先有电力的区域
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP 仅在已接入电网的区域单元格中生成新建筑。\n没有电力的单元格会被跳过并稍后重试。\n\n⚠ 在分区大部分区域尚未通电时，生成速度可能明显变慢。\n连续跳过 40 次后，该筛选会自动暂停，确保增长不会被\n永久阻断 — 一旦再次发现通电的单元格就会立即恢复。
+DISTRICT_CLUSTER_LABEL 紧贴现有建筑成片布局（毗连建筑）
+DISTRICT_CLUSTER_TOOLTIP 强制新建筑生成在现有建筑旁边，并沿道路平移，\n使可见墙面相互贴合，消除建筑模型比地块窄时\n产生的小缝隙。\n\n工作原理：\n  • 单元格相邻 — 跳过没有相邻建筑的地块的生成尝试，\n    使增长从现有建筑向外扩散，而不是随机放置\n    孤立的建筑。\n  • 位置吸附 — 当生成被接受时，新建筑会沿道路平移\n    （最多 ½ 单元格，4 米），使其模型边缘与邻居的模型\n    边缘相接。适用于模型小于 8 米单元格分配的建筑，\n    并通过投影包围盒处理旋转/未对齐网格的模型。\n\n回退机制：尝试 40 次仍找不到邻居时，该筛选会暂停，\n让空分区的第一栋建筑能正常落地 — 后续建筑随后\n紧贴它成片布局。\n\n与毗连建筑主题搭配最佳，但任何主题都适用。
+DISTRICT_SIZE_PREF_LABEL 按区域类型的建筑尺寸偏好（默认 = 游戏原始行为）：
+DISTRICT_SIZE_DEFAULT 默认
+DISTRICT_SIZE_BIGGEST 最大优先
+DISTRICT_SIZE_WIDEST 最宽优先
+DISTRICT_SIZE_DEEPEST 最深优先
+DISTRICT_SIZE_RANDOM 随机（仅权重）
+DISTRICT_SIZE_SMALLEST 最小优先
+DISTRICT_SIZE_TALLEST 最高优先
+DISTRICT_SIZE_SHORTEST 最矮优先
+DISTRICT_SIZE_PREF_TOOLTIP 默认：游戏原始行为 — 先尝试最宽的地块，逐步缩小直到主题建筑能放下。\n最大优先：偏好最宽 × 最深的占地。\n最宽优先：偏好最宽的建筑，并列时选较浅的。\n最深优先：偏好最深的建筑，并列时选较窄的。\n随机（仅权重）：不偏好尺寸 — 纯按生成权重。\n最小优先：偏好最窄 × 最浅的占地。\n最高优先：偏好最高的建筑（按模型高度）。\n最矮优先：偏好最矮的建筑（按模型高度）。
+DISTRICT_RESIDENTIAL_LABEL 住宅：
+DISTRICT_COMMERCIAL_LABEL 商业：
+DISTRICT_INDUSTRIAL_LABEL 工业：
+DISTRICT_OFFICE_LABEL 办公：
+DISTRICT_STRENGTH_LABEL 偏好强度：
+DISTRICT_STRENGTH_GENTLE 轻微
+DISTRICT_STRENGTH_MODERATE 中等
+DISTRICT_STRENGTH_STRONG 强烈
+DISTRICT_STRENGTH_ABSOLUTE 绝对（始终选择偏好尺寸）
+DISTRICT_STRENGTH_TOOLTIP 控制尺寸偏好对生成权重的压制程度。\n\n轻微 (α=0.5)：尺寸只带来轻微加成 — 生成权重仍然很重要。\n中等 (α=1.0)：均衡 — 尺寸和权重共同影响选择。\n强烈 (α=2.0)：尺寸明显主导 — 排名靠前的尺寸大多数时候出现。\n绝对：只生成排名最高的尺寸；同尺寸内由生成权重决定。
+DISTRICT_DIAGNOSTICS_BUTTON 生成诊断
+DISTRICT_DIAGNOSTICS_TOOLTIP 显示建筑在本分区生成或不生成的原因。\n在模组设置中启用“生成调试输出”可获得详细数据。
+CONFLICT_TITLE Building Themes 2 — 模组冲突
+CONFLICT_MESSAGE Building Themes 2 检测到严重的模组冲突：
+THEMES_BUTTON 主题

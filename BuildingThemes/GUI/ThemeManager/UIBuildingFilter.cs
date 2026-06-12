@@ -103,7 +103,7 @@ namespace BuildingThemes.GUI
             m_dlcEntries.AddRange(entries);
 
             string[] items = new string[entries.Count];
-            items[0] = "All DLC";
+            items[0] = Localization.Get("FILTER_ALL_DLC");
             for (int i = 1; i < entries.Count; i++)
                 items[i] = entries[i].expansion != SteamHelper.ExpansionBitMask.None
                     ? DlcNames.GetExpansionName(entries[i].expansion)
@@ -215,7 +215,7 @@ namespace BuildingThemes.GUI
             m_themeFilterNames.Add(null); // index 0 = "In any theme"
 
             themeFilter.items = new string[0];
-            themeFilter.AddItem("In any theme");
+            themeFilter.AddItem(Localization.Get("FILTER_IN_ANY_THEME"));
             foreach (var t in themes)
             {
                 if (t.name == currentThemeName) continue;
@@ -295,7 +295,7 @@ namespace BuildingThemes.GUI
 
             allZones = UIUtils.CreateButton(this);
             allZones.width = 40;
-            allZones.text = "All";
+            allZones.text = Localization.Get("FILTER_ALL");
             allZones.relativePosition = new Vector3(760, 5);
 
             allZones.eventClick += (c, p) =>
@@ -309,7 +309,7 @@ namespace BuildingThemes.GUI
 
             noZones = UIUtils.CreateButton(this);
             noZones.width = 55;
-            noZones.text = "None";
+            noZones.text = Localization.Get("FILTER_NONE");
             noZones.relativePosition = new Vector3(800, 5);
 
             noZones.eventClick += (c, p) =>
@@ -325,15 +325,15 @@ namespace BuildingThemes.GUI
             UILabel display = AddUIComponent<UILabel>();
             display.textScale = 0.8f;
             display.padding = new RectOffset(0, 0, 8, 0);
-            display.text = "Display: ";
+            display.text = Localization.Get("FILTER_DISPLAY_LABEL") + " ";
             display.relativePosition = new Vector3(0, 40);
 
             origin = UIUtils.CreateDropDown(this);
             origin.width = 90;
-            origin.AddItem("All");
-            origin.AddItem("Default");
-            origin.AddItem("Custom");
-            origin.AddItem("Cloned");
+            origin.AddItem(Localization.Get("FILTER_ALL"));
+            origin.AddItem(Localization.Get("FILTER_ORIGIN_DEFAULT"));
+            origin.AddItem(Localization.Get("FILTER_ORIGIN_CUSTOM"));
+            origin.AddItem(Localization.Get("FILTER_ORIGIN_CLONED"));
             origin.selectedIndex = 0;
             origin.relativePosition = new Vector3(display.relativePosition.x + display.width + 5, 40);
 
@@ -341,9 +341,9 @@ namespace BuildingThemes.GUI
 
             status = UIUtils.CreateDropDown(this);
             status.width = 90;
-            status.AddItem("All");
-            status.AddItem("Included");
-            status.AddItem("Excluded");
+            status.AddItem(Localization.Get("FILTER_ALL"));
+            status.AddItem(Localization.Get("FILTER_STATUS_INCLUDED"));
+            status.AddItem(Localization.Get("FILTER_STATUS_EXCLUDED"));
             status.selectedIndex = 0;
             status.relativePosition = new Vector3(origin.relativePosition.x + origin.width + 5, 40);
 
@@ -353,12 +353,12 @@ namespace BuildingThemes.GUI
             UILabel levelLabel = AddUIComponent<UILabel>();
             levelLabel.textScale = 0.8f;
             levelLabel.padding = new RectOffset(0, 0, 8, 0);
-            levelLabel.text = "Level: ";
+            levelLabel.text = Localization.Get("FILTER_LEVEL_LABEL") + " ";
             levelLabel.relativePosition = new Vector3(status.relativePosition.x + status.width + 10, 40);
 
             levelFilter = UIUtils.CreateDropDown(this);
             levelFilter.width = 55;
-            levelFilter.AddItem("All");
+            levelFilter.AddItem(Localization.Get("FILTER_ALL"));
             levelFilter.AddItem("1");
             levelFilter.AddItem("2");
             levelFilter.AddItem("3");
@@ -373,12 +373,12 @@ namespace BuildingThemes.GUI
             UILabel sizeLabel = AddUIComponent<UILabel>();
             sizeLabel.textScale = 0.8f;
             sizeLabel.padding = new RectOffset(0, 0, 8, 0);
-            sizeLabel.text = "Size: ";
+            sizeLabel.text = Localization.Get("FILTER_SIZE_LABEL") + " ";
             sizeLabel.relativePosition = new Vector3(levelFilter.relativePosition.x + levelFilter.width + 10, 40);
 
             sizeFilterX = UIUtils.CreateDropDown(this);
             sizeFilterX.width = 60;
-            sizeFilterX.AddItem("All");
+            sizeFilterX.AddItem(Localization.Get("FILTER_ALL"));
             sizeFilterX.AddItem("1");
             sizeFilterX.AddItem("2");
             sizeFilterX.AddItem("3");
@@ -395,7 +395,7 @@ namespace BuildingThemes.GUI
 
             sizeFilterY = UIUtils.CreateDropDown(this);
             sizeFilterY.width = 60;
-            sizeFilterY.AddItem("All");
+            sizeFilterY.AddItem(Localization.Get("FILTER_ALL"));
             sizeFilterY.AddItem("1");
             sizeFilterY.AddItem("2");
             sizeFilterY.AddItem("3");
@@ -410,11 +410,11 @@ namespace BuildingThemes.GUI
             float halfWidth = (width - 5) / 2f;
             dlcFilter = UIUtils.CreateDropDown(this);
             dlcFilter.width = halfWidth;
-            dlcFilter.tooltip = "Filter by DLC / Content Creator Pack.\nOnly DLCs that are installed and have buildings in this theme are shown.";
+            dlcFilter.tooltip = Localization.Get("FILTER_DLC_TOOLTIP");
             dlcFilter.relativePosition = new Vector3(0, 74);
 
             m_dlcEntries.Add(new DlcEntry()); // index 0 = "All DLC"
-            dlcFilter.AddItem("All DLC");
+            dlcFilter.AddItem(Localization.Get("FILTER_ALL_DLC"));
             dlcFilter.selectedIndex = 0;
 
             dlcFilter.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 8);
@@ -423,14 +423,14 @@ namespace BuildingThemes.GUI
             UILabel heightLabel = AddUIComponent<UILabel>();
             heightLabel.textScale = 0.8f;
             heightLabel.padding = new RectOffset(0, 0, 8, 0);
-            heightLabel.text = "Height:";
+            heightLabel.text = Localization.Get("FILTER_HEIGHT_LABEL");
             heightLabel.relativePosition = new Vector3(halfWidth + 8, 74);
 
             UITextField heightMin = UIUtils.CreateTextField(this);
             heightMin.width = 48;
             heightMin.height = 28;
             heightMin.padding = new RectOffset(4, 4, 6, 4);
-            heightMin.tooltip = "Minimum building height in metres (leave blank for no limit)";
+            heightMin.tooltip = Localization.Get("FILTER_HEIGHT_MIN_TOOLTIP");
             heightMin.relativePosition = new Vector3(heightLabel.relativePosition.x + heightLabel.width + 3, 74);
 
             UILabel heightSep = AddUIComponent<UILabel>();
@@ -443,7 +443,7 @@ namespace BuildingThemes.GUI
             heightMax.width = 48;
             heightMax.height = 28;
             heightMax.padding = new RectOffset(4, 4, 6, 4);
-            heightMax.tooltip = "Maximum building height in metres (leave blank for no limit)";
+            heightMax.tooltip = Localization.Get("FILTER_HEIGHT_MAX_TOOLTIP");
             heightMax.relativePosition = new Vector3(heightSep.relativePosition.x + heightSep.width + 2, 74);
 
             heightMin.eventTextChanged += (c, s) =>
@@ -464,7 +464,7 @@ namespace BuildingThemes.GUI
             nameLabel.textScale = 0.8f;
             nameLabel.padding = new RectOffset(0, 0, 8, 0);
             nameLabel.relativePosition = new Vector3(width - 250, 40);
-            nameLabel.text = "Name: ";
+            nameLabel.text = Localization.Get("FILTER_NAME_LABEL") + " ";
 
             nameFilter = UIUtils.CreateTextField(this);
             nameFilter.width = 200;
@@ -479,51 +479,42 @@ namespace BuildingThemes.GUI
             UILabel themeLabel = AddUIComponent<UILabel>();
             themeLabel.textScale = 0.8f;
             themeLabel.padding = new RectOffset(0, 0, 8, 0);
-            themeLabel.text = "Also in:";
+            themeLabel.text = Localization.Get("FILTER_ALSO_IN_LABEL");
             themeLabel.relativePosition = new Vector3(0, 108);
 
             themeFilter = UIUtils.CreateDropDown(this);
             themeFilter.width = width - themeLabel.width - 8;
-            themeFilter.tooltip = "Show only buildings that are also included in the selected theme.\nUseful for comparing or merging themes.";
+            themeFilter.tooltip = Localization.Get("FILTER_ALSO_IN_TOOLTIP");
             themeFilter.relativePosition = new Vector3(themeLabel.width + 8, 108);
-            themeFilter.AddItem("In any theme");
+            themeFilter.AddItem(Localization.Get("FILTER_IN_ANY_THEME"));
             themeFilter.selectedIndex = 0;
 
             themeFilter.eventSelectedIndexChanged += (c, i) => eventFilteringChanged(this, 10);
 
             // Row 5 (y=142): four checkboxes + counter label
             // "Show loaded" — hides buildings whose prefab is available
-            m_showLoadedCb = MakeFilterCheckbox("Show loaded", 0, 142, true);
-            m_showLoadedCb.tooltip = "Show buildings whose prefab is loaded and available";
+            m_showLoadedCb = MakeFilterCheckbox(Localization.Get("FILTER_SHOW_LOADED"), 0, 142, true);
+            m_showLoadedCb.tooltip = Localization.Get("FILTER_SHOW_LOADED_TOOLTIP");
             m_showLoadedCb.eventCheckChanged += (c, v) => { showLoaded = v; eventFilteringChanged(this, 6); };
 
             // "Show missing" — hides workshop/custom assets that failed to load
-            m_showMissingCb = MakeFilterCheckbox("Show missing", 150, 142, true);
-            m_showMissingCb.tooltip = "Show workshop/custom assets that are not currently loaded\n(not subscribed, disabled by Skyve, or load error)";
+            m_showMissingCb = MakeFilterCheckbox(Localization.Get("FILTER_SHOW_MISSING"), 150, 142, true);
+            m_showMissingCb.tooltip = Localization.Get("FILTER_SHOW_MISSING_TOOLTIP");
             m_showMissingCb.eventCheckChanged += (c, v) => { showMissing = v; eventFilteringChanged(this, 6); };
 
             // "Show DLC/Env" — hides assets gated by unowned DLC or wrong environment
-            m_showDLCCb = MakeFilterCheckbox("Show DLC/Env", 300, 142, true);
-            m_showDLCCb.tooltip = "Show vanilla/DLC assets not available\n(DLC not owned, or asset excluded for this map environment)";
+            m_showDLCCb = MakeFilterCheckbox(Localization.Get("FILTER_SHOW_DLC"), 300, 142, true);
+            m_showDLCCb.tooltip = Localization.Get("FILTER_SHOW_DLC_TOOLTIP");
             m_showDLCCb.eventCheckChanged += (c, v) => { showDLCLocked = v; eventFilteringChanged(this, 6); };
 
             // "Spawnable only" — show only loaded + included + valid-dimension buildings
-            m_canSpawnCb = MakeFilterCheckbox("Spawnable only", 480, 142, false);
-            m_canSpawnCb.tooltip = "Show only buildings that are loaded, included in the theme,\nand have cell dimensions (1–4) valid for zone spawning";
+            m_canSpawnCb = MakeFilterCheckbox(Localization.Get("FILTER_SPAWNABLE_ONLY"), 480, 142, false);
+            m_canSpawnCb.tooltip = Localization.Get("FILTER_SPAWNABLE_ONLY_TOOLTIP");
             m_canSpawnCb.eventCheckChanged += (c, v) => { canSpawnOnly = v; eventFilteringChanged(this, 7); };
 
             // "Wall-to-wall only" — filter by placement design (no side gaps)
-            m_wallToWallCb = MakeFilterCheckbox("Wall-to-wall", 630, 142, false);
-            m_wallToWallCb.tooltip =
-                "Show only buildings designed to be placed flush against their neighbours\n" +
-                "with no side gaps.\n\n" +
-                "Detected by two signals:\n" +
-                "• Corner placement mode (CornerLeft / CornerRight) — always wall-to-wall.\n" +
-                "• Straight buildings whose mesh fills ≥ 85 % of the lot width — no side\n" +
-                "  setback left by the creator.\n\n" +
-                "Workshop buildings are often tagged as ordinary residential/commercial even\n" +
-                "when they are wall-to-wall, so category filtering alone is not enough.\n" +
-                "This filter checks the mesh geometry directly.";
+            m_wallToWallCb = MakeFilterCheckbox(Localization.Get("FILTER_WALL_TO_WALL"), 630, 142, false);
+            m_wallToWallCb.tooltip = Localization.Get("FILTER_WALL_TO_WALL_TOOLTIP");
             m_wallToWallCb.eventCheckChanged += (c, v) => { wallToWallOnly = v; eventFilteringChanged(this, 11); };
 
         }

@@ -1,0 +1,223 @@
+MOD_DESCRIPTION 建物テーマを作成して都市や地区に適用できます。boformer（Sebastian Schöner）作の Building Themes をコミュニティが保守するフォークです。Harmony 2.x への移行は roberto-naharro。
+SETTINGS_GROUP_BEHAVIOUR 動作
+SETTINGS_MISSING_ASSETS_LABEL 既定: 不足しているワークショップ建物
+SETTINGS_MISSING_ASSETS_SKIP スキップ（まばらな区画、テーマのみ）
+SETTINGS_MISSING_ASSETS_FILL バニラで補完（不足分の区画を埋める）
+SETTINGS_MISSING_ASSETS_FALLBACK バニラに切り替え（建物が少ない場合はバニラを使用）
+SETTINGS_EMPTY_LEVEL_LABEL 既定: テーマにそのレベルの建物がない場合
+SETTINGS_EMPTY_LEVEL_VANILLA バニラで代替（ゲームがそのレベルのバニラ建物を選択）
+SETTINGS_EMPTY_LEVEL_STRICT 厳格（レベルアップを凍結。建物は現在のレベルのまま）
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL 自動解体のペース
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE 穏やか（遅い）
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL 普通
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE 積極的（速い）
+SETTINGS_INVALID_THEME_WARNING 無効なテーマを選択したときに警告を表示
+SETTINGS_GROUP_DEBUGGING デバッグ
+SETTINGS_DEBUG_OUTPUT デバッグ出力を生成
+SETTINGS_GROUP_MAINTENANCE メンテナンス
+SETTINGS_UNLOCK_POLICIES 政策パネルを最初からアンロック
+SETTINGS_PREFAB_CLONING プレハブの複製を有効化（実験的 — 下の警告を読んでください）
+SETTINGS_PREFAB_CLONING_WARNING ⚠ セーブデータへのリスク: 複製された建物はロード時に\n生成され、セーブデータに保存されます。\nこの機能を無効にするか MOD の購読を解除すると、\n複製された建物は次回ロード時にすべて消えます。\nセーブデータ自体は破損しませんが、それらの建物は\n永久に失われます。\nこのリスクを受け入れられる場合のみ有効にしてください。
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION District Styles Plus のスタイルを BT2 のテーマとして取り込みます。\n各テーマは「[DSP] <スタイル名>」という名前になります。\n先に都市をロードしてください — 取り込み済みのスタイルはスキップされます。
+SETTINGS_DSP_IMPORT_BUTTON District Styles Plus から取り込む
+SETTINGS_DSP_NEEDS_GAME この操作にはアクティブなゲームセッションが必要です。\n先に都市をロードしてから、このボタンを押してください。
+SETTINGS_DSP_RESULT_NONE District Styles Plus のカスタムスタイルが見つかりません。現在の都市に District Styles Plus のカスタムスタイルが作成されているか確認してください。
+SETTINGS_DSP_RESULT_ALL_SKIPPED {0} 件のスタイルはすべて取り込み済みです（接頭辞「{1}」）。新しく追加するものはありません。
+SETTINGS_DSP_RESULT_IMPORTED {0} 件のスタイルを Building Themes のテーマとして取り込みました（接頭辞「{1}」）。
+SETTINGS_DSP_RESULT_MIXED {0} 件のスタイルを取り込みました（接頭辞「{1}」）。{2} 件は既に存在したためスキップしました。
+SETTINGS_RESET_DEFAULTS 既定値に戻す
+SETTINGS_XML_CORRUPT BuildingThemes は設定とテーマを保存する\nBuildingThemes.xml ファイルを読み込めません！\n修復するには、このファイルを削除してゲームを再起動してください:
+THEME_MANAGER_TITLE テーママネージャー
+THEME_MANAGER_COPY_OF {0} のコピー
+THEME_MANAGER_THEME_NOT_FOUND テーマが見つかりません
+THEME_MANAGER_VALIDITY_EMPTY 建物が1つも含まれていません。
+THEME_MANAGER_VALIDITY_NO_L1 レベル1の建物が含まれていません。
+THEME_MANAGER_VALIDITY_NOT_LOADED 建物 {0}/{1} 件をロード済み。
+THEME_MANAGER_READONLY_TOOLTIP 組み込みテーマは読み取り専用です。\n「テーマをコピー」で編集可能なコピーを作成してください。
+THEME_MANAGER_NEW_THEME 新規テーマ
+THEME_MANAGER_DELETE_THEME テーマを削除
+THEME_MANAGER_DELETE_CONFIRM テーマ「{0}」を本当に削除しますか？
+THEME_MANAGER_DEPENDENCIES ワークショップ依存関係
+THEME_MANAGER_DEPENDENCIES_TOOLTIP このテーマのワークショップアセットを「ロード済み / 不足」の状態別に一覧表示します
+THEME_MANAGER_RENAME_THEME テーマ名を変更
+THEME_MANAGER_COPY_THEME テーマをコピー
+THEME_MANAGER_BTN_ALL 全て
+THEME_MANAGER_BTN_NONE なし
+THEME_MANAGER_BTN_VALID 有効
+THEME_MANAGER_BTN_MISSING 不足
+THEME_MANAGER_INCLUDE_LABEL 含める:
+THEME_MANAGER_EXCLUDE_LABEL 除外:
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP 現在のフィルター表示中の全建物をこのテーマに含めます
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP 現在のフィルター表示中の全建物をこのテーマから除外します
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP 現在のフィルター表示中の出現可能な建物をすべて含めます\n（ロード済み + 有効なセル寸法 1～4）
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP 現在のフィルター表示中の不足／未ロードの建物をすべてこのテーマから除外します
+THEME_MANAGER_EXCLUDE_MISSING_TITLE 不足分を除外
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM 現在のフィルター表示中の不足建物 {0} 件をこのテーマから除外しますか？
+THEME_MANAGER_INCLUDE_VALID_TITLE 有効分を含める
+THEME_MANAGER_INCLUDE_VALID_CONFIRM 現在のフィルター表示中の出現可能な建物 {0} 件をこのテーマに含めますか？
+THEME_MANAGER_CLONE_BUILDING 建物を複製
+THEME_MANAGER_RESIZE_TOOLTIP ドラッグでサイズ変更
+THEME_MANAGER_COUNTER_SHOWN 出現可能 {0} / 表示 {1}
+THEME_MANAGER_COUNTER_MISSING 不足 {0}
+THEME_MANAGER_COUNTER_DLC DLC/環境 {0}
+FILTER_ALL 全て
+FILTER_NONE なし
+FILTER_ALL_DLC 全DLC
+FILTER_DISPLAY_LABEL 表示:
+FILTER_ORIGIN_DEFAULT 標準
+FILTER_ORIGIN_CUSTOM カスタム
+FILTER_ORIGIN_CLONED 複製
+FILTER_STATUS_INCLUDED 含む
+FILTER_STATUS_EXCLUDED 除外
+FILTER_LEVEL_LABEL レベル:
+FILTER_SIZE_LABEL サイズ:
+FILTER_DLC_TOOLTIP DLC / コンテンツクリエイターパックで絞り込みます。\nインストール済みで、このテーマに建物がある DLC のみ表示されます。
+FILTER_HEIGHT_LABEL 高さ:
+FILTER_HEIGHT_MIN_TOOLTIP 建物の最低高（メートル）。空欄で制限なし
+FILTER_HEIGHT_MAX_TOOLTIP 建物の最高高（メートル）。空欄で制限なし
+FILTER_NAME_LABEL 名前:
+FILTER_ALSO_IN_LABEL 他テーマ:
+FILTER_ALSO_IN_TOOLTIP 選択したテーマにも含まれている建物のみ表示します。\nテーマの比較や統合に便利です。
+FILTER_IN_ANY_THEME いずれかのテーマ
+FILTER_SHOW_LOADED ロード済みを表示
+FILTER_SHOW_LOADED_TOOLTIP プレハブがロード済みで利用可能な建物を表示します
+FILTER_SHOW_MISSING 不足を表示
+FILTER_SHOW_MISSING_TOOLTIP 現在ロードされていないワークショップ／カスタムアセットを表示します\n（未購読、Skyve で無効化、またはロードエラー）
+FILTER_SHOW_DLC DLC/環境を表示
+FILTER_SHOW_DLC_TOOLTIP 利用できないバニラ／DLC アセットを表示します\n（DLC 未所持、またはこのマップ環境では除外されているアセット）
+FILTER_SPAWNABLE_ONLY 出現可能のみ
+FILTER_SPAWNABLE_ONLY_TOOLTIP ロード済みでテーマに含まれ、ゾーンに出現できる\n有効なセル寸法（1～4）を持つ建物のみ表示します
+FILTER_WALL_TO_WALL 壁面密着
+FILTER_WALL_TO_WALL_TOOLTIP 隣の建物と隙間なく密着して配置されるよう設計された建物のみ表示します。\n\n次の2つのシグナルで検出します:\n• 角配置モード（CornerLeft / CornerRight）— 常に壁面密着。\n• メッシュが区画幅の 85 % 以上を占める直線型の建物 — 制作者が\n  側面の余白を残していないもの。\n\nワークショップの建物は壁面密着でも通常の住宅／商業として\nタグ付けされていることが多く、カテゴリの絞り込みだけでは不十分です。\nこのフィルターはメッシュ形状を直接チェックします。
+OPTIONS_NO_OPTION 利用できるオプションがありません
+OPTIONS_INCLUDE 含める
+OPTIONS_SPAWN_WEIGHT_LABEL 出現ウェイト (1–100):
+OPTIONS_SPAWN_WEIGHT_TOOLTIP 同じゾーン・レベル・サイズの他の建物と比較した相対的な出現ウェイトです。\n\n例: ウェイト 10 の建物が2つあれば、それぞれ 50 % の確率で出現します。\nウェイト 20 の建物は、同じ枠のウェイト 10 の建物の2倍出現しやすくなります。\n\n枠内に1つしかない建物はウェイトに関係なく常に出現します（100 %）。\n\n最小: 1  |  既定: 10  |  最大: 100
+OPTIONS_CORNER_LABEL 角区画でも使用
+OPTIONS_CORNER_TOOLTIP この建物を角区画（交差点）にも出現させます。\n\n角を埋めたい直線型の建物に使ってください。通常の区画にも引き続き\n出現します。注意: 直線型の建物は、角専用に作られたアセットのように\n物理的に角を回り込めません — 正面は大通りに向き、側面の壁が\n交差する道路に面します。\n\n本物の角用アセット（プレビューに「角（左/右）」と表示）は既に角を\n埋めるため、このオプションは効果がありません。
+OPTIONS_UPGRADE_LABEL アップグレード:
+OPTIONS_UPGRADE_TOOLTIP レベルアップ時に出現させる建物の名前。\n空欄にするとランダムに出現します。
+OPTIONS_ASSET_NAME_LABEL アセット名:
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL アセット名（ワークショップ {0}）:
+OPTIONS_ASSET_NAME_TOOLTIP プレハブの完全な内部名です。ワークショップアセットでは Steam ワークショップ ID を含みます。\nクリックで選択してコピーできます。
+OPTIONS_PLOP 設置
+OPTIONS_BULLDOZE_ALL すべて解体
+OPTIONS_BASE_LABEL ベース:
+OPTIONS_BASE_TOOLTIP 元の建物の名前です。
+OPTIONS_WORKSHOP_ID_TOOLTIP ワークショップ ID: {0}
+THEME_ITEM_BADGE_VANILLA バニラのみのテーマ: DLC やワークショップアセットは不要です。
+THEME_ITEM_BADGE_DLC DLC が必要です。ワークショップの購読は不要です。
+THEME_ITEM_MISSING_FILL 不足 {0} 件: バニラで補完されます。
+THEME_ITEM_MISSING_FALLBACK 不足 {0} 件: 該当する枠はバニラに切り替わります。
+PREVIEW_WALL_TO_WALL 壁面密着
+PREVIEW_CORNER_LEFT 角（左）
+PREVIEW_CORNER_RIGHT 角（右）
+PREVIEW_LEVEL レベル {0}
+BUILDING_ITEM_NOT_LOADED （未ロード）
+ORIGIN_WORKSHOP ワークショップ
+ORIGIN_VANILLA バニラアセット
+ORIGIN_INCLUDED_IN {0} に収録
+CATEGORY_RESIDENTIAL_LOW 低密度住宅
+CATEGORY_RESIDENTIAL_HIGH 高密度住宅
+CATEGORY_RESIDENTIAL_ECO 自給自足住宅
+CATEGORY_COMMERCIAL_LOW 低密度商業
+CATEGORY_COMMERCIAL_HIGH 高密度商業
+CATEGORY_COMMERCIAL_LEISURE レジャー商業
+CATEGORY_COMMERCIAL_TOURISM 観光商業
+CATEGORY_COMMERCIAL_ECO オーガニック・地元産品商業
+CATEGORY_INDUSTRIAL 一般産業
+CATEGORY_FARMING 農業
+CATEGORY_FORESTRY 林業
+CATEGORY_OIL 石油産業
+CATEGORY_ORE 鉱石産業
+CATEGORY_OFFICE オフィス
+CATEGORY_OFFICE_HIGHTECH IT オフィス
+CATEGORY_RESIDENTIAL_W2W 壁面密着住宅
+CATEGORY_COMMERCIAL_W2W 壁面密着商業
+CATEGORY_OFFICE_W2W 壁面密着オフィス
+CATEGORY_OFFICE_FINANCIAL 金融オフィス
+MODAL_OK OK
+MODAL_CANCEL キャンセル
+MODAL_CLOSE 閉じる
+MODAL_CREATE 作成
+MODAL_RENAME 名前変更
+MODAL_CLONE 複製
+NEW_THEME_TITLE 新規テーマを作成
+NEW_THEME_NAME_LABEL テーマ名:
+RENAME_THEME_NAME_LABEL 新しい名前:
+CLONE_TITLE 建物を複製
+CLONE_NAME_LABEL 建物名:
+CLONE_EXISTS_TOOLTIP そのレベルの建物は既に存在します
+CLONE_ENTER_NAME_TOOLTIP 名前を入力してください
+WARNING_TITLE 警告
+DEPS_COPY_MISSING 不足 ID をコピー
+DEPS_COPY_MISSING_TOOLTIP 不足している全アセットの Steam ワークショップ ID をクリップボードにコピーします（1行に1つ）
+DEPS_COPY_ALL 全 ID をコピー
+DEPS_COPY_ALL_TOOLTIP このテーマの全アセットの Steam ワークショップ ID をクリップボードにコピーします（1行に1つ）\nSkyve での有効化管理に便利です
+DEPS_SUBSCRIBE_MISSING 不足分を購読
+DEPS_SUBSCRIBE_MISSING_TOOLTIP 不足している全ワークショップアセットを Steam で購読します\n新しく購読したアセットを読み込むにはゲームの再起動が必要です
+DEPS_REQUESTED リクエスト済み ({0})
+DEPS_NO_THEME テーマが選択されていません。
+DEPS_SUMMARY ワークショップアセット {0} 件 — ロード済み {1}、不足 {2}。
+DEPS_SECTION_MISSING 不足 — 未ロード ({0})
+DEPS_SECTION_LOADED ロード済み ({0})
+DEPS_NO_WORKSHOP_ASSETS このテーマにはワークショップアセットがありません。
+DEPS_STEAM_ID_TOOLTIP Steam ワークショップ ID: {0}
+DEPS_OPEN 開く
+DEPS_OPEN_TOOLTIP Steam ワークショップで開く
+POLICY_TAB_THEMES テーマ
+POLICY_ENABLE_MANAGEMENT_CITY この都市でテーマ管理を有効化
+POLICY_ENABLE_MANAGEMENT_DISTRICT この地区でテーマ管理を有効化
+POLICY_DISTRICT_OPTIONS 地区オプション
+POLICY_DISTRICT_OPTIONS_TOOLTIP この地区のブラックリストモード、レベル動作、\n不足アセットの処理、出現診断を設定します。
+POLICY_THEME_WARNING このテーマは期待どおりに動作しない可能性があります:
+DIAG_TITLE 地区テーマ診断
+DIAG_COPY クリップボードにコピー
+DIAG_COPIED コピーしました！
+DIAG_SKYVE_NOTE Skyve がインストールされています — テーママネージャーの「ワークショップ依存関係」で\n不足アセットの ID をコピーし、Skyve で有効化を管理してください。
+DISTRICT_OPTIONS_TITLE 地区テーマオプション
+DISTRICT_BLACKLIST_LABEL どのテーマにもない建物を許可（ブラックリストモード）
+DISTRICT_BLACKLIST_TOOLTIP 有効にすると、バニラ／テーマの全建物が出現可能になります — テーマはブラックリストとして機能します\n（明示的に除外された建物のみブロックされます）。\n無効にすると、この地区のアクティブなテーマに含まれる建物のみ出現できます。
+DISTRICT_LEVEL_UP_LABEL レベルアップ — そのレベルの建物がない場合:
+DISTRICT_NOT_LOADED_LABEL 購読済みの建物が未ロードの場合:
+DISTRICT_LEVEL_VANILLA バニラで代替 — ゲームがバニラ建物を選択
+DISTRICT_LEVEL_STRICT 厳格 — 現在のレベルでレベルアップを凍結
+DISTRICT_LEVEL_TOOLTIP バニラで代替: ゲームが上のレベルのバニラ建物を選択します。\n\n厳格: テーマに目標レベルの建物がない場合、レベルアップはブロックされます。\n建物は現在のレベルのまま維持されます。\n\nレベルアップでどの建物が出るかを正確に制御するには、テーママネージャーで\nその建物の「アップグレード」欄を使用してください。
+DISTRICT_MISSING_SKIP スキップ — テーマのみ、区画がまばらになる場合あり
+DISTRICT_MISSING_FILL バニラで補完 — 不足分の区画を埋める
+DISTRICT_MISSING_FALLBACK バニラに切り替え — 建物が少ない場合はバニラを使用
+DISTRICT_MISSING_TOOLTIP スキップ: 不足している建物は単に除外されます。テーマはロード済みの\nアセットだけで適用されます — 不足が多いと区画がまばらになることがあります。\n\nバニラで補完: バニラの建物が不足分の区画を埋めます。\nロード済みのテーマ建物は引き続き出現し、バニラが隙間を埋めます。\n\nバニラに切り替え: 枠内のどれか1つでも不足していると、その枠全体が\nバニラのみに切り替わります。まばらにはなりませんが、テーマの適用範囲は減ります。
+DISTRICT_AUTO_BULLDOZE_LABEL テーマ外の建物を自動撤去
+DISTRICT_AUTO_BULLDOZE_TOOLTIP この地区でアクティブなテーマに属さない既存の建物を徐々に解体します。\n対象は成長型の住宅・商業・産業・オフィスの建物のみで、\n公共サービスの建物には一切影響しません。\n「どのテーマにもない建物を許可」が有効な場合は効果がありません。
+DISTRICT_ENFORCE_SPEC_LABEL 特化に合わない建物も撤去
+DISTRICT_ENFORCE_SPEC_TOOLTIP 地区にアクティブな特化（農業、林業、自給自足、観光など）がある場合、\nこのオプションは特化に合わない種類のテーマ建物も撤去します —\n例えば農業地区の一般産業など。\n\n地区を特化へ完全に移行させたいときに使ってください: 種類の合わない既存の\n建物は、アクティブなテーマの正しく特化された建物に徐々に置き換えられます。\n\n「テーマ外の建物を自動撤去」が有効な場合にのみ機能します。\n地区にアクティブな特化政策がない場合は効果がありません。
+DISTRICT_PREFER_ELECTRICITY_LABEL 電気のあるゾーンを優先
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP 既に電力網に接続されているゾーンセルにのみ新しい建物を出現させます。\n電気のないセルはスキップされ、後で再試行されます。\n\n⚠ 地区の大部分が未電化の間は、出現がかなり遅くなることがあります。\n40 回連続でスキップされるとフィルターは自動的に一時停止し、成長が\n永久にブロックされないようにします — 電化されたセルが再び見つかると\nすぐに再開します。
+DISTRICT_CLUSTER_LABEL 既存の建物に寄せて配置（壁面密着）
+DISTRICT_CLUSTER_TOOLTIP 新しい建物を既存の建物の隣に出現させ、道路に沿ってずらして\n見えている壁同士を接触させます。建物のメッシュが区画より狭い場合に\n生じる小さな隙間をなくします。\n\n仕組み:\n  • セル隣接 — 隣に建物がない区画への出現はスキップされるため、\n    ランダムに孤立した建物を置くのではなく、既存の建物から外へ\n    広がるように成長します。\n  • 位置スナップ — 出現が承認されると、新しい建物は道路に沿って\n    （最大 ½ セル、4 m）ずらされ、メッシュの端が隣のメッシュの端に\n    接します。モデルが 8 m のセル割り当てより小さい建物にも機能し、\n    回転した／グリッドに揃っていないメッシュも投影バウンディング\n    ボックスで処理します。\n\nフォールバック: 40 回試しても隣が見つからない場合、フィルターは一時停止し、\n空の地区でも最初の建物が普通に出現できます — 以降の建物はそれに\n寄り添って配置されます。\n\n壁面密着テーマと相性抜群ですが、どのテーマでも機能します。
+DISTRICT_SIZE_PREF_LABEL ゾーン種別ごとの建物サイズ優先（既定 = ゲーム本来の動作）:
+DISTRICT_SIZE_DEFAULT 既定
+DISTRICT_SIZE_BIGGEST 大きい順
+DISTRICT_SIZE_WIDEST 幅広い順
+DISTRICT_SIZE_DEEPEST 奥行き順
+DISTRICT_SIZE_RANDOM ランダム（ウェイトのみ）
+DISTRICT_SIZE_SMALLEST 小さい順
+DISTRICT_SIZE_TALLEST 高い順
+DISTRICT_SIZE_SHORTEST 低い順
+DISTRICT_SIZE_PREF_TOOLTIP 既定: ゲーム本来の動作 — 最も広い区画から試し、テーマの建物が収まるまで縮小します。\n大きい順: 最も幅広く奥行きのある接地面を優先します。\n幅広い順: 最も幅広い建物を優先し、同点なら奥行きの浅いものを選びます。\n奥行き順: 最も奥行きのある建物を優先し、同点なら幅の狭いものを選びます。\nランダム（ウェイトのみ）: サイズの偏りなし — 出現ウェイトのみで決まります。\n小さい順: 最も幅が狭く浅い接地面を優先します。\n高い順: 最も高い建物を優先します（メッシュの高さ基準）。\n低い順: 最も低い建物を優先します（メッシュの高さ基準）。
+DISTRICT_RESIDENTIAL_LABEL 住宅:
+DISTRICT_COMMERCIAL_LABEL 商業:
+DISTRICT_INDUSTRIAL_LABEL 産業:
+DISTRICT_OFFICE_LABEL オフィス:
+DISTRICT_STRENGTH_LABEL 優先の強さ:
+DISTRICT_STRENGTH_GENTLE 弱い
+DISTRICT_STRENGTH_MODERATE 中程度
+DISTRICT_STRENGTH_STRONG 強い
+DISTRICT_STRENGTH_ABSOLUTE 絶対（常に優先サイズを選択）
+DISTRICT_STRENGTH_TOOLTIP サイズ優先が出現ウェイトをどの程度上回るかを制御します。\n\n弱い (α=0.5): サイズはわずかに有利になるだけ — 出現ウェイトが依然として大きく影響します。\n中程度 (α=1.0): バランス型 — サイズとウェイトの両方が選択に影響します。\n強い (α=2.0): サイズが強く支配 — 上位サイズがほとんどの場合出現します。\n絶対: 最上位のサイズのみが出現し、そのサイズ内では出現ウェイトで決まります。
+DISTRICT_DIAGNOSTICS_BUTTON 出現診断
+DISTRICT_DIAGNOSTICS_TOOLTIP この地区で建物が出現する／しない理由を表示します。\n詳細なデータを得るには、MOD 設定で「デバッグ出力を生成」を有効にしてください。
+CONFLICT_TITLE Building Themes 2 — MOD 競合
+CONFLICT_MESSAGE Building Themes 2 が重大な MOD の競合を検出しました:
+THEMES_BUTTON テーマ

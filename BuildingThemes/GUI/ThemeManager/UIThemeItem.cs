@@ -11,8 +11,8 @@ namespace BuildingThemes.GUI
         //   hidden - has at least one workshop asset
         private static readonly Color32 BadgeColorVanilla = new Color32(100, 220, 100, 255);
         private static readonly Color32 BadgeColorDlc     = new Color32(220, 100, 100, 255);
-        private const string BadgeTooltipVanilla = "Vanilla-only theme: no DLC or workshop assets required.";
-        private const string BadgeTooltipDlc     = "Needs DLC. No workshop subscriptions required.";
+        private static string BadgeTooltipVanilla => Localization.Get("THEME_ITEM_BADGE_VANILLA");
+        private static string BadgeTooltipDlc     => Localization.Get("THEME_ITEM_BADGE_DLC");
 
         private UILabel m_name;
         private UILabel m_dlcBadge;
@@ -131,8 +131,8 @@ namespace BuildingThemes.GUI
                 && BuildingThemesManager.MissingAssetBehavior != MissingAssetMode.Skip)
             {
                 modeNote = BuildingThemesManager.MissingAssetBehavior == MissingAssetMode.FillWithVanilla
-                    ? stats.MissingBuildings + " missing: supplemented with vanilla."
-                    : stats.MissingBuildings + " missing: affected buckets fall back to vanilla.";
+                    ? Localization.Get("THEME_ITEM_MISSING_FILL", stats.MissingBuildings)
+                    : Localization.Get("THEME_ITEM_MISSING_FALLBACK", stats.MissingBuildings);
             }
             m_name.tooltip = validityError == null
                 ? m_theme.displayName

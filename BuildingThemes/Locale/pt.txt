@@ -1,0 +1,223 @@
+MOD_DESCRIPTION Cria temas de edifícios e aplica-os a cidades e distritos. Fork mantido pela comunidade do Building Themes de boformer (Sebastian Schöner). Migração para Harmony 2.x por roberto-naharro.
+SETTINGS_GROUP_BEHAVIOUR Comportamento
+SETTINGS_MISSING_ASSETS_LABEL Padrão: edifícios da Workshop em falta
+SETTINGS_MISSING_ASSETS_SKIP Ignorar (lotes esparsos, apenas tema)
+SETTINGS_MISSING_ASSETS_FILL Completar com o jogo base (preencher lotes em falta)
+SETTINGS_MISSING_ASSETS_FALLBACK Recorrer ao jogo base (usá-lo se houver poucos edifícios)
+SETTINGS_EMPTY_LEVEL_LABEL Padrão: quando o tema não tem edifícios para um nível
+SETTINGS_EMPTY_LEVEL_VANILLA Recorrer ao jogo base (o jogo escolhe um edifício base para esse nível)
+SETTINGS_EMPTY_LEVEL_STRICT Estrito (congelar melhorias; o edifício fica no nível atual)
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL Ritmo de demolição automática
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE Suave (lento)
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL Normal
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE Agressivo (rápido)
+SETTINGS_INVALID_THEME_WARNING Mensagem de aviso ao selecionar um tema inválido
+SETTINGS_GROUP_DEBUGGING Depuração
+SETTINGS_DEBUG_OUTPUT Gerar saída de depuração
+SETTINGS_GROUP_MAINTENANCE Manutenção
+SETTINGS_UNLOCK_POLICIES Desbloquear o painel de políticas desde o início
+SETTINGS_PREFAB_CLONING Ativar clonagem de prefabs (experimental — leia o aviso abaixo)
+SETTINGS_PREFAB_CLONING_WARNING ⚠ RISCO PARA O JOGO GUARDADO: os edifícios clonados são gerados\nao carregar e armazenados no teu jogo guardado.\nSe desativares esta opção ou cancelares a subscrição do mod,\ntodos os edifícios clonados desaparecerão no próximo carregamento.\nO jogo guardado não fica corrompido, mas esses\nedifícios perdem-se permanentemente.\nAtiva isto apenas se aceitares esse risco.
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION Importa os estilos do District Styles Plus como temas BT2.\nCada um chama-se "[DSP] <nome do estilo>".\nCarrega primeiro uma cidade — os estilos já importados são ignorados.
+SETTINGS_DSP_IMPORT_BUTTON Importar do District Styles Plus
+SETTINGS_DSP_NEEDS_GAME Esta ação requer uma sessão de jogo ativa.\nCarrega primeiro uma cidade e depois clica neste botão.
+SETTINGS_DSP_RESULT_NONE Não foram encontrados estilos personalizados do District Styles Plus. Garante que o District Styles Plus tem estilos personalizados criados na tua cidade atual.
+SETTINGS_DSP_RESULT_ALL_SKIPPED Os {0} estilo(s) já estavam importados (prefixo "{1}"). Nada de novo a adicionar.
+SETTINGS_DSP_RESULT_IMPORTED {0} estilo(s) importados como temas do Building Themes (prefixo "{1}").
+SETTINGS_DSP_RESULT_MIXED {0} estilo(s) importados (prefixo "{1}"). {2} já existiam e foram ignorados.
+SETTINGS_RESET_DEFAULTS Repor valores padrão
+SETTINGS_XML_CORRUPT O BuildingThemes não consegue ler o ficheiro BuildingThemes.xml\nque guarda as tuas definições e temas!\nPara corrigir, apaga este ficheiro e reinicia o jogo:
+THEME_MANAGER_TITLE Gestor de temas
+THEME_MANAGER_COPY_OF Cópia de {0}
+THEME_MANAGER_THEME_NOT_FOUND Tema não encontrado
+THEME_MANAGER_VALIDITY_EMPTY Nenhum edifício incluído.
+THEME_MANAGER_VALIDITY_NO_L1 Nenhum edifício de nível 1 incluído.
+THEME_MANAGER_VALIDITY_NOT_LOADED {0}/{1} edifícios carregados.
+THEME_MANAGER_READONLY_TOOLTIP Os temas integrados são só de leitura.\nUsa 'Copiar tema' para criar uma cópia editável.
+THEME_MANAGER_NEW_THEME Novo tema
+THEME_MANAGER_DELETE_THEME Eliminar tema
+THEME_MANAGER_DELETE_CONFIRM Tens a certeza de que queres eliminar o tema '{0}'?
+THEME_MANAGER_DEPENDENCIES Dependências da Workshop
+THEME_MANAGER_DEPENDENCIES_TOOLTIP Lista todos os itens da Workshop deste tema agrupados por estado Carregado / Em falta
+THEME_MANAGER_RENAME_THEME Renomear tema
+THEME_MANAGER_COPY_THEME Copiar tema
+THEME_MANAGER_BTN_ALL Todos
+THEME_MANAGER_BTN_NONE Nenhum
+THEME_MANAGER_BTN_VALID Válidos
+THEME_MANAGER_BTN_MISSING Em falta
+THEME_MANAGER_INCLUDE_LABEL Incluir:
+THEME_MANAGER_EXCLUDE_LABEL Excluir:
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP Incluir neste tema todos os edifícios da vista filtrada atual
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP Excluir deste tema todos os edifícios da vista filtrada atual
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP Incluir todos os edifícios geráveis da vista filtrada atual\n(carregados + dimensões de célula válidas 1–4)
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP Excluir deste tema todos os edifícios em falta/não carregados da vista filtrada atual
+THEME_MANAGER_EXCLUDE_MISSING_TITLE Excluir em falta
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM Excluir deste tema {0} edifício(s) em falta da vista filtrada atual?
+THEME_MANAGER_INCLUDE_VALID_TITLE Incluir válidos
+THEME_MANAGER_INCLUDE_VALID_CONFIRM Incluir neste tema {0} edifício(s) gerável(is) da vista filtrada atual?
+THEME_MANAGER_CLONE_BUILDING Clonar edifício
+THEME_MANAGER_RESIZE_TOOLTIP Arrasta para redimensionar
+THEME_MANAGER_COUNTER_SHOWN {0} geráveis / {1} mostrados
+THEME_MANAGER_COUNTER_MISSING {0} em falta
+THEME_MANAGER_COUNTER_DLC {0} DLC/amb.
+FILTER_ALL Todos
+FILTER_NONE Nenhum
+FILTER_ALL_DLC Todos os DLC
+FILTER_DISPLAY_LABEL Mostrar:
+FILTER_ORIGIN_DEFAULT Do jogo
+FILTER_ORIGIN_CUSTOM Personalizados
+FILTER_ORIGIN_CLONED Clonados
+FILTER_STATUS_INCLUDED Incluídos
+FILTER_STATUS_EXCLUDED Excluídos
+FILTER_LEVEL_LABEL Nível:
+FILTER_SIZE_LABEL Tamanho:
+FILTER_DLC_TOOLTIP Filtrar por DLC / Content Creator Pack.\nSó são mostrados os DLC instalados com edifícios neste tema.
+FILTER_HEIGHT_LABEL Altura:
+FILTER_HEIGHT_MIN_TOOLTIP Altura mínima do edifício em metros (deixa em branco para sem limite)
+FILTER_HEIGHT_MAX_TOOLTIP Altura máxima do edifício em metros (deixa em branco para sem limite)
+FILTER_NAME_LABEL Nome:
+FILTER_ALSO_IN_LABEL Também em:
+FILTER_ALSO_IN_TOOLTIP Mostrar apenas os edifícios também incluídos no tema selecionado.\nÚtil para comparar ou fundir temas.
+FILTER_IN_ANY_THEME Em qualquer tema
+FILTER_SHOW_LOADED Mostrar carregados
+FILTER_SHOW_LOADED_TOOLTIP Mostrar os edifícios cujo prefab está carregado e disponível
+FILTER_SHOW_MISSING Mostrar em falta
+FILTER_SHOW_MISSING_TOOLTIP Mostrar os itens da Workshop/personalizados não carregados atualmente\n(sem subscrição, desativados pelo Skyve ou com erro de carregamento)
+FILTER_SHOW_DLC Mostrar DLC/Amb.
+FILTER_SHOW_DLC_TOOLTIP Mostrar os itens do jogo base/DLC não disponíveis\n(DLC não comprado, ou item excluído para o ambiente deste mapa)
+FILTER_SPAWNABLE_ONLY Só geráveis
+FILTER_SPAWNABLE_ONLY_TOOLTIP Mostrar apenas os edifícios carregados, incluídos no tema\ne com dimensões de célula (1–4) válidas para aparecer nas zonas
+FILTER_WALL_TO_WALL Parede com parede
+FILTER_WALL_TO_WALL_TOOLTIP Mostrar apenas os edifícios concebidos para ficar encostados aos vizinhos\nsem espaços laterais.\n\nDetetados por dois sinais:\n• Modo de colocação de esquina (CornerLeft / CornerRight) — sempre parede com parede.\n• Edifícios retos cuja malha ocupa ≥ 85 % da largura do lote — o criador\n  não deixou recuo lateral.\n\nOs edifícios da Workshop costumam estar marcados como residenciais/comerciais\nnormais mesmo quando são parede com parede, pelo que filtrar por categoria não basta.\nEste filtro verifica diretamente a geometria da malha.
+OPTIONS_NO_OPTION Nenhuma opção disponível
+OPTIONS_INCLUDE Incluir
+OPTIONS_SPAWN_WEIGHT_LABEL Peso de aparição (1–100):
+OPTIONS_SPAWN_WEIGHT_TOOLTIP Peso de aparição relativo face a outros edifícios da mesma zona, nível e tamanho.\n\nExemplo: dois edifícios com peso 10 aparecem cada um 50 % das vezes.\nUm edifício com peso 20 tem o dobro da probabilidade de um com peso 10 no mesmo lote.\n\nUm edifício sozinho no seu lote aparece sempre (100 %), seja qual for o seu peso.\n\nMín: 1  |  Padrão: 10  |  Máx: 100
+OPTIONS_CORNER_LABEL Usar em lotes de esquina
+OPTIONS_CORNER_TOOLTIP Oferecer também este edifício para lotes de esquina (cruzamentos).\n\nUsa isto para edifícios retos que devam preencher esquinas. O edifício continua\na aparecer também em lotes normais. Nota: um edifício reto não consegue envolver\nfisicamente a esquina como um item concebido para esquinas — vira a frente para a\nrua principal e a parede lateral fica para a rua transversal.\n\nOs verdadeiros itens de esquina (mostrados como 'Esquina (esquerda/direita)' na\npré-visualização) já preenchem esquinas, pelo que esta opção não tem efeito neles.
+OPTIONS_UPGRADE_LABEL Melhoria:
+OPTIONS_UPGRADE_TOOLTIP Nome do edifício a aparecer ao melhorar.\nDeixa vazio para aparição aleatória.
+OPTIONS_ASSET_NAME_LABEL Nome do item:
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL Nome do item (Workshop {0}):
+OPTIONS_ASSET_NAME_TOOLTIP Nome interno completo do prefab. Para itens da Workshop inclui o ID da Steam Workshop.\nClica para selecionar e copiar.
+OPTIONS_PLOP Colocar
+OPTIONS_BULLDOZE_ALL Demolir todos
+OPTIONS_BASE_LABEL Base:
+OPTIONS_BASE_TOOLTIP Nome do edifício original.
+OPTIONS_WORKSHOP_ID_TOOLTIP ID da Workshop: {0}
+THEME_ITEM_BADGE_VANILLA Tema só do jogo base: não requer DLC nem itens da Workshop.
+THEME_ITEM_BADGE_DLC Precisa de DLC. Não requer subscrições da Workshop.
+THEME_ITEM_MISSING_FILL {0} em falta: complementados com o jogo base.
+THEME_ITEM_MISSING_FALLBACK {0} em falta: os grupos afetados recorrem ao jogo base.
+PREVIEW_WALL_TO_WALL Parede com parede
+PREVIEW_CORNER_LEFT Esquina (esquerda)
+PREVIEW_CORNER_RIGHT Esquina (direita)
+PREVIEW_LEVEL Nível {0}
+BUILDING_ITEM_NOT_LOADED (Não carregado)
+ORIGIN_WORKSHOP Workshop
+ORIGIN_VANILLA Item do jogo base
+ORIGIN_INCLUDED_IN Incluído em {0}
+CATEGORY_RESIDENTIAL_LOW Residencial de baixa densidade
+CATEGORY_RESIDENTIAL_HIGH Residencial de alta densidade
+CATEGORY_RESIDENTIAL_ECO Residencial autossuficiente
+CATEGORY_COMMERCIAL_LOW Comercial de baixa densidade
+CATEGORY_COMMERCIAL_HIGH Comercial de alta densidade
+CATEGORY_COMMERCIAL_LEISURE Comércio de lazer
+CATEGORY_COMMERCIAL_TOURISM Comércio turístico
+CATEGORY_COMMERCIAL_ECO Comércio de produtos biológicos e locais
+CATEGORY_INDUSTRIAL Indústria genérica
+CATEGORY_FARMING Indústria agrícola
+CATEGORY_FORESTRY Indústria florestal
+CATEGORY_OIL Indústria petrolífera
+CATEGORY_ORE Indústria mineira
+CATEGORY_OFFICE Escritórios
+CATEGORY_OFFICE_HIGHTECH Escritórios de informática
+CATEGORY_RESIDENTIAL_W2W Residencial parede com parede
+CATEGORY_COMMERCIAL_W2W Comercial parede com parede
+CATEGORY_OFFICE_W2W Escritórios parede com parede
+CATEGORY_OFFICE_FINANCIAL Escritórios financeiros
+MODAL_OK OK
+MODAL_CANCEL Cancelar
+MODAL_CLOSE Fechar
+MODAL_CREATE Criar
+MODAL_RENAME Renomear
+MODAL_CLONE Clonar
+NEW_THEME_TITLE Criar novo tema
+NEW_THEME_NAME_LABEL Nome do tema:
+RENAME_THEME_NAME_LABEL Novo nome:
+CLONE_TITLE Clonar edifício
+CLONE_NAME_LABEL Nome do edifício:
+CLONE_EXISTS_TOOLTIP Já existe um edifício com esse nível
+CLONE_ENTER_NAME_TOOLTIP Introduz um nome
+WARNING_TITLE Aviso
+DEPS_COPY_MISSING Copiar IDs em falta
+DEPS_COPY_MISSING_TOOLTIP Copiar para a área de transferência os IDs da Steam Workshop de todos os itens em falta (um por linha)
+DEPS_COPY_ALL Copiar todos os IDs
+DEPS_COPY_ALL_TOOLTIP Copiar para a área de transferência os IDs da Steam Workshop de todos os itens deste tema (um por linha)\nÚtil para gerir a ativação no Skyve
+DEPS_SUBSCRIBE_MISSING Subscrever em falta
+DEPS_SUBSCRIBE_MISSING_TOOLTIP Subscrever na Steam todos os itens da Workshop em falta\nO jogo tem de ser reiniciado para carregar os itens recém-subscritos
+DEPS_REQUESTED Pedidos ({0})
+DEPS_NO_THEME Nenhum tema selecionado.
+DEPS_SUMMARY {0} item(ns) da Workshop — {1} carregados, {2} em falta.
+DEPS_SECTION_MISSING Em falta — não carregados ({0})
+DEPS_SECTION_LOADED Carregados ({0})
+DEPS_NO_WORKSHOP_ASSETS Este tema não tem itens da Workshop.
+DEPS_STEAM_ID_TOOLTIP ID da Steam Workshop: {0}
+DEPS_OPEN Abrir
+DEPS_OPEN_TOOLTIP Abrir na Steam Workshop
+POLICY_TAB_THEMES Temas
+POLICY_ENABLE_MANAGEMENT_CITY Ativar a gestão de temas para esta cidade
+POLICY_ENABLE_MANAGEMENT_DISTRICT Ativar a gestão de temas para este distrito
+POLICY_DISTRICT_OPTIONS Opções do distrito
+POLICY_DISTRICT_OPTIONS_TOOLTIP Configura o modo lista negra, o comportamento dos níveis,\no tratamento de itens em falta e o diagnóstico de aparição para este distrito.
+POLICY_THEME_WARNING Este tema pode não funcionar como esperado:
+DIAG_TITLE Diagnóstico de temas do distrito
+DIAG_COPY Copiar para a área de transferência
+DIAG_COPIED Copiado!
+DIAG_SKYVE_NOTE O Skyve está instalado — usa 'Dependências da Workshop' no Gestor de temas\npara copiar os IDs dos itens em falta e gerir a sua ativação no Skyve.
+DISTRICT_OPTIONS_TITLE Opções de temas do distrito
+DISTRICT_BLACKLIST_LABEL Permitir edifícios fora de qualquer tema (modo lista negra)
+DISTRICT_BLACKLIST_TOOLTIP Se ativado, todos os edifícios do jogo base/dos temas podem aparecer — os temas tornam-se uma lista negra\n(só os edifícios explicitamente excluídos são bloqueados).\nSe desativado, só podem aparecer os edifícios incluídos num tema ativo deste distrito.
+DISTRICT_LEVEL_UP_LABEL Subida de nível — sem edifícios para esse nível:
+DISTRICT_NOT_LOADED_LABEL Edifício subscrito não carregado:
+DISTRICT_LEVEL_VANILLA Recorrer ao jogo base — o jogo escolhe um edifício base
+DISTRICT_LEVEL_STRICT Estrito — congelar melhorias no nível atual
+DISTRICT_LEVEL_TOOLTIP Recorrer ao jogo base: o jogo escolhe um edifício do jogo base para o nível superior.\n\nEstrito: as melhorias são bloqueadas quando o tema não tem edifícios do nível alvo.\nO edifício fica indefinidamente no seu nível atual.\n\nPara controlar exatamente que edifício resulta de uma subida de nível, usa o campo\n'Melhoria' desse edifício no Gestor de temas.
+DISTRICT_MISSING_SKIP Ignorar — apenas tema, os lotes podem ficar esparsos
+DISTRICT_MISSING_FILL Completar com o jogo base — preencher lotes em falta
+DISTRICT_MISSING_FALLBACK Recorrer ao jogo base — usá-lo se houver poucos edifícios
+DISTRICT_MISSING_TOOLTIP Ignorar: os edifícios em falta são simplesmente descartados. O tema continua a aplicar-se\napenas com os itens carregados — pode haver lotes vazios se faltarem muitos.\n\nCompletar com o jogo base: edifícios do jogo base complementam cada lote em falta.\nOs teus edifícios de tema carregados continuam a aparecer; o jogo base preenche as lacunas.\n\nRecorrer ao jogo base: se faltar algum edifício de um lote, todo esse lote\npassa a usar apenas o jogo base. Sem zonas esparsas, mas com menos cobertura do tema.
+DISTRICT_AUTO_BULLDOZE_LABEL Remover automaticamente edifícios fora do tema
+DISTRICT_AUTO_BULLDOZE_TOOLTIP Demole gradualmente os edifícios existentes neste distrito que não fazem\nparte de nenhum tema ativo. Afeta apenas edifícios de crescimento residenciais,\ncomerciais, industriais e de escritórios — os edifícios de serviços nunca são tocados.\nNão tem efeito quando 'Permitir edifícios fora de qualquer tema' está ativado.
+DISTRICT_ENFORCE_SPEC_LABEL Remover também edifícios não especializados
+DISTRICT_ENFORCE_SPEC_TOOLTIP Quando um distrito tem uma especialização ativa (agrícola, florestal, autossuficiente,\nturismo, etc.), esta opção remove também os edifícios de tema cujo tipo não\ncorresponde à especialização — por exemplo, indústria genérica num distrito agrícola.\n\nUsa isto para concluir a transição de um distrito para a sua especialização: os edifícios\nexistentes do tipo errado são gradualmente substituídos por outros corretamente\nespecializados dos temas ativos.\n\nSó está ativa quando 'Remover automaticamente edifícios fora do tema' também está.\nNão tem efeito se o distrito não tiver nenhuma política de especialização ativa.
+DISTRICT_PREFER_ELECTRICITY_LABEL Preferir zonas com eletricidade
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP Fazer aparecer novos edifícios apenas em células de zona já ligadas à\nrede elétrica. As células sem energia são ignoradas e tentadas de novo mais tarde.\n\n⚠ A aparição pode ser bastante mais lenta enquanto grande parte do distrito\nainda não estiver eletrificada. Após 40 omissões consecutivas o filtro é\nsuspenso automaticamente para que o crescimento nunca fique bloqueado de forma\npermanente — reativa-se assim que for encontrada de novo uma célula eletrificada.
+DISTRICT_CLUSTER_LABEL Agrupar junto a edifícios existentes (parede com parede)
+DISTRICT_CLUSTER_TOOLTIP Obriga os novos edifícios a aparecer junto aos existentes e desliza-os\nao longo da estrada para que as suas paredes visíveis se toquem, eliminando os\npequenos espaços que surgem quando a malha de um edifício é mais estreita que o seu lote.\n\nComo funciona:\n  • Adjacência de células — as tentativas de aparição em lotes sem nenhum\n    edifício vizinho são ignoradas, pelo que o crescimento irradia da construção\n    existente em vez de largar edifícios isolados ao acaso.\n  • Ajuste de posição — quando uma aparição é aceite, o novo edifício é\n    deslocado ao longo da estrada (até ½ célula, 4 m) para que a aresta da sua\n    malha encoste à aresta da malha do vizinho. Funciona com edifícios cujo modelo\n    é mais pequeno que a sua célula de 8 m, e respeita malhas rodadas ou não\n    alinhadas à grelha através de caixas delimitadoras projetadas.\n\nRecurso: quando não se encontra nenhum vizinho após 40 tentativas, o filtro\nsuspende-se para que o primeiro edifício de um distrito vazio possa aparecer\nnormalmente — os edifícios seguintes agrupam-se depois junto a ele.\n\nIdeal com temas parede com parede, mas funciona com qualquer tema.
+DISTRICT_SIZE_PREF_LABEL Preferência de tamanho de edifício por tipo de zona  (Padrão = comportamento original do jogo):
+DISTRICT_SIZE_DEFAULT Padrão
+DISTRICT_SIZE_BIGGEST Maiores primeiro
+DISTRICT_SIZE_WIDEST Mais largos primeiro
+DISTRICT_SIZE_DEEPEST Mais profundos primeiro
+DISTRICT_SIZE_RANDOM Aleatório (só peso)
+DISTRICT_SIZE_SMALLEST Mais pequenos primeiro
+DISTRICT_SIZE_TALLEST Mais altos primeiro
+DISTRICT_SIZE_SHORTEST Mais baixos primeiro
+DISTRICT_SIZE_PREF_TOOLTIP Padrão: comportamento original do jogo — tenta primeiro o lote mais largo e reduz até caber um edifício do tema.\nMaiores primeiro: prefere a área mais larga × mais profunda.\nMais largos primeiro: prefere os edifícios mais largos; em empate, os menos profundos.\nMais profundos primeiro: prefere os edifícios mais profundos; em empate, os mais estreitos.\nAleatório (só peso): sem viés de tamanho — apenas pelo peso de aparição.\nMais pequenos primeiro: prefere a área mais estreita × menos profunda.\nMais altos primeiro: prefere os edifícios mais altos (pela altura da malha).\nMais baixos primeiro: prefere os edifícios mais baixos (pela altura da malha).
+DISTRICT_RESIDENTIAL_LABEL Residencial:
+DISTRICT_COMMERCIAL_LABEL Comercial:
+DISTRICT_INDUSTRIAL_LABEL Industrial:
+DISTRICT_OFFICE_LABEL Escritórios:
+DISTRICT_STRENGTH_LABEL Intensidade da preferência:
+DISTRICT_STRENGTH_GENTLE Suave
+DISTRICT_STRENGTH_MODERATE Moderada
+DISTRICT_STRENGTH_STRONG Forte
+DISTRICT_STRENGTH_ABSOLUTE Absoluta (escolher sempre o tamanho preferido)
+DISTRICT_STRENGTH_TOOLTIP Controla quanto a preferência de tamanho se sobrepõe ao peso de aparição.\n\nSuave (α=0.5): o tamanho dá um impulso ligeiro — o peso de aparição ainda conta muito.\nModerada (α=1.0): equilibrada — tamanho e peso influenciam a seleção por igual.\nForte (α=2.0): o tamanho domina claramente — os tamanhos melhor classificados aparecem quase sempre.\nAbsoluta: só aparece o tamanho melhor classificado; o peso de aparição desempata dentro desse tamanho.
+DISTRICT_DIAGNOSTICS_BUTTON Diagnóstico de aparição
+DISTRICT_DIAGNOSTICS_TOOLTIP Mostra porque é que os edifícios aparecem ou não neste distrito.\nAtiva 'Gerar saída de depuração' nas opções do mod para dados detalhados.
+CONFLICT_TITLE Building Themes 2 — Conflito de mods
+CONFLICT_MESSAGE O Building Themes 2 detetou um conflito crítico de mods:
+THEMES_BUTTON TEMAS

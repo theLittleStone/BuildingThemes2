@@ -37,14 +37,14 @@ namespace BuildingThemes.GUI
 
             // Title Bar
             m_title = AddUIComponent<UITitleBar>();
-            m_title.title = "Create New Theme";
+            m_title.title = Localization.Get("NEW_THEME_TITLE");
             m_title.iconSprite = "ToolbarIconZoomOutCity";
             m_title.isModal = true;
 
             // Name
             UILabel name = AddUIComponent<UILabel>();
             name.height = 30;
-            name.text = "Theme name:";
+            name.text = Localization.Get("NEW_THEME_NAME_LABEL");
             name.relativePosition = new Vector3(5, m_title.height);
 
             m_name = UIUtils.CreateTextField(this);
@@ -66,7 +66,7 @@ namespace BuildingThemes.GUI
 
             // Ok
             m_ok = UIUtils.CreateButton(this);
-            m_ok.text = "Create";
+            m_ok.text = Localization.Get("MODAL_CREATE");
             m_ok.isEnabled = false;
             m_ok.relativePosition = new Vector3(5, m_name.relativePosition.y + m_name.height + 5);
 
@@ -79,7 +79,7 @@ namespace BuildingThemes.GUI
 
             // Cancel
             m_cancel = UIUtils.CreateButton(this);
-            m_cancel.text = "Cancel";
+            m_cancel.text = Localization.Get("MODAL_CANCEL");
             m_cancel.relativePosition = new Vector3(width - m_cancel.width - 5, m_ok.relativePosition.y);
 
             m_cancel.eventClick += (c, p) =>

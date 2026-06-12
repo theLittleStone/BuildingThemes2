@@ -58,7 +58,7 @@ namespace BuildingThemes.GUI
 
             // Title Bar
             m_title = AddUIComponent<UITitleBar>();
-            m_title.title = "Warning";
+            m_title.title = Localization.Get("WARNING_TITLE");
             m_title.iconSprite = "ToolbarIconZoomOutCity";
             m_title.isModal = true;
 
@@ -76,7 +76,7 @@ namespace BuildingThemes.GUI
 
             // Ok
             m_ok = UIUtils.CreateButton(this);
-            m_ok.text = "OK";
+            m_ok.text = Localization.Get("MODAL_OK");
             m_ok.relativePosition = new Vector3((width - m_ok.width) / 2, height - m_ok.height - 5);
 
             m_ok.eventClick += (c, p) =>

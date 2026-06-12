@@ -116,11 +116,32 @@
         <Compile Include="SerializableDataExtension.cs" />
         <Compile Include="GUI\ThemePolicies\ThemePolicyContainer.cs" />
         <Compile Include="Util.cs" />
+        <Compile Include="Localization.cs" />
+        <Compile Include="TranslationFramework\ILanguage.cs" />
+        <Compile Include="TranslationFramework\ILanguageDeserializer.cs" />
+        <Compile Include="TranslationFramework\LocalizationManager.cs" />
+        <Compile Include="TranslationFramework\TranslationUtil.cs" />
+        <Compile Include="LanguageFormat\LanguageDictionaryWrapper.cs" />
+        <Compile Include="LanguageFormat\PlainTextLanguageDeserializer.cs" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="BuildingThemes.xml">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
+        <Content Include="Locale\de.txt" />
+        <Content Include="Locale\en.txt" />
+        <Content Include="Locale\es.txt" />
+        <Content Include="Locale\fr.txt" />
+        <Content Include="Locale\it.txt" />
+        <Content Include="Locale\ja.txt" />
+        <Content Include="Locale\ko.txt" />
+        <Content Include="Locale\kr.txt" />
+        <Content Include="Locale\pl.txt" />
+        <Content Include="Locale\pt.txt" />
+        <Content Include="Locale\ru.txt" />
+        <Content Include="Locale\zh.txt" />
+        <Content Include="Locale\zh-cn.txt" />
+        <Content Include="Locale\zh-tw.txt" />
     </ItemGroup>
     <ItemGroup>
         <None Include="packages.config" />

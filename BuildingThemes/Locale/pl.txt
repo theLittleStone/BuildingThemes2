@@ -1,0 +1,223 @@
+MOD_DESCRIPTION Twórz motywy budynków i stosuj je w miastach i dzielnicach. Utrzymywany przez społeczność fork moda Building Themes autorstwa boformera (Sebastian Schöner). Migracja na Harmony 2.x: roberto-naharro.
+SETTINGS_GROUP_BEHAVIOUR Zachowanie
+SETTINGS_MISSING_ASSETS_LABEL Domyślnie: brakujące budynki z Warsztatu
+SETTINGS_MISSING_ASSETS_SKIP Pomiń (rzadsza zabudowa, tylko motyw)
+SETTINGS_MISSING_ASSETS_FILL Uzupełnij podstawową grą (wypełnij brakujące miejsca)
+SETTINGS_MISSING_ASSETS_FALLBACK Wróć do podstawowej gry (użyj jej przy rzadkiej zabudowie)
+SETTINGS_EMPTY_LEVEL_LABEL Domyślnie: gdy motyw nie ma budynków dla danego poziomu
+SETTINGS_EMPTY_LEVEL_VANILLA Powrót do podstawowej gry (gra wybiera podstawowy budynek dla tego poziomu)
+SETTINGS_EMPTY_LEVEL_STRICT Ścisły (zamroź ulepszenia; budynek pozostaje na obecnym poziomie)
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL Tempo automatycznego wyburzania
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE Łagodne (wolne)
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL Normalne
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE Agresywne (szybkie)
+SETTINGS_INVALID_THEME_WARNING Ostrzeżenie przy wyborze nieprawidłowego motywu
+SETTINGS_GROUP_DEBUGGING Debugowanie
+SETTINGS_DEBUG_OUTPUT Generuj dane debugowania
+SETTINGS_GROUP_MAINTENANCE Konserwacja
+SETTINGS_UNLOCK_POLICIES Odblokuj panel polityk od początku gry
+SETTINGS_PREFAB_CLONING Włącz klonowanie prefabów (eksperymentalne — przeczytaj ostrzeżenie poniżej)
+SETTINGS_PREFAB_CLONING_WARNING ⚠ RYZYKO DLA ZAPISU: sklonowane budynki są generowane\nprzy wczytywaniu i zapisywane w twoim zapisie gry.\nJeśli wyłączysz tę opcję lub anulujesz subskrypcję moda,\nwszystkie sklonowane budynki znikną przy następnym wczytaniu.\nZapis gry nie ulega uszkodzeniu, ale te\nbudynki przepadają bezpowrotnie.\nWłącz tylko wtedy, gdy akceptujesz to ryzyko.
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION Importuje style z District Styles Plus jako motywy BT2.\nKażdy nazywa się "[DSP] <nazwa stylu>".\nNajpierw wczytaj miasto — już zaimportowane style są pomijane.
+SETTINGS_DSP_IMPORT_BUTTON Importuj z District Styles Plus
+SETTINGS_DSP_NEEDS_GAME Ta akcja wymaga aktywnej sesji gry.\nNajpierw wczytaj miasto, potem kliknij ten przycisk.
+SETTINGS_DSP_RESULT_NONE Nie znaleziono własnych stylów District Styles Plus. Upewnij się, że District Styles Plus ma własne style utworzone w twoim obecnym mieście.
+SETTINGS_DSP_RESULT_ALL_SKIPPED Wszystkie {0} style już zaimportowane (przedrostek "{1}"). Nie ma nic nowego do dodania.
+SETTINGS_DSP_RESULT_IMPORTED Zaimportowano {0} stylów jako motywy Building Themes (przedrostek "{1}").
+SETTINGS_DSP_RESULT_MIXED Zaimportowano {0} stylów (przedrostek "{1}"). {2} już istniało i zostało pominiętych.
+SETTINGS_RESET_DEFAULTS Przywróć ustawienia domyślne
+SETTINGS_XML_CORRUPT BuildingThemes nie może odczytać pliku BuildingThemes.xml,\nktóry przechowuje twoje ustawienia i motywy!\nAby to naprawić, usuń ten plik i uruchom grę ponownie:
+THEME_MANAGER_TITLE Menedżer motywów
+THEME_MANAGER_COPY_OF Kopia {0}
+THEME_MANAGER_THEME_NOT_FOUND Nie znaleziono motywu
+THEME_MANAGER_VALIDITY_EMPTY Nie uwzględniono żadnego budynku.
+THEME_MANAGER_VALIDITY_NO_L1 Nie uwzględniono żadnego budynku poziomu 1.
+THEME_MANAGER_VALIDITY_NOT_LOADED Wczytano {0}/{1} budynków.
+THEME_MANAGER_READONLY_TOOLTIP Wbudowane motywy są tylko do odczytu.\nUżyj 'Kopiuj motyw', aby utworzyć edytowalną kopię.
+THEME_MANAGER_NEW_THEME Nowy motyw
+THEME_MANAGER_DELETE_THEME Usuń motyw
+THEME_MANAGER_DELETE_CONFIRM Czy na pewno chcesz usunąć motyw '{0}'?
+THEME_MANAGER_DEPENDENCIES Zależności z Warsztatu
+THEME_MANAGER_DEPENDENCIES_TOOLTIP Wyświetla wszystkie zasoby z Warsztatu w tym motywie pogrupowane według stanu Wczytane / Brakujące
+THEME_MANAGER_RENAME_THEME Zmień nazwę motywu
+THEME_MANAGER_COPY_THEME Kopiuj motyw
+THEME_MANAGER_BTN_ALL Wszystkie
+THEME_MANAGER_BTN_NONE Żaden
+THEME_MANAGER_BTN_VALID Prawidłowe
+THEME_MANAGER_BTN_MISSING Brakujące
+THEME_MANAGER_INCLUDE_LABEL Uwzględnij:
+THEME_MANAGER_EXCLUDE_LABEL Wyklucz:
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP Uwzględnij w tym motywie wszystkie budynki z bieżącego przefiltrowanego widoku
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP Wyklucz z tego motywu wszystkie budynki z bieżącego przefiltrowanego widoku
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP Uwzględnij wszystkie budynki z bieżącego przefiltrowanego widoku, które mogą się pojawiać\n(wczytane + prawidłowe wymiary komórek 1–4)
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP Wyklucz z tego motywu wszystkie brakujące/niewczytane budynki z bieżącego przefiltrowanego widoku
+THEME_MANAGER_EXCLUDE_MISSING_TITLE Wyklucz brakujące
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM Wykluczyć z tego motywu {0} brakujących budynków z bieżącego przefiltrowanego widoku?
+THEME_MANAGER_INCLUDE_VALID_TITLE Uwzględnij prawidłowe
+THEME_MANAGER_INCLUDE_VALID_CONFIRM Uwzględnić w tym motywie {0} budynków z bieżącego przefiltrowanego widoku, które mogą się pojawiać?
+THEME_MANAGER_CLONE_BUILDING Klonuj budynek
+THEME_MANAGER_RESIZE_TOOLTIP Przeciągnij, aby zmienić rozmiar
+THEME_MANAGER_COUNTER_SHOWN {0} może się pojawiać / {1} pokazanych
+THEME_MANAGER_COUNTER_MISSING {0} brakujących
+THEME_MANAGER_COUNTER_DLC {0} DLC/środ.
+FILTER_ALL Wszystkie
+FILTER_NONE Żaden
+FILTER_ALL_DLC Wszystkie DLC
+FILTER_DISPLAY_LABEL Pokaż:
+FILTER_ORIGIN_DEFAULT Podstawowe
+FILTER_ORIGIN_CUSTOM Własne
+FILTER_ORIGIN_CLONED Sklonowane
+FILTER_STATUS_INCLUDED Uwzględnione
+FILTER_STATUS_EXCLUDED Wykluczone
+FILTER_LEVEL_LABEL Poziom:
+FILTER_SIZE_LABEL Rozmiar:
+FILTER_DLC_TOOLTIP Filtruj według DLC / Content Creator Pack.\nPokazywane są tylko zainstalowane DLC mające budynki w tym motywie.
+FILTER_HEIGHT_LABEL Wysokość:
+FILTER_HEIGHT_MIN_TOOLTIP Minimalna wysokość budynku w metrach (pozostaw puste, by nie ograniczać)
+FILTER_HEIGHT_MAX_TOOLTIP Maksymalna wysokość budynku w metrach (pozostaw puste, by nie ograniczać)
+FILTER_NAME_LABEL Nazwa:
+FILTER_ALSO_IN_LABEL Także w:
+FILTER_ALSO_IN_TOOLTIP Pokaż tylko budynki, które są też uwzględnione w wybranym motywie.\nPrzydatne do porównywania lub łączenia motywów.
+FILTER_IN_ANY_THEME W dowolnym motywie
+FILTER_SHOW_LOADED Pokaż wczytane
+FILTER_SHOW_LOADED_TOOLTIP Pokaż budynki, których prefab jest wczytany i dostępny
+FILTER_SHOW_MISSING Pokaż brakujące
+FILTER_SHOW_MISSING_TOOLTIP Pokaż zasoby z Warsztatu/własne, które nie są obecnie wczytane\n(brak subskrypcji, wyłączone przez Skyve lub błąd wczytywania)
+FILTER_SHOW_DLC Pokaż DLC/Środ.
+FILTER_SHOW_DLC_TOOLTIP Pokaż niedostępne zasoby podstawowej gry/DLC\n(nieposiadane DLC lub zasób wykluczony dla środowiska tej mapy)
+FILTER_SPAWNABLE_ONLY Tylko pojawialne
+FILTER_SPAWNABLE_ONLY_TOOLTIP Pokaż tylko budynki, które są wczytane, uwzględnione w motywie\ni mają prawidłowe wymiary komórek (1–4) do pojawiania się w strefach
+FILTER_WALL_TO_WALL Ściana w ścianę
+FILTER_WALL_TO_WALL_TOOLTIP Pokaż tylko budynki zaprojektowane do stawiania tuż przy sąsiadach,\nbez bocznych odstępów.\n\nWykrywane na podstawie dwóch sygnałów:\n• Narożny tryb umieszczania (CornerLeft / CornerRight) — zawsze ściana w ścianę.\n• Proste budynki, których siatka wypełnia ≥ 85 % szerokości działki — twórca\n  nie zostawił bocznego odsunięcia.\n\nBudynki z Warsztatu są często oznaczone jako zwykłe mieszkalne/handlowe nawet\ngdy stoją ściana w ścianę, więc samo filtrowanie po kategorii nie wystarcza.\nTen filtr sprawdza bezpośrednio geometrię siatki.
+OPTIONS_NO_OPTION Brak dostępnych opcji
+OPTIONS_INCLUDE Uwzględnij
+OPTIONS_SPAWN_WEIGHT_LABEL Waga pojawiania (1–100):
+OPTIONS_SPAWN_WEIGHT_TOOLTIP Względna waga pojawiania w porównaniu z innymi budynkami tej samej strefy, poziomu i rozmiaru.\n\nPrzykład: dwa budynki o wadze 10 pojawiają się każdy przez 50 % czasu.\nBudynek o wadze 20 jest dwa razy bardziej prawdopodobny niż ten o wadze 10 w tym samym miejscu.\n\nBudynek sam w swoim miejscu pojawia się zawsze (100 %), niezależnie od wagi.\n\nMin: 1  |  Domyślnie: 10  |  Maks: 100
+OPTIONS_CORNER_LABEL Używaj na działkach narożnych
+OPTIONS_CORNER_TOOLTIP Oferuj ten budynek także na działkach narożnych (skrzyżowaniach).\n\nUżywaj tego dla prostych budynków, które mają wypełniać narożniki. Budynek nadal\npojawia się też na zwykłych działkach. Uwaga: prosty budynek nie może fizycznie\nowinąć się wokół narożnika jak zasób zaprojektowany pod narożniki — front ma od\ngłównej ulicy, a jego boczna ściana wychodzi na przecznicę.\n\nPrawdziwe zasoby narożne (pokazywane jako 'Narożnik (lewy/prawy)' w podglądzie)\njuż wypełniają narożniki, więc ta opcja nie ma na nie wpływu.
+OPTIONS_UPGRADE_LABEL Ulepszenie:
+OPTIONS_UPGRADE_TOOLTIP Nazwa budynku, który ma się pojawić po ulepszeniu.\nPozostaw puste dla losowego pojawiania.
+OPTIONS_ASSET_NAME_LABEL Nazwa zasobu:
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL Nazwa zasobu (Warsztat {0}):
+OPTIONS_ASSET_NAME_TOOLTIP Pełna wewnętrzna nazwa prefabu. Dla zasobów z Warsztatu zawiera ID Steam Workshop.\nKliknij, aby zaznaczyć i skopiować.
+OPTIONS_PLOP Postaw
+OPTIONS_BULLDOZE_ALL Wyburz wszystkie
+OPTIONS_BASE_LABEL Baza:
+OPTIONS_BASE_TOOLTIP Nazwa oryginalnego budynku.
+OPTIONS_WORKSHOP_ID_TOOLTIP ID Warsztatu: {0}
+THEME_ITEM_BADGE_VANILLA Motyw tylko z podstawowej gry: nie wymaga DLC ani zasobów z Warsztatu.
+THEME_ITEM_BADGE_DLC Wymaga DLC. Nie wymaga subskrypcji z Warsztatu.
+THEME_ITEM_MISSING_FILL Brakuje {0}: uzupełniane podstawową grą.
+THEME_ITEM_MISSING_FALLBACK Brakuje {0}: dotknięte grupy wracają do podstawowej gry.
+PREVIEW_WALL_TO_WALL Ściana w ścianę
+PREVIEW_CORNER_LEFT Narożnik (lewy)
+PREVIEW_CORNER_RIGHT Narożnik (prawy)
+PREVIEW_LEVEL Poziom {0}
+BUILDING_ITEM_NOT_LOADED (Niewczytany)
+ORIGIN_WORKSHOP Warsztat
+ORIGIN_VANILLA Zasób podstawowej gry
+ORIGIN_INCLUDED_IN Zawarty w {0}
+CATEGORY_RESIDENTIAL_LOW Mieszkalna o niskiej gęstości
+CATEGORY_RESIDENTIAL_HIGH Mieszkalna o wysokiej gęstości
+CATEGORY_RESIDENTIAL_ECO Mieszkalna samowystarczalna
+CATEGORY_COMMERCIAL_LOW Handlowa o niskiej gęstości
+CATEGORY_COMMERCIAL_HIGH Handlowa o wysokiej gęstości
+CATEGORY_COMMERCIAL_LEISURE Handlowa rozrywkowa
+CATEGORY_COMMERCIAL_TOURISM Handlowa turystyczna
+CATEGORY_COMMERCIAL_ECO Handlowa z produktami ekologicznymi i lokalnymi
+CATEGORY_INDUSTRIAL Przemysł ogólny
+CATEGORY_FARMING Przemysł rolny
+CATEGORY_FORESTRY Przemysł leśny
+CATEGORY_OIL Przemysł naftowy
+CATEGORY_ORE Przemysł wydobywczy
+CATEGORY_OFFICE Biura
+CATEGORY_OFFICE_HIGHTECH Biura informatyczne
+CATEGORY_RESIDENTIAL_W2W Mieszkalna ściana w ścianę
+CATEGORY_COMMERCIAL_W2W Handlowa ściana w ścianę
+CATEGORY_OFFICE_W2W Biura ściana w ścianę
+CATEGORY_OFFICE_FINANCIAL Biura finansowe
+MODAL_OK OK
+MODAL_CANCEL Anuluj
+MODAL_CLOSE Zamknij
+MODAL_CREATE Utwórz
+MODAL_RENAME Zmień nazwę
+MODAL_CLONE Klonuj
+NEW_THEME_TITLE Utwórz nowy motyw
+NEW_THEME_NAME_LABEL Nazwa motywu:
+RENAME_THEME_NAME_LABEL Nowa nazwa:
+CLONE_TITLE Klonuj budynek
+CLONE_NAME_LABEL Nazwa budynku:
+CLONE_EXISTS_TOOLTIP Budynek o tym poziomie już istnieje
+CLONE_ENTER_NAME_TOOLTIP Wprowadź nazwę
+WARNING_TITLE Ostrzeżenie
+DEPS_COPY_MISSING Kopiuj brakujące ID
+DEPS_COPY_MISSING_TOOLTIP Skopiuj do schowka ID Steam Workshop wszystkich brakujących zasobów (po jednym w wierszu)
+DEPS_COPY_ALL Kopiuj wszystkie ID
+DEPS_COPY_ALL_TOOLTIP Skopiuj do schowka ID Steam Workshop wszystkich zasobów tego motywu (po jednym w wierszu)\nPrzydatne do zarządzania aktywacją w Skyve
+DEPS_SUBSCRIBE_MISSING Subskrybuj brakujące
+DEPS_SUBSCRIBE_MISSING_TOOLTIP Zasubskrybuj na Steam wszystkie brakujące zasoby z Warsztatu\nGrę trzeba uruchomić ponownie, aby wczytać nowo zasubskrybowane zasoby
+DEPS_REQUESTED Zażądano ({0})
+DEPS_NO_THEME Nie wybrano motywu.
+DEPS_SUMMARY {0} zasobów z Warsztatu — {1} wczytanych, {2} brakujących.
+DEPS_SECTION_MISSING Brakujące — niewczytane ({0})
+DEPS_SECTION_LOADED Wczytane ({0})
+DEPS_NO_WORKSHOP_ASSETS Ten motyw nie ma zasobów z Warsztatu.
+DEPS_STEAM_ID_TOOLTIP ID Steam Workshop: {0}
+DEPS_OPEN Otwórz
+DEPS_OPEN_TOOLTIP Otwórz w Steam Workshop
+POLICY_TAB_THEMES Motywy
+POLICY_ENABLE_MANAGEMENT_CITY Włącz zarządzanie motywami dla tego miasta
+POLICY_ENABLE_MANAGEMENT_DISTRICT Włącz zarządzanie motywami dla tej dzielnicy
+POLICY_DISTRICT_OPTIONS Opcje dzielnicy
+POLICY_DISTRICT_OPTIONS_TOOLTIP Skonfiguruj tryb czarnej listy, zachowanie poziomów,\nobsługę brakujących zasobów i diagnostykę pojawiania dla tej dzielnicy.
+POLICY_THEME_WARNING Ten motyw może nie działać zgodnie z oczekiwaniami:
+DIAG_TITLE Diagnostyka motywów dzielnicy
+DIAG_COPY Kopiuj do schowka
+DIAG_COPIED Skopiowano!
+DIAG_SKYVE_NOTE Skyve jest zainstalowany — użyj 'Zależności z Warsztatu' w Menedżerze motywów,\naby skopiować ID brakujących zasobów i zarządzać ich aktywacją w Skyve.
+DISTRICT_OPTIONS_TITLE Opcje motywów dzielnicy
+DISTRICT_BLACKLIST_LABEL Zezwalaj na budynki spoza wszystkich motywów (tryb czarnej listy)
+DISTRICT_BLACKLIST_TOOLTIP Gdy włączone, mogą pojawiać się wszystkie budynki podstawowej gry/motywów — motywy stają się czarną listą\n(blokowane są tylko budynki jawnie wykluczone).\nGdy wyłączone, mogą pojawiać się tylko budynki uwzględnione w aktywnym motywie tej dzielnicy.
+DISTRICT_LEVEL_UP_LABEL Awans poziomu — brak budynków dla tego poziomu:
+DISTRICT_NOT_LOADED_LABEL Zasubskrybowany budynek niewczytany:
+DISTRICT_LEVEL_VANILLA Powrót do podstawowej gry — gra wybiera podstawowy budynek
+DISTRICT_LEVEL_STRICT Ścisły — zamroź ulepszenia na obecnym poziomie
+DISTRICT_LEVEL_TOOLTIP Powrót do podstawowej gry: gra wybiera podstawowy budynek dla wyższego poziomu.\n\nŚcisły: ulepszenia są blokowane, gdy motyw nie ma budynków docelowego poziomu.\nBudynek pozostaje na obecnym poziomie bezterminowo.\n\nAby dokładnie kontrolować, jaki budynek powstaje przy awansie, użyj pola 'Ulepszenie'\ntego budynku w Menedżerze motywów.
+DISTRICT_MISSING_SKIP Pomiń — tylko motyw, zabudowa może być rzadsza
+DISTRICT_MISSING_FILL Uzupełnij podstawową grą — wypełnij brakujące miejsca
+DISTRICT_MISSING_FALLBACK Wróć do podstawowej gry — użyj jej przy rzadkiej zabudowie
+DISTRICT_MISSING_TOOLTIP Pomiń: brakujące budynki są po cichu odrzucane. Motyw nadal obowiązuje,\nkorzystając tylko z wczytanych zasobów — przy wielu brakach zabudowa może być rzadsza.\n\nUzupełnij podstawową grą: budynki podstawowej gry uzupełniają każde brakujące miejsce.\nTwoje wczytane budynki motywu nadal się pojawiają; podstawowa gra wypełnia luki.\n\nWróć do podstawowej gry: jeśli w danym miejscu brakuje jakiegoś budynku, całe to miejsce\nprzechodzi wyłącznie na podstawową grę. Bez rzadkiej zabudowy, ale z mniejszym pokryciem motywu.
+DISTRICT_AUTO_BULLDOZE_LABEL Automatycznie usuwaj budynki spoza motywu
+DISTRICT_AUTO_BULLDOZE_TOOLTIP Stopniowo wyburza istniejące budynki w tej dzielnicy, które nie należą\ndo żadnego aktywnego motywu. Dotyczy tylko rosnących budynków mieszkalnych,\nhandlowych, przemysłowych i biurowych — budynki usług nigdy nie są ruszane.\nNie działa, gdy włączono 'Zezwalaj na budynki spoza wszystkich motywów'.
+DISTRICT_ENFORCE_SPEC_LABEL Usuwaj także budynki bez specjalizacji
+DISTRICT_ENFORCE_SPEC_TOOLTIP Gdy dzielnica ma aktywną specjalizację (rolnictwo, leśnictwo, samowystarczalność,\nturystyka itd.), ta opcja usuwa również budynki motywu, których typ nie pasuje\ndo specjalizacji — na przykład przemysł ogólny w dzielnicy rolniczej.\n\nUżyj jej, aby w pełni przestawić dzielnicę na jej specjalizację: istniejące budynki\nniewłaściwego typu są stopniowo zastępowane prawidłowo wyspecjalizowanymi\nz aktywnych motywów.\n\nDziała tylko wtedy, gdy włączono też 'Automatycznie usuwaj budynki spoza motywu'.\nNie działa, jeśli dzielnica nie ma aktywnej polityki specjalizacji.
+DISTRICT_PREFER_ELECTRICITY_LABEL Preferuj strefy z elektrycznością
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP Pozwalaj nowym budynkom pojawiać się tylko w komórkach stref już podłączonych\ndo sieci elektrycznej. Komórki bez prądu są pomijane i ponawiane później.\n\n⚠ Pojawianie może być znacznie wolniejsze, dopóki duża część dzielnicy\nnie jest jeszcze zelektryfikowana. Po 40 kolejnych pominięciach filtr jest\nautomatycznie zawieszany, aby wzrost nigdy nie został zablokowany na stałe —\nwłącza się ponownie, gdy tylko znów znajdzie się zelektryfikowana komórka.
+DISTRICT_CLUSTER_LABEL Grupuj przy istniejących budynkach (ściana w ścianę)
+DISTRICT_CLUSTER_TOOLTIP Wymusza pojawianie się nowych budynków obok istniejących i przesuwa je\nwzdłuż drogi tak, by ich widoczne ściany się stykały, eliminując małe\nszczeliny powstające, gdy siatka budynku jest węższa niż jego działka.\n\nJak to działa:\n  • Sąsiedztwo komórek — próby pojawienia na działkach bez żadnego sąsiedniego\n    budynku są pomijane, więc zabudowa rozrasta się od istniejących konstrukcji,\n    zamiast stawiać losowo odizolowane budynki.\n  • Przyciąganie pozycji — gdy pojawienie zostanie zaakceptowane, nowy budynek\n    jest dosuwany wzdłuż drogi (do ½ komórki, 4 m), aby krawędź jego siatki\n    zetknęła się z krawędzią siatki sąsiada. Działa dla budynków, których model\n    jest mniejszy niż przydzielona komórka 8 m, i uwzględnia siatki obrócone /\n    niewyrównane do kratki dzięki rzutowanym prostokątom ograniczającym.\n\nAwaryjnie: gdy po 40 próbach nigdzie nie znaleziono sąsiada, filtr się zawiesza,\naby pierwszy budynek w pustej dzielnicy mógł powstać normalnie — kolejne\nbudynki grupują się potem przy nim.\n\nNajlepiej z motywami ściana w ścianę, ale działa z każdym motywem.
+DISTRICT_SIZE_PREF_LABEL Preferencja rozmiaru budynków według typu strefy  (Domyślne = oryginalne zachowanie gry):
+DISTRICT_SIZE_DEFAULT Domyślne
+DISTRICT_SIZE_BIGGEST Najpierw największe
+DISTRICT_SIZE_WIDEST Najpierw najszersze
+DISTRICT_SIZE_DEEPEST Najpierw najgłębsze
+DISTRICT_SIZE_RANDOM Losowo (tylko waga)
+DISTRICT_SIZE_SMALLEST Najpierw najmniejsze
+DISTRICT_SIZE_TALLEST Najpierw najwyższe
+DISTRICT_SIZE_SHORTEST Najpierw najniższe
+DISTRICT_SIZE_PREF_TOOLTIP Domyślne: oryginalne zachowanie gry — próbuje najpierw najszerszej działki i zmniejsza ją, aż zmieści się budynek motywu.\nNajpierw największe: preferuje najszerszy × najgłębszy obrys.\nNajpierw najszersze: preferuje najszersze budynki, przy remisie najpłytsze.\nNajpierw najgłębsze: preferuje najgłębsze budynki, przy remisie najwęższe.\nLosowo (tylko waga): bez preferencji rozmiaru — wyłącznie według wagi pojawiania.\nNajpierw najmniejsze: preferuje najwęższy × najpłytszy obrys.\nNajpierw najwyższe: preferuje najwyższe budynki (według wysokości siatki).\nNajpierw najniższe: preferuje najniższe budynki (według wysokości siatki).
+DISTRICT_RESIDENTIAL_LABEL Mieszkalna:
+DISTRICT_COMMERCIAL_LABEL Handlowa:
+DISTRICT_INDUSTRIAL_LABEL Przemysłowa:
+DISTRICT_OFFICE_LABEL Biura:
+DISTRICT_STRENGTH_LABEL Siła preferencji:
+DISTRICT_STRENGTH_GENTLE Łagodna
+DISTRICT_STRENGTH_MODERATE Umiarkowana
+DISTRICT_STRENGTH_STRONG Silna
+DISTRICT_STRENGTH_ABSOLUTE Absolutna (zawsze wybieraj preferowany rozmiar)
+DISTRICT_STRENGTH_TOOLTIP Kontroluje, jak mocno preferencja rozmiaru przeważa nad wagą pojawiania.\n\nŁagodna (α=0.5): rozmiar daje lekki bonus — waga pojawiania wciąż ma duże znaczenie.\nUmiarkowana (α=1.0): zrównoważona — rozmiar i waga wpływają na wybór po równo.\nSilna (α=2.0): rozmiar wyraźnie dominuje — najlepiej sklasyfikowane rozmiary pojawiają się najczęściej.\nAbsolutna: pojawia się tylko najlepiej sklasyfikowany rozmiar; waga pojawiania rozstrzyga remisy w obrębie tego rozmiaru.
+DISTRICT_DIAGNOSTICS_BUTTON Diagnostyka pojawiania
+DISTRICT_DIAGNOSTICS_TOOLTIP Pokazuje, dlaczego budynki pojawiają się lub nie w tej dzielnicy.\nWłącz 'Generuj dane debugowania' w ustawieniach moda, aby uzyskać szczegółowe dane.
+CONFLICT_TITLE Building Themes 2 — Konflikt modów
+CONFLICT_MESSAGE Building Themes 2 wykrył krytyczny konflikt modów:
+THEMES_BUTTON MOTYWY

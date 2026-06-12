@@ -1,0 +1,223 @@
+MOD_DESCRIPTION 건물 테마를 만들어 도시와 지구에 적용하세요. boformer(Sebastian Schöner)의 Building Themes를 커뮤니티가 유지보수하는 포크입니다. Harmony 2.x 마이그레이션: roberto-naharro.
+SETTINGS_GROUP_BEHAVIOUR 동작
+SETTINGS_MISSING_ASSETS_LABEL 기본값: 누락된 창작마당 건물
+SETTINGS_MISSING_ASSETS_SKIP 건너뛰기 (드문드문한 부지, 테마 전용)
+SETTINGS_MISSING_ASSETS_FILL 바닐라로 보완 (누락된 부지 채우기)
+SETTINGS_MISSING_ASSETS_FALLBACK 바닐라로 대체 (건물이 부족하면 바닐라 사용)
+SETTINGS_EMPTY_LEVEL_LABEL 기본값: 테마에 해당 레벨의 건물이 없을 때
+SETTINGS_EMPTY_LEVEL_VANILLA 바닐라 대체 (게임이 해당 레벨의 바닐라 건물을 선택)
+SETTINGS_EMPTY_LEVEL_STRICT 엄격 (업그레이드 동결, 건물이 현재 레벨에 머무름)
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL 자동 철거 속도
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE 완만 (느림)
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL 보통
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE 공격적 (빠름)
+SETTINGS_INVALID_THEME_WARNING 잘못된 테마 선택 시 경고 메시지 표시
+SETTINGS_GROUP_DEBUGGING 디버깅
+SETTINGS_DEBUG_OUTPUT 디버그 출력 생성
+SETTINGS_GROUP_MAINTENANCE 유지 관리
+SETTINGS_UNLOCK_POLICIES 정책 패널을 처음부터 잠금 해제
+SETTINGS_PREFAB_CLONING 프리팹 복제 활성화 (실험적 — 아래 경고를 읽어주세요)
+SETTINGS_PREFAB_CLONING_WARNING ⚠ 저장 파일 위험: 복제된 건물은 로드 시 생성되어\n저장 파일에 보관됩니다.\n이 기능을 끄거나 모드 구독을 취소하면\n복제된 건물이 다음 로드 때 모두 사라집니다.\n저장 파일이 손상되지는 않지만 해당 건물은\n영구적으로 사라집니다.\n이 위험을 감수할 수 있을 때만 켜세요.
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION District Styles Plus의 스타일을 BT2 테마로 가져옵니다.\n각 테마 이름은 "[DSP] <스타일 이름>"이 됩니다.\n먼저 도시를 로드하세요 — 이미 가져온 스타일은 건너뜁니다.
+SETTINGS_DSP_IMPORT_BUTTON District Styles Plus에서 가져오기
+SETTINGS_DSP_NEEDS_GAME 이 작업에는 진행 중인 게임 세션이 필요합니다.\n먼저 도시를 로드한 뒤 이 버튼을 누르세요.
+SETTINGS_DSP_RESULT_NONE District Styles Plus 사용자 지정 스타일을 찾지 못했습니다. 현재 도시에 District Styles Plus 사용자 지정 스타일이 만들어져 있는지 확인하세요.
+SETTINGS_DSP_RESULT_ALL_SKIPPED {0}개 스타일이 모두 이미 가져와져 있습니다(접두사 "{1}"). 새로 추가할 것이 없습니다.
+SETTINGS_DSP_RESULT_IMPORTED {0}개 스타일을 Building Themes 테마로 가져왔습니다(접두사 "{1}").
+SETTINGS_DSP_RESULT_MIXED {0}개 스타일을 가져왔습니다(접두사 "{1}"). {2}개는 이미 있어 건너뛰었습니다.
+SETTINGS_RESET_DEFAULTS 기본값으로 재설정
+SETTINGS_XML_CORRUPT BuildingThemes가 설정과 테마를 저장하는\nBuildingThemes.xml 파일을 읽을 수 없습니다!\n해결하려면 이 파일을 삭제하고 게임을 다시 시작하세요:
+THEME_MANAGER_TITLE 테마 관리자
+THEME_MANAGER_COPY_OF {0}의 사본
+THEME_MANAGER_THEME_NOT_FOUND 테마를 찾을 수 없음
+THEME_MANAGER_VALIDITY_EMPTY 포함된 건물이 없습니다.
+THEME_MANAGER_VALIDITY_NO_L1 레벨 1 건물이 포함되어 있지 않습니다.
+THEME_MANAGER_VALIDITY_NOT_LOADED 건물 {0}/{1}개 로드됨.
+THEME_MANAGER_READONLY_TOOLTIP 내장 테마는 읽기 전용입니다.\n'테마 복사'로 편집 가능한 사본을 만드세요.
+THEME_MANAGER_NEW_THEME 새 테마
+THEME_MANAGER_DELETE_THEME 테마 삭제
+THEME_MANAGER_DELETE_CONFIRM '{0}' 테마를 정말 삭제하시겠습니까?
+THEME_MANAGER_DEPENDENCIES 창작마당 종속성
+THEME_MANAGER_DEPENDENCIES_TOOLTIP 이 테마의 모든 창작마당 애셋을 로드됨 / 누락 상태별로 나열합니다
+THEME_MANAGER_RENAME_THEME 테마 이름 변경
+THEME_MANAGER_COPY_THEME 테마 복사
+THEME_MANAGER_BTN_ALL 전체
+THEME_MANAGER_BTN_NONE 없음
+THEME_MANAGER_BTN_VALID 유효
+THEME_MANAGER_BTN_MISSING 누락
+THEME_MANAGER_INCLUDE_LABEL 포함:
+THEME_MANAGER_EXCLUDE_LABEL 제외:
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP 현재 필터링된 목록의 모든 건물을 이 테마에 포함합니다
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP 현재 필터링된 목록의 모든 건물을 이 테마에서 제외합니다
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP 현재 필터링된 목록에서 생성 가능한 모든 건물을 포함합니다\n(로드됨 + 유효한 셀 크기 1–4)
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP 현재 필터링된 목록의 누락/미로드 건물을 모두 이 테마에서 제외합니다
+THEME_MANAGER_EXCLUDE_MISSING_TITLE 누락 제외
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM 현재 필터링된 목록의 누락 건물 {0}개를 이 테마에서 제외할까요?
+THEME_MANAGER_INCLUDE_VALID_TITLE 유효 포함
+THEME_MANAGER_INCLUDE_VALID_CONFIRM 현재 필터링된 목록의 생성 가능한 건물 {0}개를 이 테마에 포함할까요?
+THEME_MANAGER_CLONE_BUILDING 건물 복제
+THEME_MANAGER_RESIZE_TOOLTIP 드래그하여 크기 조절
+THEME_MANAGER_COUNTER_SHOWN 생성 가능 {0} / 표시 {1}
+THEME_MANAGER_COUNTER_MISSING 누락 {0}
+THEME_MANAGER_COUNTER_DLC DLC/환경 {0}
+FILTER_ALL 전체
+FILTER_NONE 없음
+FILTER_ALL_DLC 전체 DLC
+FILTER_DISPLAY_LABEL 표시:
+FILTER_ORIGIN_DEFAULT 기본
+FILTER_ORIGIN_CUSTOM 사용자 지정
+FILTER_ORIGIN_CLONED 복제됨
+FILTER_STATUS_INCLUDED 포함됨
+FILTER_STATUS_EXCLUDED 제외됨
+FILTER_LEVEL_LABEL 레벨:
+FILTER_SIZE_LABEL 크기:
+FILTER_DLC_TOOLTIP DLC / 콘텐츠 크리에이터 팩으로 필터링합니다.\n설치되어 있고 이 테마에 건물이 있는 DLC만 표시됩니다.
+FILTER_HEIGHT_LABEL 높이:
+FILTER_HEIGHT_MIN_TOOLTIP 건물 최소 높이(미터). 비워 두면 제한 없음
+FILTER_HEIGHT_MAX_TOOLTIP 건물 최대 높이(미터). 비워 두면 제한 없음
+FILTER_NAME_LABEL 이름:
+FILTER_ALSO_IN_LABEL 다른 테마:
+FILTER_ALSO_IN_TOOLTIP 선택한 테마에도 포함된 건물만 표시합니다.\n테마 비교나 병합에 유용합니다.
+FILTER_IN_ANY_THEME 아무 테마나
+FILTER_SHOW_LOADED 로드됨 표시
+FILTER_SHOW_LOADED_TOOLTIP 프리팹이 로드되어 사용 가능한 건물을 표시합니다
+FILTER_SHOW_MISSING 누락 표시
+FILTER_SHOW_MISSING_TOOLTIP 현재 로드되지 않은 창작마당/사용자 지정 애셋을 표시합니다\n(미구독, Skyve로 비활성화, 또는 로드 오류)
+FILTER_SHOW_DLC DLC/환경 표시
+FILTER_SHOW_DLC_TOOLTIP 사용할 수 없는 바닐라/DLC 애셋을 표시합니다\n(DLC 미보유, 또는 이 맵 환경에서 제외된 애셋)
+FILTER_SPAWNABLE_ONLY 생성 가능만
+FILTER_SPAWNABLE_ONLY_TOOLTIP 로드되어 있고 테마에 포함되며 구역 생성에 유효한\n셀 크기(1–4)를 가진 건물만 표시합니다
+FILTER_WALL_TO_WALL 벽 맞붙음
+FILTER_WALL_TO_WALL_TOOLTIP 옆 건물과 틈 없이 맞붙도록 설계된 건물만 표시합니다.\n\n두 가지 신호로 감지합니다:\n• 모서리 배치 모드(CornerLeft / CornerRight) — 항상 벽 맞붙음.\n• 메시가 부지 폭의 85 % 이상을 차지하는 직선형 건물 — 제작자가\n  측면 여백을 남기지 않은 경우.\n\n창작마당 건물은 벽 맞붙음이어도 일반 주거/상업으로 분류된 경우가\n많아 카테고리 필터만으로는 부족합니다.\n이 필터는 메시 형상을 직접 검사합니다.
+OPTIONS_NO_OPTION 사용 가능한 옵션 없음
+OPTIONS_INCLUDE 포함
+OPTIONS_SPAWN_WEIGHT_LABEL 생성 가중치 (1–100):
+OPTIONS_SPAWN_WEIGHT_TOOLTIP 같은 구역·레벨·크기의 다른 건물 대비 상대적인 생성 가중치입니다.\n\n예: 가중치 10인 건물 두 개는 각각 50 % 확률로 생성됩니다.\n가중치 20인 건물은 같은 자리의 가중치 10인 건물보다 두 배 잘 나옵니다.\n\n자리에 혼자 있는 건물은 가중치와 무관하게 항상 생성됩니다(100 %).\n\n최소: 1  |  기본: 10  |  최대: 100
+OPTIONS_CORNER_LABEL 모서리 부지에 사용
+OPTIONS_CORNER_TOOLTIP 이 건물을 모서리 부지(교차로)에도 제공합니다.\n\n모서리를 채워야 하는 직선형 건물에 사용하세요. 건물은 일반 부지에도\n계속 생성됩니다. 참고: 직선형 건물은 모서리 전용 애셋처럼 모서리를\n물리적으로 감쌀 수 없습니다 — 정면은 큰길을 향하고 측면 벽이\n교차하는 길을 향합니다.\n\n진짜 모서리 애셋(미리보기에 '모서리(왼쪽/오른쪽)'로 표시)은 이미\n모서리를 채우므로 이 옵션이 영향을 주지 않습니다.
+OPTIONS_UPGRADE_LABEL 업그레이드:
+OPTIONS_UPGRADE_TOOLTIP 업그레이드 시 생성할 건물의 이름입니다.\n비워 두면 무작위로 생성됩니다.
+OPTIONS_ASSET_NAME_LABEL 애셋 이름:
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL 애셋 이름 (창작마당 {0}):
+OPTIONS_ASSET_NAME_TOOLTIP 프리팹의 전체 내부 이름입니다. 창작마당 애셋은 Steam 창작마당 ID를 포함합니다.\n클릭하여 선택하고 복사하세요.
+OPTIONS_PLOP 배치
+OPTIONS_BULLDOZE_ALL 모두 철거
+OPTIONS_BASE_LABEL 원본:
+OPTIONS_BASE_TOOLTIP 원본 건물의 이름입니다.
+OPTIONS_WORKSHOP_ID_TOOLTIP 창작마당 ID: {0}
+THEME_ITEM_BADGE_VANILLA 바닐라 전용 테마: DLC나 창작마당 애셋이 필요 없습니다.
+THEME_ITEM_BADGE_DLC DLC가 필요합니다. 창작마당 구독은 필요 없습니다.
+THEME_ITEM_MISSING_FILL 누락 {0}개: 바닐라로 보완됩니다.
+THEME_ITEM_MISSING_FALLBACK 누락 {0}개: 영향을 받는 자리는 바닐라로 대체됩니다.
+PREVIEW_WALL_TO_WALL 벽 맞붙음
+PREVIEW_CORNER_LEFT 모서리 (왼쪽)
+PREVIEW_CORNER_RIGHT 모서리 (오른쪽)
+PREVIEW_LEVEL 레벨 {0}
+BUILDING_ITEM_NOT_LOADED (미로드)
+ORIGIN_WORKSHOP 창작마당
+ORIGIN_VANILLA 바닐라 애셋
+ORIGIN_INCLUDED_IN {0}에 수록됨
+CATEGORY_RESIDENTIAL_LOW 저밀도 주거
+CATEGORY_RESIDENTIAL_HIGH 고밀도 주거
+CATEGORY_RESIDENTIAL_ECO 자급자족 주거
+CATEGORY_COMMERCIAL_LOW 저밀도 상업
+CATEGORY_COMMERCIAL_HIGH 고밀도 상업
+CATEGORY_COMMERCIAL_LEISURE 레저 상업
+CATEGORY_COMMERCIAL_TOURISM 관광 상업
+CATEGORY_COMMERCIAL_ECO 유기농·지역 생산품 상업
+CATEGORY_INDUSTRIAL 일반 산업
+CATEGORY_FARMING 농업
+CATEGORY_FORESTRY 임업
+CATEGORY_OIL 석유 산업
+CATEGORY_ORE 광석 산업
+CATEGORY_OFFICE 사무실
+CATEGORY_OFFICE_HIGHTECH IT 사무실
+CATEGORY_RESIDENTIAL_W2W 벽 맞붙음 주거
+CATEGORY_COMMERCIAL_W2W 벽 맞붙음 상업
+CATEGORY_OFFICE_W2W 벽 맞붙음 사무실
+CATEGORY_OFFICE_FINANCIAL 금융 사무실
+MODAL_OK 확인
+MODAL_CANCEL 취소
+MODAL_CLOSE 닫기
+MODAL_CREATE 만들기
+MODAL_RENAME 이름 변경
+MODAL_CLONE 복제
+NEW_THEME_TITLE 새 테마 만들기
+NEW_THEME_NAME_LABEL 테마 이름:
+RENAME_THEME_NAME_LABEL 새 이름:
+CLONE_TITLE 건물 복제
+CLONE_NAME_LABEL 건물 이름:
+CLONE_EXISTS_TOOLTIP 해당 레벨의 건물이 이미 있습니다
+CLONE_ENTER_NAME_TOOLTIP 이름을 입력하세요
+WARNING_TITLE 경고
+DEPS_COPY_MISSING 누락 ID 복사
+DEPS_COPY_MISSING_TOOLTIP 누락된 모든 애셋의 Steam 창작마당 ID를 클립보드에 복사합니다(한 줄에 하나씩)
+DEPS_COPY_ALL 전체 ID 복사
+DEPS_COPY_ALL_TOOLTIP 이 테마의 모든 애셋의 Steam 창작마당 ID를 클립보드에 복사합니다(한 줄에 하나씩)\nSkyve에서 활성화를 관리할 때 유용합니다
+DEPS_SUBSCRIBE_MISSING 누락 구독
+DEPS_SUBSCRIBE_MISSING_TOOLTIP 누락된 모든 창작마당 애셋을 Steam에서 구독합니다\n새로 구독한 애셋을 로드하려면 게임을 다시 시작해야 합니다
+DEPS_REQUESTED 요청됨 ({0})
+DEPS_NO_THEME 선택된 테마가 없습니다.
+DEPS_SUMMARY 창작마당 애셋 {0}개 — 로드됨 {1}, 누락 {2}.
+DEPS_SECTION_MISSING 누락 — 미로드 ({0})
+DEPS_SECTION_LOADED 로드됨 ({0})
+DEPS_NO_WORKSHOP_ASSETS 이 테마에는 창작마당 애셋이 없습니다.
+DEPS_STEAM_ID_TOOLTIP Steam 창작마당 ID: {0}
+DEPS_OPEN 열기
+DEPS_OPEN_TOOLTIP Steam 창작마당에서 열기
+POLICY_TAB_THEMES 테마
+POLICY_ENABLE_MANAGEMENT_CITY 이 도시에서 테마 관리 활성화
+POLICY_ENABLE_MANAGEMENT_DISTRICT 이 지구에서 테마 관리 활성화
+POLICY_DISTRICT_OPTIONS 지구 옵션
+POLICY_DISTRICT_OPTIONS_TOOLTIP 이 지구의 블랙리스트 모드, 레벨 동작,\n누락 애셋 처리, 생성 진단을 설정합니다.
+POLICY_THEME_WARNING 이 테마는 예상대로 동작하지 않을 수 있습니다:
+DIAG_TITLE 지구 테마 진단
+DIAG_COPY 클립보드에 복사
+DIAG_COPIED 복사했습니다!
+DIAG_SKYVE_NOTE Skyve가 설치되어 있습니다 — 테마 관리자의 '창작마당 종속성'에서\n누락 애셋 ID를 복사하고 Skyve에서 활성화를 관리하세요.
+DISTRICT_OPTIONS_TITLE 지구 테마 옵션
+DISTRICT_BLACKLIST_LABEL 어느 테마에도 없는 건물 허용 (블랙리스트 모드)
+DISTRICT_BLACKLIST_TOOLTIP 켜면 모든 바닐라/테마 건물이 생성될 수 있습니다 — 테마가 블랙리스트가 됩니다\n(명시적으로 제외한 건물만 차단됩니다).\n끄면 이 지구의 활성 테마에 포함된 건물만 생성될 수 있습니다.
+DISTRICT_LEVEL_UP_LABEL 레벨 업 — 해당 레벨의 건물이 없을 때:
+DISTRICT_NOT_LOADED_LABEL 구독한 건물이 로드되지 않았을 때:
+DISTRICT_LEVEL_VANILLA 바닐라 대체 — 게임이 바닐라 건물을 선택
+DISTRICT_LEVEL_STRICT 엄격 — 현재 레벨에서 업그레이드 동결
+DISTRICT_LEVEL_TOOLTIP 바닐라 대체: 게임이 상위 레벨의 바닐라 건물을 선택합니다.\n\n엄격: 테마에 목표 레벨의 건물이 없으면 업그레이드가 차단됩니다.\n건물은 현재 레벨에 무기한 머무릅니다.\n\n레벨 업 시 어떤 건물이 나올지 정확히 제어하려면 테마 관리자에서\n해당 건물의 '업그레이드' 칸을 사용하세요.
+DISTRICT_MISSING_SKIP 건너뛰기 — 테마 전용, 부지가 드문드문해질 수 있음
+DISTRICT_MISSING_FILL 바닐라로 보완 — 누락된 부지 채우기
+DISTRICT_MISSING_FALLBACK 바닐라로 대체 — 건물이 부족하면 바닐라 사용
+DISTRICT_MISSING_TOOLTIP 건너뛰기: 누락된 건물은 조용히 제외됩니다. 테마는 로드된 애셋만으로\n계속 적용됩니다 — 누락이 많으면 부지가 드문드문해질 수 있습니다.\n\n바닐라로 보완: 바닐라 건물이 누락된 자리를 채웁니다.\n로드된 테마 건물은 계속 나오고, 바닐라가 빈틈을 메웁니다.\n\n바닐라로 대체: 자리의 건물이 하나라도 누락되면 그 자리 전체가\n바닐라 전용으로 바뀝니다. 드문드문해지지 않지만 테마 적용 범위는 줄어듭니다.
+DISTRICT_AUTO_BULLDOZE_LABEL 테마 외 건물 자동 제거
+DISTRICT_AUTO_BULLDOZE_TOOLTIP 이 지구에서 활성 테마에 속하지 않는 기존 건물을 서서히 철거합니다.\n성장형 주거·상업·산업·사무실 건물만 대상이며\n공공 서비스 건물은 절대 건드리지 않습니다.\n'어느 테마에도 없는 건물 허용'이 켜져 있으면 효과가 없습니다.
+DISTRICT_ENFORCE_SPEC_LABEL 특화에 맞지 않는 건물도 제거
+DISTRICT_ENFORCE_SPEC_TOOLTIP 지구에 활성 특화(농업, 임업, 자급자족, 관광 등)가 있으면\n이 옵션은 특화와 유형이 맞지 않는 테마 건물도 제거합니다 —\n예: 농업 지구의 일반 산업.\n\n지구를 특화로 완전히 전환할 때 사용하세요. 유형이 맞지 않는 기존\n건물이 활성 테마의 올바르게 특화된 건물로 서서히 교체됩니다.\n\n'테마 외 건물 자동 제거'가 켜져 있을 때만 동작합니다.\n지구에 활성 특화 정책이 없으면 효과가 없습니다.
+DISTRICT_PREFER_ELECTRICITY_LABEL 전기가 있는 구역 우선
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP 이미 전력망에 연결된 구역 셀에만 새 건물을 생성합니다.\n전기가 없는 셀은 건너뛰고 나중에 다시 시도합니다.\n\n⚠ 지구 대부분이 아직 전기가 들어오지 않은 동안에는 생성이 상당히\n느려질 수 있습니다. 40회 연속 건너뛰면 필터가 자동으로 일시 중지되어\n성장이 영구히 막히지 않습니다 — 전기가 들어온 셀이 다시 발견되면\n곧바로 재개됩니다.
+DISTRICT_CLUSTER_LABEL 기존 건물 옆에 모아 배치 (벽 맞붙음)
+DISTRICT_CLUSTER_TOOLTIP 새 건물이 기존 건물 옆에 생성되도록 강제하고 도로를 따라 밀어서\n보이는 벽끼리 닿게 합니다. 건물 메시가 부지보다 좁을 때 생기는\n작은 틈을 없앱니다.\n\n동작 방식:\n  • 셀 인접 — 이웃 건물이 없는 부지의 생성 시도는 건너뛰므로,\n    무작위로 떨어진 건물을 두는 대신 기존 건축물에서 바깥으로\n    퍼져 나가며 성장합니다.\n  • 위치 스냅 — 생성이 승인되면 새 건물을 도로를 따라(최대 ½셀, 4 m)\n    밀어 메시 가장자리가 이웃의 메시 가장자리와 만나게 합니다.\n    모델이 8 m 셀 할당보다 작은 건물에도 작동하며, 회전했거나\n    격자에 맞지 않는 메시는 투영된 경계 상자로 처리합니다.\n\n예외 처리: 40회 시도 후에도 이웃을 찾지 못하면 필터가 일시 중지되어\n빈 지구의 첫 건물이 정상적으로 자리 잡을 수 있습니다 — 이후 건물은\n그 옆에 모여 배치됩니다.\n\n벽 맞붙음 테마와 가장 잘 어울리지만 어떤 테마와도 작동합니다.
+DISTRICT_SIZE_PREF_LABEL 구역 유형별 건물 크기 선호  (기본 = 게임 원래 동작):
+DISTRICT_SIZE_DEFAULT 기본
+DISTRICT_SIZE_BIGGEST 큰 것 우선
+DISTRICT_SIZE_WIDEST 넓은 것 우선
+DISTRICT_SIZE_DEEPEST 깊은 것 우선
+DISTRICT_SIZE_RANDOM 무작위 (가중치만)
+DISTRICT_SIZE_SMALLEST 작은 것 우선
+DISTRICT_SIZE_TALLEST 높은 것 우선
+DISTRICT_SIZE_SHORTEST 낮은 것 우선
+DISTRICT_SIZE_PREF_TOOLTIP 기본: 게임 원래 동작 — 가장 넓은 부지부터 시도하고 테마 건물이 맞을 때까지 줄입니다.\n큰 것 우선: 가장 넓고 깊은 바닥 면적을 선호합니다.\n넓은 것 우선: 가장 넓은 건물을 선호하고, 동률이면 얕은 쪽을 택합니다.\n깊은 것 우선: 가장 깊은 건물을 선호하고, 동률이면 좁은 쪽을 택합니다.\n무작위 (가중치만): 크기 편향 없음 — 순수하게 생성 가중치로 정합니다.\n작은 것 우선: 가장 좁고 얕은 바닥 면적을 선호합니다.\n높은 것 우선: 가장 높은 건물을 선호합니다(메시 높이 기준).\n낮은 것 우선: 가장 낮은 건물을 선호합니다(메시 높이 기준).
+DISTRICT_RESIDENTIAL_LABEL 주거:
+DISTRICT_COMMERCIAL_LABEL 상업:
+DISTRICT_INDUSTRIAL_LABEL 산업:
+DISTRICT_OFFICE_LABEL 사무실:
+DISTRICT_STRENGTH_LABEL 선호 강도:
+DISTRICT_STRENGTH_GENTLE 약함
+DISTRICT_STRENGTH_MODERATE 보통
+DISTRICT_STRENGTH_STRONG 강함
+DISTRICT_STRENGTH_ABSOLUTE 절대 (항상 선호 크기 선택)
+DISTRICT_STRENGTH_TOOLTIP 크기 선호가 생성 가중치를 얼마나 압도할지 제어합니다.\n\n약함 (α=0.5): 크기가 약간만 유리해짐 — 생성 가중치가 여전히 크게 작용합니다.\n보통 (α=1.0): 균형 — 크기와 가중치가 선택에 똑같이 영향을 줍니다.\n강함 (α=2.0): 크기가 강하게 지배 — 상위 크기가 대부분 생성됩니다.\n절대: 최상위 크기만 생성되며, 그 안에서는 생성 가중치로 결정됩니다.
+DISTRICT_DIAGNOSTICS_BUTTON 생성 진단
+DISTRICT_DIAGNOSTICS_TOOLTIP 이 지구에서 건물이 생성되거나 되지 않는 이유를 보여줍니다.\n자세한 데이터를 보려면 모드 설정에서 '디버그 출력 생성'을 켜세요.
+CONFLICT_TITLE Building Themes 2 — 모드 충돌
+CONFLICT_MESSAGE Building Themes 2가 심각한 모드 충돌을 감지했습니다:
+THEMES_BUTTON 테마

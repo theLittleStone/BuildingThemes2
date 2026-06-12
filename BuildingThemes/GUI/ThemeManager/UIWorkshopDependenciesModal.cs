@@ -68,7 +68,7 @@ namespace BuildingThemes.GUI
 
             // Title
             m_title = AddUIComponent<UITitleBar>();
-            m_title.title = "Workshop Dependencies";
+            m_title.title = Localization.Get("THEME_MANAGER_DEPENDENCIES");
             m_title.iconSprite = "SteamWorkshop";
             m_title.isModal = false; // not a blocking modal — X calls parent.Hide() directly
 
@@ -133,8 +133,8 @@ namespace BuildingThemes.GUI
             // Buttons row
             m_copyMissing = UIUtils.CreateButton(this);
             m_copyMissing.width = 150;
-            m_copyMissing.text = "Copy Missing IDs";
-            m_copyMissing.tooltip = "Copy Steam Workshop IDs of all missing assets to clipboard (one per line)";
+            m_copyMissing.text = Localization.Get("DEPS_COPY_MISSING");
+            m_copyMissing.tooltip = Localization.Get("DEPS_COPY_MISSING_TOOLTIP");
             m_copyMissing.relativePosition = new Vector3(10, height - 40);
             m_copyMissing.eventClick += (c, p) =>
             {
@@ -144,8 +144,8 @@ namespace BuildingThemes.GUI
 
             m_copyAll = UIUtils.CreateButton(this);
             m_copyAll.width = 130;
-            m_copyAll.text = "Copy All IDs";
-            m_copyAll.tooltip = "Copy Steam Workshop IDs of all assets in this theme to clipboard (one per line)\nUseful for managing activation in Skyve";
+            m_copyAll.text = Localization.Get("DEPS_COPY_ALL");
+            m_copyAll.tooltip = Localization.Get("DEPS_COPY_ALL_TOOLTIP");
             m_copyAll.relativePosition = new Vector3(10 + 150 + 5, height - 40);
             m_copyAll.eventClick += (c, p) =>
             {
@@ -158,8 +158,8 @@ namespace BuildingThemes.GUI
             {
                 m_subscribeMissing = UIUtils.CreateButton(this);
                 m_subscribeMissing.width = 150;
-                m_subscribeMissing.text = "Subscribe Missing";
-                m_subscribeMissing.tooltip = "Subscribe to all missing workshop assets on Steam\nThe game must be restarted to load the newly subscribed assets";
+                m_subscribeMissing.text = Localization.Get("DEPS_SUBSCRIBE_MISSING");
+                m_subscribeMissing.tooltip = Localization.Get("DEPS_SUBSCRIBE_MISSING_TOOLTIP");
                 m_subscribeMissing.relativePosition = new Vector3(10 + 150 + 5 + 130 + 5, height - 40);
                 m_subscribeMissing.eventClick += (c, p) =>
                 {
@@ -180,15 +180,15 @@ namespace BuildingThemes.GUI
                     }
                     Debugger.LogFormat("Subscribe Missing: requested {0} subscription(s).", count);
                     m_subscribeMissing.text = count > 0
-                        ? string.Format("Requested ({0})", count)
-                        : "Subscribe Missing";
+                        ? Localization.Get("DEPS_REQUESTED", count)
+                        : Localization.Get("DEPS_SUBSCRIBE_MISSING");
                     m_subscribeMissing.isEnabled = false;
                 };
             }
 
             m_close = UIUtils.CreateButton(this);
             m_close.width = 90;
-            m_close.text = "Close";
+            m_close.text = Localization.Get("MODAL_CLOSE");
             m_close.relativePosition = new Vector3(width - 100, height - 40);
             m_close.eventClick += (c, p) => Hide();
         }
@@ -205,7 +205,7 @@ namespace BuildingThemes.GUI
 
             if (m_theme == null || UIThemeManager.instance == null)
             {
-                SetSummary("No theme selected.");
+                SetSummary(Localization.Get("DEPS_NO_THEME"));
                 UpdateCopyButton();
                 return;
             }
@@ -233,14 +233,12 @@ namespace BuildingThemes.GUI
                 m_allWorkshopIDs.Add(item.steamID);
 
             int total = loaded.Count + missing.Count;
-            SetSummary(string.Format(
-                "{0} workshop asset(s) — {1} loaded, {2} missing.",
-                total, loaded.Count, missing.Count));
+            SetSummary(Localization.Get("DEPS_SUMMARY", total, loaded.Count, missing.Count));
 
             // Missing section
             if (missing.Count > 0)
             {
-                AddSectionHeader("Missing — not loaded (" + missing.Count + ")", new Color32(220, 70, 70, 255));
+                AddSectionHeader(Localization.Get("DEPS_SECTION_MISSING", missing.Count), new Color32(220, 70, 70, 255));
                 foreach (BuildingItem item in missing)
                     AddRow(item, RowState.Missing);
             }
@@ -248,7 +246,7 @@ namespace BuildingThemes.GUI
             // Loaded section
             if (loaded.Count > 0)
             {
-                AddSectionHeader("Loaded (" + loaded.Count + ")", new Color32(100, 200, 100, 255));
+                AddSectionHeader(Localization.Get("DEPS_SECTION_LOADED", loaded.Count), new Color32(100, 200, 100, 255));
                 foreach (BuildingItem item in loaded)
                     AddRow(item, RowState.Loaded);
             }
@@ -256,7 +254,7 @@ namespace BuildingThemes.GUI
             if (total == 0)
             {
                 UILabel empty = m_scrollPanel.AddUIComponent<UILabel>();
-                empty.text = "This theme has no workshop assets.";
+                empty.text = Localization.Get("DEPS_NO_WORKSHOP_ASSETS");
                 empty.textScale = 0.85f;
                 empty.textColor = new Color32(160, 160, 160, 255);
                 empty.width = m_scrollPanel.width - 5;
@@ -312,7 +310,7 @@ namespace BuildingThemes.GUI
             idLabel.height = 20;
             idLabel.textAlignment = UIHorizontalAlignment.Right;
             idLabel.relativePosition = new Vector3(row.width - 140, 3);
-            idLabel.tooltip = "Steam Workshop ID: " + item.steamID;
+            idLabel.tooltip = Localization.Get("DEPS_STEAM_ID_TOOLTIP", item.steamID);
 
             // "Open" button — only when Steam overlay is available
             if (PlatformService.IsOverlayEnabled())
@@ -320,10 +318,10 @@ namespace BuildingThemes.GUI
                 UIButton openBtn = UIUtils.CreateButton(row);
                 openBtn.width = 35;
                 openBtn.height = 18;
-                openBtn.text = "Open";
+                openBtn.text = Localization.Get("DEPS_OPEN");
                 openBtn.textScale = 0.65f;
                 openBtn.relativePosition = new Vector3(row.width - 38, 2);
-                openBtn.tooltip = "Open in Steam Workshop";
+                openBtn.tooltip = Localization.Get("DEPS_OPEN_TOOLTIP");
 
                 string capturedID = item.steamID;
                 openBtn.eventClick += (c, p) =>
@@ -344,7 +342,7 @@ namespace BuildingThemes.GUI
             if (m_subscribeMissing != null)
             {
                 m_subscribeMissing.isEnabled = m_missingIDs.Count > 0;
-                m_subscribeMissing.text = "Subscribe Missing";
+                m_subscribeMissing.text = Localization.Get("DEPS_SUBSCRIBE_MISSING");
             }
         }
 

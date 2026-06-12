@@ -44,14 +44,14 @@ namespace BuildingThemes.GUI
 
             // Title Bar
             m_title = AddUIComponent<UITitleBar>();
-            m_title.title = "Clone Building";
+            m_title.title = Localization.Get("CLONE_TITLE");
             m_title.iconSprite = "ToolbarIconZoomOutCity";
             m_title.isModal = true;
 
             // Name
             UILabel name = AddUIComponent<UILabel>();
             name.height = 30;
-            name.text = "Building name:";
+            name.text = Localization.Get("CLONE_NAME_LABEL");
             name.relativePosition = new Vector3(5, m_title.height);
 
             m_name = UIUtils.CreateTextField(this);
@@ -74,7 +74,7 @@ namespace BuildingThemes.GUI
 
             // Ok
             m_ok = UIUtils.CreateButton(this);
-            m_ok.text = "Clone";
+            m_ok.text = Localization.Get("MODAL_CLONE");
             m_ok.isEnabled = false;
             m_ok.relativePosition = new Vector3(5, m_name.relativePosition.y + m_name.height + 5);
 
@@ -89,7 +89,7 @@ namespace BuildingThemes.GUI
 
             // Cancel
             m_cancel = UIUtils.CreateButton(this);
-            m_cancel.text = "Cancel";
+            m_cancel.text = Localization.Get("MODAL_CANCEL");
             m_cancel.relativePosition = new Vector3(width - m_cancel.width - 5, m_ok.relativePosition.y);
 
             m_cancel.eventClick += (c, p) =>
@@ -108,7 +108,7 @@ namespace BuildingThemes.GUI
         {
             if (!m_name.text.IsNullOrWhiteSpace())
             {
-                int.TryParse(m_level.selectedValue.Replace("Level ", ""), out m_selectedLevel);
+                int.TryParse(System.Text.RegularExpressions.Regex.Match(m_level.selectedValue, @"\d+").Value, out m_selectedLevel);
 
                 string prefix = "{{" + UIThemeManager.instance.selectedTheme.name + "}}.";
                 string suffix = " L" + m_selectedLevel + " " + m_item.sizeAsString;
@@ -126,12 +126,12 @@ namespace BuildingThemes.GUI
                 if (m_ok.isEnabled)
                     m_ok.tooltip = null;
                 else
-                    m_ok.tooltip = "Building already exists with that level";
+                    m_ok.tooltip = Localization.Get("CLONE_EXISTS_TOOLTIP");
             }
             else
             {
                 m_ok.isEnabled = false;
-                m_ok.tooltip = "Please enter a name";
+                m_ok.tooltip = Localization.Get("CLONE_ENTER_NAME_TOOLTIP");
             }
 
         }
@@ -159,7 +159,7 @@ namespace BuildingThemes.GUI
                 // Level
                 int maxLevel = m_item.maxLevel;
                 m_level.items = new string[0];
-                for (int i = 1; i <= maxLevel; i++ ) m_level.AddItem("Level " + i);
+                for (int i = 1; i <= maxLevel; i++ ) m_level.AddItem(Localization.Get("PREVIEW_LEVEL", i));
                 m_level.selectedIndex = (m_item.level < maxLevel) ? m_item.level : 0;
 
                 CheckValidity();

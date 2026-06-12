@@ -57,6 +57,12 @@ Each imported style becomes a theme named [b][DSP] style name[/b]. Only growable
 
 DSP does not need to be active for the import — its style packages are loaded by the game whenever a city is open.
 
+[h1]Translations[/h1]
+
+The mod UI is available in [b]14 languages[/b]: English, German, Spanish, French, Italian, Japanese, Korean, Polish, Portuguese, Russian, Chinese (Simplified and Traditional). The game's language is detected automatically, with English as fallback.
+
+[b]⚠ Most translations are machine-generated and still need review by native speakers.[/b] If you spot awkward wording or text that doesn't fit, corrections are very welcome — translating is as simple as editing one plain-text file. See the [url=https://github.com/roberto-naharro/BuildingThemes2#translations]Translations section of the README[/url] for the file format and how to submit fixes (pull request, GitHub issue, or just post here in the comments).
+
 [h1]Compatibility[/h1]
 
 Compatible with [b]Cities: Skylines 1.21.1-f9[/b] and later 1.x. Save games from the original Building Themes are [b]fully compatible[/b].

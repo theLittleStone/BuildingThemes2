@@ -714,6 +714,63 @@ Please open an issue on GitHub with:
 
 ---
 
+## Translations
+
+The mod UI is fully localizable. Language files live in
+[`BuildingThemes/Locale/`](BuildingThemes/Locale/) — one plain-text file per language,
+named after the game's locale code:
+
+| File | Language |
+| ---- | -------- |
+| `en.txt` | English (source of truth) |
+| `de.txt` | German |
+| `es.txt` | Spanish |
+| `fr.txt` | French |
+| `it.txt` | Italian |
+| `ja.txt` | Japanese |
+| `ko.txt` / `kr.txt` | Korean (both codes used by Korean language mods) |
+| `pl.txt` | Polish |
+| `pt.txt` | Portuguese |
+| `ru.txt` | Russian |
+| `zh.txt` / `zh-cn.txt` | Chinese Simplified (`zh` is the game's built-in code) |
+| `zh-tw.txt` | Chinese Traditional |
+
+The mod picks the file matching the game's current language and falls back to English
+for any missing key or unsupported language.
+
+> ⚠️ **All translations except English (and the reviewed Spanish) are machine-generated
+> and have not been reviewed by native speakers.** They may contain awkward phrasing,
+> wrong game terminology, or text that does not fit the UI. Corrections from native
+> speakers are very welcome — see below.
+
+### How to update or fix a language
+
+1. Open the file for your language in `BuildingThemes/Locale/` (any text editor, UTF-8).
+2. Each line is `KEY translated text` — the **first space** separates the key from the
+   text. Translate only the text after the key; **never change the key itself**.
+3. Formatting rules:
+   - `\n` inside the text is a line break — keep them in roughly the same places.
+   - `{0}`, `{1}`, `{2}` are placeholders filled in by the mod (counts, names, IDs).
+     Keep every placeholder; you may reorder them if your language needs it.
+   - Keep button texts short — they share limited space in the UI.
+   - Use `en.txt` as the reference for what each key means.
+4. To test in-game without rebuilding the mod: copy your edited file into the mod's
+   `Locale/` folder (local mod: `<game data>/Addons/Mods/BuildingThemes2/Locale/`;
+   workshop copy: `workshop/content/255710/3708105182/Locale/`) and restart the game.
+
+### How to contribute a translation
+
+- **Preferred:** open a pull request on
+  [GitHub](https://github.com/roberto-naharro/BuildingThemes2) editing the file in
+  `BuildingThemes/Locale/`.
+- Or open a [GitHub issue](https://github.com/roberto-naharro/BuildingThemes2/issues)
+  with the corrected file attached, or post in the Workshop comments.
+
+To add a **new language**, copy `en.txt` to `<locale-code>.txt` (the code your
+game/language mod reports, e.g. `nl.txt`), translate it, and submit it the same way.
+
+---
+
 ## Credits
 
 **boformer (Sebastian Schöner)**: original mod concept, architecture, and all game logic.

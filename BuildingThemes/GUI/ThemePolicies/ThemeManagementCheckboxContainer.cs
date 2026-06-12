@@ -8,8 +8,8 @@ namespace BuildingThemes.GUI
     {
         private UICheckBox m_Check;
 
-        private const string TEXT_CITY = "Enable Theme Management for this city";
-        private const string TEXT_DISTRICT = "Enable Theme Management for this district";
+        private static string TEXT_CITY => Localization.Get("POLICY_ENABLE_MANAGEMENT_CITY");
+        private static string TEXT_DISTRICT => Localization.Get("POLICY_ENABLE_MANAGEMENT_DISTRICT");
 
         private void Start()
         {

@@ -167,7 +167,7 @@ namespace BuildingThemes.GUI
         {
             if (sourceTheme == null) return;
 
-            string baseName = "Copy of " + sourceTheme.name;
+            string baseName = Localization.Get("THEME_MANAGER_COPY_OF", sourceTheme.name);
             string candidate = baseName;
             int suffix = 2;
             while (BuildingThemesManager.instance.GetLocalThemeByName(candidate) != null)
@@ -442,7 +442,7 @@ namespace BuildingThemes.GUI
             if (!m_themes.ContainsKey(theme))
             {
                 InitBuildingLists();
-                if (!m_themes.ContainsKey(theme)) return "Theme not found";
+                if (!m_themes.ContainsKey(theme)) return Localization.Get("THEME_MANAGER_THEME_NOT_FOUND");
             }
 
             var stats = GetThemeStats(theme);
@@ -456,12 +456,12 @@ namespace BuildingThemes.GUI
 
             StringBuilder errorMessage = new StringBuilder();
             if ((validity & ThemeValidity.Empty) == ThemeValidity.Empty)
-                errorMessage.Append("No building included.\n");
+                errorMessage.Append(Localization.Get("THEME_MANAGER_VALIDITY_EMPTY")).Append("\n");
             else if ((validity & ThemeValidity.MissingL1) == ThemeValidity.MissingL1)
-                errorMessage.Append("No level 1 building included.\n");
+                errorMessage.Append(Localization.Get("THEME_MANAGER_VALIDITY_NO_L1")).Append("\n");
             if ((validity & ThemeValidity.BuildingNotLoaded) == ThemeValidity.BuildingNotLoaded)
-                errorMessage.AppendFormat("{0}/{1} buildings loaded.\n",
-                    stats.LoadedBuildings, stats.LoadedBuildings + stats.MissingBuildings);
+                errorMessage.Append(Localization.Get("THEME_MANAGER_VALIDITY_NOT_LOADED",
+                    stats.LoadedBuildings, stats.LoadedBuildings + stats.MissingBuildings)).Append("\n");
             errorMessage.Length--;
 
             return errorMessage.ToString();
@@ -514,7 +514,7 @@ namespace BuildingThemes.GUI
         {
             // Title Bar
             m_title = AddUIComponent<UITitleBar>();
-            m_title.title = "Theme Manager";
+            m_title.title = Localization.Get("THEME_MANAGER_TITLE");
             m_title.iconSprite = "ToolbarIconZoomOutCity";
 
             // Filter
@@ -586,26 +586,26 @@ namespace BuildingThemes.GUI
                 }
 
                 bool canEdit = !((Configuration.Theme)m_themeSelection.selectedItem).isBuiltIn;
-                string readOnlyTip = canEdit ? null : "Built-in themes are read-only.\nUse 'Copy Theme' to create an editable copy.";
+                string readOnlyTip = canEdit ? null : Localization.Get("THEME_MANAGER_READONLY_TOOLTIP");
                 m_themeRemove.isEnabled = canEdit;
                 m_themeRemove.tooltip = readOnlyTip;
                 m_themeRename.isEnabled = canEdit;
                 m_themeRename.tooltip = readOnlyTip;
                 m_themeCopy.isEnabled = true;
                 m_includeAll.isEnabled = canEdit;
-                m_includeAll.tooltip = canEdit ? "Include all buildings in the current filtered view in this theme" : readOnlyTip;
+                m_includeAll.tooltip = canEdit ? Localization.Get("THEME_MANAGER_INCLUDE_ALL_TOOLTIP") : readOnlyTip;
                 m_includeNone.isEnabled = canEdit;
-                m_includeNone.tooltip = canEdit ? "Exclude all buildings in the current filtered view from this theme" : readOnlyTip;
+                m_includeNone.tooltip = canEdit ? Localization.Get("THEME_MANAGER_INCLUDE_NONE_TOOLTIP") : readOnlyTip;
                 m_includeValid.isEnabled = canEdit;
-                m_includeValid.tooltip = canEdit ? "Include all spawnable buildings in the current filtered view\n(loaded + valid cell dimensions 1–4)" : readOnlyTip;
+                m_includeValid.tooltip = canEdit ? Localization.Get("THEME_MANAGER_INCLUDE_VALID_TOOLTIP") : readOnlyTip;
                 m_excludeMissing.isEnabled = canEdit;
-                m_excludeMissing.tooltip = canEdit ? "Exclude all missing/unloaded buildings in the current filtered view from this theme" : readOnlyTip;
+                m_excludeMissing.tooltip = canEdit ? Localization.Get("THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP") : readOnlyTip;
             };
 
             // Add theme
             m_themeAdd = UIUtils.CreateButton(left);
             m_themeAdd.width = (LEFT_WIDTH - SPACING) / 2;
-            m_themeAdd.text = "New Theme";
+            m_themeAdd.text = Localization.Get("THEME_MANAGER_NEW_THEME");
             m_themeAdd.relativePosition = new Vector3(0, m_themeSelection.height + SPACING);
 
             m_themeAdd.eventClick += (c, p) =>
@@ -617,21 +617,22 @@ namespace BuildingThemes.GUI
             // Remove theme
             m_themeRemove = UIUtils.CreateButton(left);
             m_themeRemove.width = (LEFT_WIDTH - SPACING) / 2;
-            m_themeRemove.text = "Delete Theme";
+            m_themeRemove.text = Localization.Get("THEME_MANAGER_DELETE_THEME");
             m_themeRemove.isEnabled = false;
             m_themeRemove.relativePosition = new Vector3(LEFT_WIDTH - m_themeRemove.width, m_themeSelection.height + SPACING);
 
             m_themeRemove.eventClick += (c, p) =>
             {
-                ConfirmPanel.ShowModal("Delete Theme", "Are you sure you want to delete '" + selectedTheme.name + "' theme ?",
+                ConfirmPanel.ShowModal(Localization.Get("THEME_MANAGER_DELETE_THEME"),
+                    Localization.Get("THEME_MANAGER_DELETE_CONFIRM", selectedTheme.name),
                     (d, i) => { if (i == 1) DeleteTheme(selectedTheme); });
             };
 
             // Workshop Dependencies button (full-width, second row below Add/Delete)
             m_dependencies = UIUtils.CreateButton(left);
             m_dependencies.width = LEFT_WIDTH;
-            m_dependencies.text = "Workshop Dependencies";
-            m_dependencies.tooltip = "List all workshop assets in this theme grouped by Loaded / Missing status";
+            m_dependencies.text = Localization.Get("THEME_MANAGER_DEPENDENCIES");
+            m_dependencies.tooltip = Localization.Get("THEME_MANAGER_DEPENDENCIES_TOOLTIP");
             m_dependencies.relativePosition = new Vector3(0, m_themeSelection.height + 40 + SPACING);
 
             m_dependencies.eventClick += (c, p) =>
@@ -643,7 +644,7 @@ namespace BuildingThemes.GUI
             // Rename theme button (full-width, third row below Add/Delete)
             m_themeRename = UIUtils.CreateButton(left);
             m_themeRename.width = LEFT_WIDTH;
-            m_themeRename.text = "Rename Theme";
+            m_themeRename.text = Localization.Get("THEME_MANAGER_RENAME_THEME");
             m_themeRename.isEnabled = false;
             m_themeRename.relativePosition = new Vector3(0, m_themeSelection.height + 80 + SPACING);
 
@@ -656,7 +657,7 @@ namespace BuildingThemes.GUI
             // Copy theme button (full-width, fourth row below Add/Delete)
             m_themeCopy = UIUtils.CreateButton(left);
             m_themeCopy.width = LEFT_WIDTH;
-            m_themeCopy.text = "Copy Theme";
+            m_themeCopy.text = Localization.Get("THEME_MANAGER_COPY_THEME");
             m_themeCopy.isEnabled = false;
             m_themeCopy.relativePosition = new Vector3(0, m_themeSelection.height + 120 + SPACING);
 
@@ -713,27 +714,27 @@ namespace BuildingThemes.GUI
             // Right-aligned: Include: [All] [None] [Valid]
             m_includeNone = UIUtils.CreateButton(middle);
             m_includeNone.width = 50;
-            m_includeNone.text = "None";
-            m_includeNone.tooltip = "Exclude all buildings in the current filtered view from this theme";
+            m_includeNone.text = Localization.Get("THEME_MANAGER_BTN_NONE");
+            m_includeNone.tooltip = Localization.Get("THEME_MANAGER_INCLUDE_NONE_TOOLTIP");
             m_includeNone.relativePosition = new Vector3(MIDDLE_WIDTH - m_includeNone.width, initialListBottom);
 
             m_includeAll = UIUtils.CreateButton(middle);
             m_includeAll.width = 45;
-            m_includeAll.text = "All";
-            m_includeAll.tooltip = "Include all buildings in the current filtered view in this theme";
+            m_includeAll.text = Localization.Get("THEME_MANAGER_BTN_ALL");
+            m_includeAll.tooltip = Localization.Get("THEME_MANAGER_INCLUDE_ALL_TOOLTIP");
             m_includeAll.relativePosition = new Vector3(m_includeNone.relativePosition.x - m_includeAll.width - SPACING, initialListBottom);
 
             m_includeValid = UIUtils.CreateButton(middle);
             m_includeValid.width = 50;
-            m_includeValid.text = "Valid";
-            m_includeValid.tooltip = "Include all spawnable buildings in the current filtered view\n(loaded + valid cell dimensions 1–4)";
+            m_includeValid.text = Localization.Get("THEME_MANAGER_BTN_VALID");
+            m_includeValid.tooltip = Localization.Get("THEME_MANAGER_INCLUDE_VALID_TOOLTIP");
             m_includeValid.relativePosition = new Vector3(m_includeAll.relativePosition.x - m_includeValid.width - SPACING, initialListBottom);
 
             m_includeLabel = middle.AddUIComponent<UILabel>();
             m_includeLabel.width = 65;
             m_includeLabel.padding = new RectOffset(0, 0, 8, 0);
             m_includeLabel.textScale = 0.8f;
-            m_includeLabel.text = "Include:";
+            m_includeLabel.text = Localization.Get("THEME_MANAGER_INCLUDE_LABEL");
             m_includeLabel.relativePosition = new Vector3(m_includeValid.relativePosition.x - m_includeLabel.width - SPACING, initialListBottom);
 
             // Left-aligned: Exclude: [Missing]
@@ -741,13 +742,13 @@ namespace BuildingThemes.GUI
             m_excludeLabel.width = 60;
             m_excludeLabel.padding = new RectOffset(0, 0, 8, 0);
             m_excludeLabel.textScale = 0.8f;
-            m_excludeLabel.text = "Exclude:";
+            m_excludeLabel.text = Localization.Get("THEME_MANAGER_EXCLUDE_LABEL");
             m_excludeLabel.relativePosition = new Vector3(0, initialListBottom);
 
             m_excludeMissing = UIUtils.CreateButton(middle);
             m_excludeMissing.width = 70;
-            m_excludeMissing.text = "Missing";
-            m_excludeMissing.tooltip = "Exclude all missing/unloaded buildings in the current filtered view from this theme";
+            m_excludeMissing.text = Localization.Get("THEME_MANAGER_BTN_MISSING");
+            m_excludeMissing.tooltip = Localization.Get("THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP");
             m_excludeMissing.relativePosition = new Vector3(m_excludeLabel.width + SPACING, initialListBottom);
 
             m_includeAll.eventClick += (c, p) =>
@@ -781,8 +782,8 @@ namespace BuildingThemes.GUI
                     if (item != null && item.prefab == null && item.included) count++;
                 }
                 if (count == 0) return;
-                ConfirmPanel.ShowModal("Exclude Missing",
-                    string.Format("Exclude {0} missing building(s) in the current filtered view from this theme?", count),
+                ConfirmPanel.ShowModal(Localization.Get("THEME_MANAGER_EXCLUDE_MISSING_TITLE"),
+                    Localization.Get("THEME_MANAGER_EXCLUDE_MISSING_CONFIRM", count),
                     (d, result) =>
                     {
                         if (result != 1) return;
@@ -805,8 +806,8 @@ namespace BuildingThemes.GUI
                     if (item != null && item.canSpawn && !item.included) count++;
                 }
                 if (count == 0) return;
-                ConfirmPanel.ShowModal("Include Valid",
-                    string.Format("Include {0} spawnable building(s) from the current filtered view in this theme?", count),
+                ConfirmPanel.ShowModal(Localization.Get("THEME_MANAGER_INCLUDE_VALID_TITLE"),
+                    Localization.Get("THEME_MANAGER_INCLUDE_VALID_CONFIRM", count),
                     (d, result) =>
                     {
                         if (result != 1) return;
@@ -836,7 +837,7 @@ namespace BuildingThemes.GUI
             m_cloneBuilding = UIUtils.CreateButton(right);
             m_cloneBuilding.width = RIGHT_WIDTH;
             m_cloneBuilding.height = 30;
-            m_cloneBuilding.text = "Clone building";
+            m_cloneBuilding.text = Localization.Get("THEME_MANAGER_CLONE_BUILDING");
             m_cloneBuilding.isEnabled = false;
             m_cloneBuilding.relativePosition = new Vector3(0, m_buildingOptions.relativePosition.y + m_buildingOptions.height + SPACING);
 
@@ -856,7 +857,7 @@ namespace BuildingThemes.GUI
             m_resizeHandle.relativePosition = new Vector3(width - 16, height - 16);
             m_resizeHandle.canFocus = true;
             m_resizeHandle.isInteractive = true;
-            m_resizeHandle.tooltip = "Drag to resize";
+            m_resizeHandle.tooltip = Localization.Get("THEME_MANAGER_RESIZE_TOOLTIP");
             m_resizeHandle.BringToFront();
 
             m_resizeHandle.eventMouseDown += (c, p) =>
@@ -1202,9 +1203,9 @@ namespace BuildingThemes.GUI
             }
 
             var sb = new StringBuilder();
-            sb.AppendFormat("{0} spawnable / {1} shown", spawnable, filtered.Count);
-            if (missing > 0) sb.AppendFormat("  |  {0} missing", missing);
-            if (dlc > 0) sb.AppendFormat("  |  {0} DLC/env", dlc);
+            sb.Append(Localization.Get("THEME_MANAGER_COUNTER_SHOWN", spawnable, filtered.Count));
+            if (missing > 0) sb.Append("  |  ").Append(Localization.Get("THEME_MANAGER_COUNTER_MISSING", missing));
+            if (dlc > 0) sb.Append("  |  ").Append(Localization.Get("THEME_MANAGER_COUNTER_DLC", dlc));
             m_counterLabel.text = sb.ToString();
         }
 

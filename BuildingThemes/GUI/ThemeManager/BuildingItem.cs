@@ -442,10 +442,10 @@ namespace BuildingThemes.GUI
             if (string.IsNullOrEmpty(prefabName)) return "";
 
             string clean = Regex.Replace(prefabName, @"^\{\{.*?\}\}\.", "");
-            if (clean.Contains(".")) return "Workshop";
+            if (clean.Contains(".")) return Localization.Get("ORIGIN_WORKSHOP");
 
             var prefab = PrefabCollection<BuildingInfo>.FindLoaded(prefabName);
-            if (prefab == null) return "Vanilla asset";
+            if (prefab == null) return Localization.Get("ORIGIN_VANILLA");
 
             var exp  = prefab.m_requiredExpansion;
             var pack = prefab.m_requiredModderPack;
@@ -468,8 +468,8 @@ namespace BuildingThemes.GUI
                 }
             }
 
-            if (parts.Count == 0) return "Vanilla asset";
-            return "Included in " + string.Join(", ", parts.ToArray());
+            if (parts.Count == 0) return Localization.Get("ORIGIN_VANILLA");
+            return Localization.Get("ORIGIN_INCLUDED_IN", string.Join(", ", parts.ToArray()));
         }
 
         public static string CleanName(string name, bool cleanNumbers = false)

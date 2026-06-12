@@ -122,7 +122,7 @@ namespace BuildingThemes.GUI
 
             m_building = data as BuildingItem;
             m_name.text = m_building.displayName;
-            if (m_building.prefab == null) m_name.text += " (Not Loaded)";
+            if (m_building.prefab == null) m_name.text += " " + Localization.Get("BUILDING_ITEM_NOT_LOADED");
             m_name.label.textColor = m_building.GetStatusColor();
             m_name.label.isInteractive = false;
             _displaying = true;
@@ -131,7 +131,7 @@ namespace BuildingThemes.GUI
 
             bool builtIn = UIThemeManager.instance.selectedTheme?.isBuiltIn ?? false;
             m_name.isEnabled = !builtIn;
-            m_name.tooltip = builtIn ? "Built-in themes are read-only.\nUse 'Copy Theme' to create an editable copy." : null;
+            m_name.tooltip = builtIn ? Localization.Get("THEME_MANAGER_READONLY_TOOLTIP") : null;
 
             m_level.text = m_building.level == 0 ? null : "L" + m_building.level;
             m_size.text = m_building.sizeAsString;

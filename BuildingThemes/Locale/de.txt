@@ -1,0 +1,223 @@
+MOD_DESCRIPTION Erstelle Gebäude-Themen und wende sie auf Städte und Stadtteile an. Von der Community gepflegter Fork von Building Themes von boformer (Sebastian Schöner). Harmony-2.x-Migration von roberto-naharro.
+SETTINGS_GROUP_BEHAVIOUR Verhalten
+SETTINGS_MISSING_ASSETS_LABEL Standard: fehlende Workshop-Gebäude
+SETTINGS_MISSING_ASSETS_SKIP Überspringen (lückenhafte Plätze, nur Thema)
+SETTINGS_MISSING_ASSETS_FILL Mit Vanilla auffüllen (fehlende Plätze ergänzen)
+SETTINGS_MISSING_ASSETS_FALLBACK Auf Vanilla ausweichen (Vanilla nutzen, wenn zu wenig vorhanden)
+SETTINGS_EMPTY_LEVEL_LABEL Standard: wenn das Thema keine Gebäude für eine Stufe hat
+SETTINGS_EMPTY_LEVEL_VANILLA Vanilla-Ausweichlösung (das Spiel wählt ein Vanilla-Gebäude für diese Stufe)
+SETTINGS_EMPTY_LEVEL_STRICT Strikt (Aufstiege einfrieren; Gebäude bleibt auf aktueller Stufe)
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL Tempo des automatischen Abrisses
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE Sanft (langsam)
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL Normal
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE Aggressiv (schnell)
+SETTINGS_INVALID_THEME_WARNING Warnmeldung bei Auswahl eines ungültigen Themas
+SETTINGS_GROUP_DEBUGGING Fehlersuche
+SETTINGS_DEBUG_OUTPUT Debug-Ausgabe erzeugen
+SETTINGS_GROUP_MAINTENANCE Wartung
+SETTINGS_UNLOCK_POLICIES Richtlinien-Panel von Anfang an freischalten
+SETTINGS_PREFAB_CLONING Prefab-Klonen aktivieren (experimentell — Warnung unten lesen)
+SETTINGS_PREFAB_CLONING_WARNING ⚠ SPIELSTAND-RISIKO: Geklonte Gebäude werden\nbeim Laden erzeugt und im Spielstand gespeichert.\nWenn du dies deaktivierst oder den Mod abbestellst,\nverschwinden alle geklonten Gebäude beim nächsten Laden.\nDer Spielstand wird nicht beschädigt, aber diese\nGebäude sind dauerhaft verloren.\nNur aktivieren, wenn du dieses Risiko akzeptierst.
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION Importiert District-Styles-Plus-Stile als BT2-Themen.\nJedes heißt "[DSP] <Stilname>".\nLade zuerst eine Stadt — bereits importierte Stile werden übersprungen.
+SETTINGS_DSP_IMPORT_BUTTON Aus District Styles Plus importieren
+SETTINGS_DSP_NEEDS_GAME Diese Aktion erfordert eine aktive Spielsitzung.\nLade zuerst eine Stadt und klicke dann auf diesen Knopf.
+SETTINGS_DSP_RESULT_NONE Keine benutzerdefinierten District-Styles-Plus-Stile gefunden. Stelle sicher, dass District Styles Plus in deiner aktuellen Stadt eigene Stile angelegt hat.
+SETTINGS_DSP_RESULT_ALL_SKIPPED Alle {0} Stil(e) bereits importiert (Präfix "{1}"). Nichts Neues hinzuzufügen.
+SETTINGS_DSP_RESULT_IMPORTED {0} Stil(e) als Building Themes importiert (Präfix "{1}").
+SETTINGS_DSP_RESULT_MIXED {0} Stil(e) importiert (Präfix "{1}"). {2} existierten bereits und wurden übersprungen.
+SETTINGS_RESET_DEFAULTS Auf Standardwerte zurücksetzen
+SETTINGS_XML_CORRUPT BuildingThemes kann die Datei BuildingThemes.xml nicht lesen,\nin der deine Einstellungen und Themen gespeichert sind!\nZum Beheben lösche diese Datei und starte das Spiel neu:
+THEME_MANAGER_TITLE Themen-Manager
+THEME_MANAGER_COPY_OF Kopie von {0}
+THEME_MANAGER_THEME_NOT_FOUND Thema nicht gefunden
+THEME_MANAGER_VALIDITY_EMPTY Kein Gebäude enthalten.
+THEME_MANAGER_VALIDITY_NO_L1 Kein Gebäude der Stufe 1 enthalten.
+THEME_MANAGER_VALIDITY_NOT_LOADED {0}/{1} Gebäude geladen.
+THEME_MANAGER_READONLY_TOOLTIP Eingebaute Themen sind schreibgeschützt.\nNutze 'Thema kopieren', um eine bearbeitbare Kopie zu erstellen.
+THEME_MANAGER_NEW_THEME Neues Thema
+THEME_MANAGER_DELETE_THEME Thema löschen
+THEME_MANAGER_DELETE_CONFIRM Möchtest du das Thema '{0}' wirklich löschen?
+THEME_MANAGER_DEPENDENCIES Workshop-Abhängigkeiten
+THEME_MANAGER_DEPENDENCIES_TOOLTIP Listet alle Workshop-Assets dieses Themas, gruppiert nach Status Geladen / Fehlend
+THEME_MANAGER_RENAME_THEME Thema umbenennen
+THEME_MANAGER_COPY_THEME Thema kopieren
+THEME_MANAGER_BTN_ALL Alle
+THEME_MANAGER_BTN_NONE Keine
+THEME_MANAGER_BTN_VALID Gültige
+THEME_MANAGER_BTN_MISSING Fehlende
+THEME_MANAGER_INCLUDE_LABEL Einschließen:
+THEME_MANAGER_EXCLUDE_LABEL Ausschließen:
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP Alle Gebäude der aktuell gefilterten Ansicht in dieses Thema aufnehmen
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP Alle Gebäude der aktuell gefilterten Ansicht aus diesem Thema ausschließen
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP Alle spawnbaren Gebäude der aktuell gefilterten Ansicht aufnehmen\n(geladen + gültige Zellenmaße 1–4)
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP Alle fehlenden/nicht geladenen Gebäude der aktuell gefilterten Ansicht aus diesem Thema ausschließen
+THEME_MANAGER_EXCLUDE_MISSING_TITLE Fehlende ausschließen
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM {0} fehlende(s) Gebäude der aktuell gefilterten Ansicht aus diesem Thema ausschließen?
+THEME_MANAGER_INCLUDE_VALID_TITLE Gültige aufnehmen
+THEME_MANAGER_INCLUDE_VALID_CONFIRM {0} spawnbare(s) Gebäude der aktuell gefilterten Ansicht in dieses Thema aufnehmen?
+THEME_MANAGER_CLONE_BUILDING Gebäude klonen
+THEME_MANAGER_RESIZE_TOOLTIP Zum Ändern der Größe ziehen
+THEME_MANAGER_COUNTER_SHOWN {0} spawnbar / {1} angezeigt
+THEME_MANAGER_COUNTER_MISSING {0} fehlend
+THEME_MANAGER_COUNTER_DLC {0} DLC/Umgebung
+FILTER_ALL Alle
+FILTER_NONE Keine
+FILTER_ALL_DLC Alle DLC
+FILTER_DISPLAY_LABEL Anzeigen:
+FILTER_ORIGIN_DEFAULT Standard
+FILTER_ORIGIN_CUSTOM Benutzerdefiniert
+FILTER_ORIGIN_CLONED Geklont
+FILTER_STATUS_INCLUDED Enthalten
+FILTER_STATUS_EXCLUDED Ausgeschlossen
+FILTER_LEVEL_LABEL Stufe:
+FILTER_SIZE_LABEL Größe:
+FILTER_DLC_TOOLTIP Nach DLC / Content Creator Pack filtern.\nNur installierte DLCs mit Gebäuden in diesem Thema werden angezeigt.
+FILTER_HEIGHT_LABEL Höhe:
+FILTER_HEIGHT_MIN_TOOLTIP Minimale Gebäudehöhe in Metern (leer lassen für kein Limit)
+FILTER_HEIGHT_MAX_TOOLTIP Maximale Gebäudehöhe in Metern (leer lassen für kein Limit)
+FILTER_NAME_LABEL Name:
+FILTER_ALSO_IN_LABEL Auch in:
+FILTER_ALSO_IN_TOOLTIP Nur Gebäude anzeigen, die auch im ausgewählten Thema enthalten sind.\nNützlich zum Vergleichen oder Zusammenführen von Themen.
+FILTER_IN_ANY_THEME In irgendeinem Thema
+FILTER_SHOW_LOADED Geladene anzeigen
+FILTER_SHOW_LOADED_TOOLTIP Gebäude anzeigen, deren Prefab geladen und verfügbar ist
+FILTER_SHOW_MISSING Fehlende anzeigen
+FILTER_SHOW_MISSING_TOOLTIP Workshop-/benutzerdefinierte Assets anzeigen, die derzeit nicht geladen sind\n(nicht abonniert, durch Skyve deaktiviert oder Ladefehler)
+FILTER_SHOW_DLC DLC/Umg. anzeigen
+FILTER_SHOW_DLC_TOOLTIP Nicht verfügbare Vanilla-/DLC-Assets anzeigen\n(DLC nicht im Besitz oder Asset für diese Kartenumgebung ausgeschlossen)
+FILTER_SPAWNABLE_ONLY Nur spawnbare
+FILTER_SPAWNABLE_ONLY_TOOLTIP Nur Gebäude anzeigen, die geladen, im Thema enthalten sind\nund gültige Zellenmaße (1–4) zum Spawnen in Zonen haben
+FILTER_WALL_TO_WALL Wand an Wand
+FILTER_WALL_TO_WALL_TOOLTIP Nur Gebäude anzeigen, die bündig an ihre Nachbarn gebaut werden sollen,\nohne seitliche Lücken.\n\nErkennung über zwei Signale:\n• Eck-Platzierungsmodus (CornerLeft / CornerRight) — immer Wand an Wand.\n• Gerade Gebäude, deren Mesh ≥ 85 % der Grundstücksbreite ausfüllt — kein\n  seitlicher Abstand vom Ersteller vorgesehen.\n\nWorkshop-Gebäude sind oft als gewöhnliche Wohn-/Gewerbegebäude markiert, auch\nwenn sie Wand an Wand stehen; Kategoriefilter allein reichen daher nicht aus.\nDieser Filter prüft die Mesh-Geometrie direkt.
+OPTIONS_NO_OPTION Keine Option verfügbar
+OPTIONS_INCLUDE Einschließen
+OPTIONS_SPAWN_WEIGHT_LABEL Spawn-Gewicht (1–100):
+OPTIONS_SPAWN_WEIGHT_TOOLTIP Relatives Spawn-Gewicht im Vergleich zu anderen Gebäuden gleicher Zone, Stufe und Größe.\n\nBeispiel: zwei Gebäude mit Gewicht 10 erscheinen jeweils 50 % der Zeit.\nEin Gebäude mit Gewicht 20 ist doppelt so wahrscheinlich wie eines mit Gewicht 10 im selben Platz.\n\nEin Gebäude allein auf seinem Platz erscheint immer (100 %), unabhängig vom Gewicht.\n\nMin: 1  |  Standard: 10  |  Max: 100
+OPTIONS_CORNER_LABEL Auf Eckgrundstücken verwenden
+OPTIONS_CORNER_TOOLTIP Dieses Gebäude auch für Eckgrundstücke (Kreuzungen) anbieten.\n\nNutze dies für gerade Gebäude, die Ecken füllen sollen. Das Gebäude erscheint\nweiterhin auch auf normalen Grundstücken. Hinweis: Ein gerades Gebäude kann die Ecke\nnicht physisch umschließen wie ein eigens gebautes Eck-Asset — es zeigt zur Hauptstraße\nund seine Seitenwand zur Querstraße.\n\nEchte Eck-Assets (in der Vorschau als 'Ecke (links/rechts)' angezeigt) füllen Ecken\nbereits, daher hat diese Option bei ihnen keine Wirkung.
+OPTIONS_UPGRADE_LABEL Aufstieg:
+OPTIONS_UPGRADE_TOOLTIP Name des Gebäudes, das beim Aufstieg erscheinen soll.\nLeer lassen für zufälliges Spawnen.
+OPTIONS_ASSET_NAME_LABEL Asset-Name:
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL Asset-Name (Workshop {0}):
+OPTIONS_ASSET_NAME_TOOLTIP Vollständiger interner Prefab-Name. Bei Workshop-Assets enthält er die Steam-Workshop-ID.\nKlicken zum Auswählen und Kopieren.
+OPTIONS_PLOP Platzieren
+OPTIONS_BULLDOZE_ALL Alle abreißen
+OPTIONS_BASE_LABEL Basis:
+OPTIONS_BASE_TOOLTIP Name des ursprünglichen Gebäudes.
+OPTIONS_WORKSHOP_ID_TOOLTIP Workshop-ID: {0}
+THEME_ITEM_BADGE_VANILLA Reines Vanilla-Thema: keine DLC- oder Workshop-Assets erforderlich.
+THEME_ITEM_BADGE_DLC Benötigt DLC. Keine Workshop-Abonnements erforderlich.
+THEME_ITEM_MISSING_FILL {0} fehlend: werden mit Vanilla ergänzt.
+THEME_ITEM_MISSING_FALLBACK {0} fehlend: betroffene Gruppen weichen auf Vanilla aus.
+PREVIEW_WALL_TO_WALL Wand an Wand
+PREVIEW_CORNER_LEFT Ecke (links)
+PREVIEW_CORNER_RIGHT Ecke (rechts)
+PREVIEW_LEVEL Stufe {0}
+BUILDING_ITEM_NOT_LOADED (Nicht geladen)
+ORIGIN_WORKSHOP Workshop
+ORIGIN_VANILLA Vanilla-Asset
+ORIGIN_INCLUDED_IN Enthalten in {0}
+CATEGORY_RESIDENTIAL_LOW Wohngebiet mit geringer Dichte
+CATEGORY_RESIDENTIAL_HIGH Wohngebiet mit hoher Dichte
+CATEGORY_RESIDENTIAL_ECO Autarkes Wohngebiet
+CATEGORY_COMMERCIAL_LOW Gewerbegebiet mit geringer Dichte
+CATEGORY_COMMERCIAL_HIGH Gewerbegebiet mit hoher Dichte
+CATEGORY_COMMERCIAL_LEISURE Freizeit-Gewerbe
+CATEGORY_COMMERCIAL_TOURISM Tourismus-Gewerbe
+CATEGORY_COMMERCIAL_ECO Gewerbe mit Bio- und Regionalprodukten
+CATEGORY_INDUSTRIAL Allgemeine Industrie
+CATEGORY_FARMING Landwirtschaft
+CATEGORY_FORESTRY Forstwirtschaft
+CATEGORY_OIL Ölindustrie
+CATEGORY_ORE Erzindustrie
+CATEGORY_OFFICE Büro
+CATEGORY_OFFICE_HIGHTECH IT-Büro
+CATEGORY_RESIDENTIAL_W2W Wohngebiet Wand an Wand
+CATEGORY_COMMERCIAL_W2W Gewerbe Wand an Wand
+CATEGORY_OFFICE_W2W Büro Wand an Wand
+CATEGORY_OFFICE_FINANCIAL Finanzbüro
+MODAL_OK OK
+MODAL_CANCEL Abbrechen
+MODAL_CLOSE Schließen
+MODAL_CREATE Erstellen
+MODAL_RENAME Umbenennen
+MODAL_CLONE Klonen
+NEW_THEME_TITLE Neues Thema erstellen
+NEW_THEME_NAME_LABEL Themenname:
+RENAME_THEME_NAME_LABEL Neuer Name:
+CLONE_TITLE Gebäude klonen
+CLONE_NAME_LABEL Gebäudename:
+CLONE_EXISTS_TOOLTIP Es existiert bereits ein Gebäude mit dieser Stufe
+CLONE_ENTER_NAME_TOOLTIP Bitte gib einen Namen ein
+WARNING_TITLE Warnung
+DEPS_COPY_MISSING Fehlende IDs kopieren
+DEPS_COPY_MISSING_TOOLTIP Steam-Workshop-IDs aller fehlenden Assets in die Zwischenablage kopieren (eine pro Zeile)
+DEPS_COPY_ALL Alle IDs kopieren
+DEPS_COPY_ALL_TOOLTIP Steam-Workshop-IDs aller Assets dieses Themas in die Zwischenablage kopieren (eine pro Zeile)\nNützlich zur Verwaltung der Aktivierung in Skyve
+DEPS_SUBSCRIBE_MISSING Fehlende abonnieren
+DEPS_SUBSCRIBE_MISSING_TOOLTIP Alle fehlenden Workshop-Assets auf Steam abonnieren\nDas Spiel muss neu gestartet werden, um die neu abonnierten Assets zu laden
+DEPS_REQUESTED Angefordert ({0})
+DEPS_NO_THEME Kein Thema ausgewählt.
+DEPS_SUMMARY {0} Workshop-Asset(s) — {1} geladen, {2} fehlend.
+DEPS_SECTION_MISSING Fehlend — nicht geladen ({0})
+DEPS_SECTION_LOADED Geladen ({0})
+DEPS_NO_WORKSHOP_ASSETS Dieses Thema enthält keine Workshop-Assets.
+DEPS_STEAM_ID_TOOLTIP Steam-Workshop-ID: {0}
+DEPS_OPEN Öffnen
+DEPS_OPEN_TOOLTIP Im Steam Workshop öffnen
+POLICY_TAB_THEMES Themen
+POLICY_ENABLE_MANAGEMENT_CITY Themenverwaltung für diese Stadt aktivieren
+POLICY_ENABLE_MANAGEMENT_DISTRICT Themenverwaltung für diesen Stadtteil aktivieren
+POLICY_DISTRICT_OPTIONS Stadtteil-Optionen
+POLICY_DISTRICT_OPTIONS_TOOLTIP Blacklist-Modus, Stufenverhalten,\nUmgang mit fehlenden Assets und Spawn-Diagnose für diesen Stadtteil konfigurieren.
+POLICY_THEME_WARNING Dieses Thema funktioniert möglicherweise nicht wie erwartet:
+DIAG_TITLE Stadtteil-Themen-Diagnose
+DIAG_COPY In Zwischenablage kopieren
+DIAG_COPIED Kopiert!
+DIAG_SKYVE_NOTE Skyve ist installiert — nutze 'Workshop-Abhängigkeiten' im Themen-Manager,\num IDs fehlender Assets zu kopieren und die Aktivierung in Skyve zu verwalten.
+DISTRICT_OPTIONS_TITLE Stadtteil-Themen-Optionen
+DISTRICT_BLACKLIST_LABEL Gebäude erlauben, die in keinem Thema sind (Blacklist-Modus)
+DISTRICT_BLACKLIST_TOOLTIP Wenn aktiviert, können alle Vanilla-/Themen-Gebäude erscheinen — die Themen werden zur Blacklist\n(nur ausdrücklich ausgeschlossene Gebäude werden blockiert).\nWenn deaktiviert, können nur Gebäude erscheinen, die in einem aktiven Thema dieses Stadtteils enthalten sind.
+DISTRICT_LEVEL_UP_LABEL Aufstieg — keine Gebäude für diese Stufe:
+DISTRICT_NOT_LOADED_LABEL Abonniertes Gebäude nicht geladen:
+DISTRICT_LEVEL_VANILLA Vanilla-Ausweichlösung — das Spiel wählt ein Vanilla-Gebäude
+DISTRICT_LEVEL_STRICT Strikt — Aufstiege auf aktueller Stufe einfrieren
+DISTRICT_LEVEL_TOOLTIP Vanilla-Ausweichlösung: das Spiel wählt ein Vanilla-Gebäude für die höhere Stufe.\n\nStrikt: Aufstiege werden blockiert, wenn das Thema keine Gebäude der Zielstufe hat.\nDas Gebäude bleibt dauerhaft auf seiner aktuellen Stufe.\n\nUm genau zu steuern, welches Gebäude ein Aufstieg erzeugt, nutze das Feld 'Aufstieg'\ndieses Gebäudes im Themen-Manager.
+DISTRICT_MISSING_SKIP Überspringen — nur Thema, Plätze können lückenhaft sein
+DISTRICT_MISSING_FILL Mit Vanilla auffüllen — fehlende Plätze ergänzen
+DISTRICT_MISSING_FALLBACK Auf Vanilla ausweichen — Vanilla nutzen, wenn zu wenig vorhanden
+DISTRICT_MISSING_TOOLTIP Überspringen: fehlende Gebäude werden stillschweigend verworfen. Das Thema gilt weiterhin,\nnur mit den geladenen Assets — bei vielen fehlenden kann es Lücken geben.\n\nMit Vanilla auffüllen: Vanilla-Gebäude ergänzen jeden fehlenden Platz.\nDeine geladenen Themen-Gebäude erscheinen weiterhin; Vanilla füllt die Lücken.\n\nAuf Vanilla ausweichen: fehlt ein Gebäude eines Platzes, weicht der gesamte Platz\nauf reines Vanilla aus. Keine lückenhaften Bereiche, aber weniger Themen-Abdeckung.
+DISTRICT_AUTO_BULLDOZE_LABEL Themenfremde Gebäude automatisch entfernen
+DISTRICT_AUTO_BULLDOZE_TOOLTIP Reißt nach und nach bestehende Gebäude dieses Stadtteils ab, die zu keinem\naktiven Thema gehören. Betrifft nur wachsende Wohn-, Gewerbe-, Industrie-\nund Bürogebäude — Dienstleistungsgebäude werden nie angetastet.\nHat keine Wirkung, wenn 'Gebäude erlauben, die in keinem Thema sind' aktiviert ist.
+DISTRICT_ENFORCE_SPEC_LABEL Auch nicht spezialisierte Gebäude entfernen
+DISTRICT_ENFORCE_SPEC_TOOLTIP Wenn ein Stadtteil eine aktive Spezialisierung hat (Landwirtschaft, Forstwirtschaft,\nAutarkie, Tourismus usw.), entfernt diese Option auch Themen-Gebäude, deren Typ nicht\nzur Spezialisierung passt — z. B. allgemeine Industrie in einem Landwirtschafts-Stadtteil.\n\nNutze dies, um einen Stadtteil vollständig auf seine Spezialisierung umzustellen:\nbestehende Gebäude des falschen Typs werden nach und nach durch korrekt\nspezialisierte aus den aktiven Themen ersetzt.\n\nNur aktiv, wenn 'Themenfremde Gebäude automatisch entfernen' ebenfalls aktiviert ist.\nHat keine Wirkung, wenn der Stadtteil keine aktive Spezialisierungs-Richtlinie hat.
+DISTRICT_PREFER_ELECTRICITY_LABEL Zonen mit Strom bevorzugen
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP Neue Gebäude nur in Zonenzellen erscheinen lassen, die bereits ans Stromnetz\nangeschlossen sind. Zellen ohne Strom werden übersprungen und später erneut versucht.\n\n⚠ Das Spawnen kann deutlich langsamer sein, solange große Teile des Stadtteils\nnoch nicht elektrifiziert sind. Nach 40 aufeinanderfolgenden Auslassungen wird der\nFilter automatisch ausgesetzt, damit das Wachstum nie dauerhaft blockiert ist — er\nreaktiviert sich, sobald wieder eine elektrifizierte Zelle gefunden wird.
+DISTRICT_CLUSTER_LABEL An bestehende Gebäude anlagern (Wand an Wand)
+DISTRICT_CLUSTER_TOOLTIP Zwingt neue Gebäude, neben bestehenden zu erscheinen, und verschiebt sie\nentlang der Straße, sodass sich ihre sichtbaren Wände berühren — das beseitigt die\nkleinen Lücken, die entstehen, wenn das Mesh eines Gebäudes schmaler ist als sein Grundstück.\n\nFunktionsweise:\n  • Zellen-Nachbarschaft — Spawn-Versuche auf Grundstücken ohne Nachbargebäude\n    werden übersprungen, sodass das Wachstum von bestehender Bebauung nach außen\n    ausstrahlt, statt zufällig isolierte Gebäude abzusetzen.\n  • Positions-Einrasten — wird ein Spawn akzeptiert, wird das neue Gebäude entlang\n    der Straße verschoben (bis zu ½ Zelle, 4 m), damit seine Mesh-Kante auf die\n    Mesh-Kante des Nachbarn trifft. Funktioniert bei Gebäuden, deren Modell kleiner\n    als ihre 8-m-Zellenzuteilung ist, und berücksichtigt gedrehte / nicht am Raster\n    ausgerichtete Meshes über projizierte Begrenzungsrahmen.\n\nNotlösung: Wird nach 40 Versuchen nirgends ein Nachbar gefunden, setzt der Filter\naus, damit das erste Gebäude eines leeren Stadtteils normal landen kann — die\nfolgenden Gebäude lagern sich dann daran an.\n\nAm besten mit Wand-an-Wand-Themen, funktioniert aber mit jedem Thema.
+DISTRICT_SIZE_PREF_LABEL Gebäudegrößen-Präferenz pro Zonentyp  (Standard = ursprüngliches Spielverhalten):
+DISTRICT_SIZE_DEFAULT Standard
+DISTRICT_SIZE_BIGGEST Größte zuerst
+DISTRICT_SIZE_WIDEST Breiteste zuerst
+DISTRICT_SIZE_DEEPEST Tiefste zuerst
+DISTRICT_SIZE_RANDOM Zufällig (nur Gewicht)
+DISTRICT_SIZE_SMALLEST Kleinste zuerst
+DISTRICT_SIZE_TALLEST Höchste zuerst
+DISTRICT_SIZE_SHORTEST Niedrigste zuerst
+DISTRICT_SIZE_PREF_TOOLTIP Standard: ursprüngliches Spielverhalten — versucht zuerst das breiteste Grundstück und verkleinert, bis ein Themen-Gebäude passt.\nGrößte zuerst: bevorzugt die breiteste × tiefste Grundfläche.\nBreiteste zuerst: bevorzugt die breitesten Gebäude, bei Gleichstand die flachsten.\nTiefste zuerst: bevorzugt die tiefsten Gebäude, bei Gleichstand die schmalsten.\nZufällig (nur Gewicht): keine Größen-Vorliebe — rein nach Spawn-Gewicht.\nKleinste zuerst: bevorzugt die schmalste × flachste Grundfläche.\nHöchste zuerst: bevorzugt die höchsten Gebäude (nach Mesh-Höhe).\nNiedrigste zuerst: bevorzugt die niedrigsten Gebäude (nach Mesh-Höhe).
+DISTRICT_RESIDENTIAL_LABEL Wohngebiet:
+DISTRICT_COMMERCIAL_LABEL Gewerbe:
+DISTRICT_INDUSTRIAL_LABEL Industrie:
+DISTRICT_OFFICE_LABEL Büro:
+DISTRICT_STRENGTH_LABEL Präferenz-Stärke:
+DISTRICT_STRENGTH_GENTLE Sanft
+DISTRICT_STRENGTH_MODERATE Moderat
+DISTRICT_STRENGTH_STRONG Stark
+DISTRICT_STRENGTH_ABSOLUTE Absolut (immer bevorzugte Größe wählen)
+DISTRICT_STRENGTH_TOOLTIP Steuert, wie stark die Größen-Präferenz das Spawn-Gewicht übersteuert.\n\nSanft (α=0.5): Größe gibt einen leichten Schub — das Spawn-Gewicht zählt weiterhin viel.\nModerat (α=1.0): ausgewogen — Größe und Gewicht beeinflussen die Auswahl gleichermaßen.\nStark (α=2.0): Größe dominiert deutlich — die bestplatzierten Größen erscheinen meistens.\nAbsolut: nur die bestplatzierte Größe erscheint; das Spawn-Gewicht entscheidet innerhalb dieser Größe.
+DISTRICT_DIAGNOSTICS_BUTTON Spawn-Diagnose
+DISTRICT_DIAGNOSTICS_TOOLTIP Zeigt, warum Gebäude in diesem Stadtteil erscheinen oder nicht.\nAktiviere 'Debug-Ausgabe erzeugen' in den Mod-Einstellungen für detaillierte Daten.
+CONFLICT_TITLE Building Themes 2 — Mod-Konflikt
+CONFLICT_MESSAGE Building Themes 2 hat einen kritischen Mod-Konflikt erkannt:
+THEMES_BUTTON THEMEN

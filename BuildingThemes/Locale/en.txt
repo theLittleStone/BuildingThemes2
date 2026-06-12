@@ -1,0 +1,223 @@
+MOD_DESCRIPTION Create building themes and apply them to cities and districts. Community-maintained fork of Building Themes by boformer (Sebastian Schöner). Harmony 2.x migration by roberto-naharro.
+SETTINGS_GROUP_BEHAVIOUR Behaviour
+SETTINGS_MISSING_ASSETS_LABEL Default: missing workshop buildings
+SETTINGS_MISSING_ASSETS_SKIP Skip (sparse slots, theme-only)
+SETTINGS_MISSING_ASSETS_FILL Fill with vanilla (supplement missing slots)
+SETTINGS_MISSING_ASSETS_FALLBACK Fall back to vanilla (use vanilla if sparse)
+SETTINGS_EMPTY_LEVEL_LABEL Default: when theme has no buildings for a level
+SETTINGS_EMPTY_LEVEL_VANILLA Vanilla fallback (game picks a vanilla building for that level)
+SETTINGS_EMPTY_LEVEL_STRICT Strict (freeze upgrades; building stays at current level)
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL Auto-bulldoze pace
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE Gentle (slow)
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL Normal
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE Aggressive (fast)
+SETTINGS_INVALID_THEME_WARNING Warning message when selecting an invalid theme
+SETTINGS_GROUP_DEBUGGING Debugging
+SETTINGS_DEBUG_OUTPUT Generate Debug Output
+SETTINGS_GROUP_MAINTENANCE Maintenance
+SETTINGS_UNLOCK_POLICIES Unlock Policies Panel From Start
+SETTINGS_PREFAB_CLONING Enable Prefab Cloning (experimental — read warning below)
+SETTINGS_PREFAB_CLONING_WARNING ⚠ SAVE RISK: Cloned buildings are generated\nat load time and stored in your save.\nIf you disable this or unsubscribe the mod,\nall cloned buildings vanish on next load.\nThe save file is not corrupted, but those\nbuildings are gone permanently.\nOnly enable this if you accept that risk.
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION Imports District Styles Plus styles as BT2 themes.\nEach is named "[DSP] <style name>".\nLoad a city first — skips already-imported styles.
+SETTINGS_DSP_IMPORT_BUTTON Import from District Styles Plus
+SETTINGS_DSP_NEEDS_GAME This action requires an active game session.\nLoad a city first, then click this button.
+SETTINGS_DSP_RESULT_NONE No custom District Styles Plus styles found. Make sure District Styles Plus has custom styles created in your current city.
+SETTINGS_DSP_RESULT_ALL_SKIPPED All {0} style(s) already imported (prefix "{1}"). Nothing new to add.
+SETTINGS_DSP_RESULT_IMPORTED {0} style(s) imported as Building Themes (prefix "{1}").
+SETTINGS_DSP_RESULT_MIXED {0} style(s) imported (prefix "{1}"). {2} already existed and were skipped.
+SETTINGS_RESET_DEFAULTS Reset to Defaults
+SETTINGS_XML_CORRUPT BuildingThemes is unable to read the BuildingThemes.xml file\nthat stores your settings and themes!\nTo fix it, delete this file and restart the game:
+THEME_MANAGER_TITLE Theme Manager
+THEME_MANAGER_COPY_OF Copy of {0}
+THEME_MANAGER_THEME_NOT_FOUND Theme not found
+THEME_MANAGER_VALIDITY_EMPTY No building included.
+THEME_MANAGER_VALIDITY_NO_L1 No level 1 building included.
+THEME_MANAGER_VALIDITY_NOT_LOADED {0}/{1} buildings loaded.
+THEME_MANAGER_READONLY_TOOLTIP Built-in themes are read-only.\nUse 'Copy Theme' to create an editable copy.
+THEME_MANAGER_NEW_THEME New Theme
+THEME_MANAGER_DELETE_THEME Delete Theme
+THEME_MANAGER_DELETE_CONFIRM Are you sure you want to delete '{0}' theme ?
+THEME_MANAGER_DEPENDENCIES Workshop Dependencies
+THEME_MANAGER_DEPENDENCIES_TOOLTIP List all workshop assets in this theme grouped by Loaded / Missing status
+THEME_MANAGER_RENAME_THEME Rename Theme
+THEME_MANAGER_COPY_THEME Copy Theme
+THEME_MANAGER_BTN_ALL All
+THEME_MANAGER_BTN_NONE None
+THEME_MANAGER_BTN_VALID Valid
+THEME_MANAGER_BTN_MISSING Missing
+THEME_MANAGER_INCLUDE_LABEL Include:
+THEME_MANAGER_EXCLUDE_LABEL Exclude:
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP Include all buildings in the current filtered view in this theme
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP Exclude all buildings in the current filtered view from this theme
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP Include all spawnable buildings in the current filtered view\n(loaded + valid cell dimensions 1–4)
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP Exclude all missing/unloaded buildings in the current filtered view from this theme
+THEME_MANAGER_EXCLUDE_MISSING_TITLE Exclude Missing
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM Exclude {0} missing building(s) in the current filtered view from this theme?
+THEME_MANAGER_INCLUDE_VALID_TITLE Include Valid
+THEME_MANAGER_INCLUDE_VALID_CONFIRM Include {0} spawnable building(s) from the current filtered view in this theme?
+THEME_MANAGER_CLONE_BUILDING Clone building
+THEME_MANAGER_RESIZE_TOOLTIP Drag to resize
+THEME_MANAGER_COUNTER_SHOWN {0} spawnable / {1} shown
+THEME_MANAGER_COUNTER_MISSING {0} missing
+THEME_MANAGER_COUNTER_DLC {0} DLC/env
+FILTER_ALL All
+FILTER_NONE None
+FILTER_ALL_DLC All DLC
+FILTER_DISPLAY_LABEL Display:
+FILTER_ORIGIN_DEFAULT Default
+FILTER_ORIGIN_CUSTOM Custom
+FILTER_ORIGIN_CLONED Cloned
+FILTER_STATUS_INCLUDED Included
+FILTER_STATUS_EXCLUDED Excluded
+FILTER_LEVEL_LABEL Level:
+FILTER_SIZE_LABEL Size:
+FILTER_DLC_TOOLTIP Filter by DLC / Content Creator Pack.\nOnly DLCs that are installed and have buildings in this theme are shown.
+FILTER_HEIGHT_LABEL Height:
+FILTER_HEIGHT_MIN_TOOLTIP Minimum building height in metres (leave blank for no limit)
+FILTER_HEIGHT_MAX_TOOLTIP Maximum building height in metres (leave blank for no limit)
+FILTER_NAME_LABEL Name:
+FILTER_ALSO_IN_LABEL Also in:
+FILTER_ALSO_IN_TOOLTIP Show only buildings that are also included in the selected theme.\nUseful for comparing or merging themes.
+FILTER_IN_ANY_THEME In any theme
+FILTER_SHOW_LOADED Show loaded
+FILTER_SHOW_LOADED_TOOLTIP Show buildings whose prefab is loaded and available
+FILTER_SHOW_MISSING Show missing
+FILTER_SHOW_MISSING_TOOLTIP Show workshop/custom assets that are not currently loaded\n(not subscribed, disabled by Skyve, or load error)
+FILTER_SHOW_DLC Show DLC/Env
+FILTER_SHOW_DLC_TOOLTIP Show vanilla/DLC assets not available\n(DLC not owned, or asset excluded for this map environment)
+FILTER_SPAWNABLE_ONLY Spawnable only
+FILTER_SPAWNABLE_ONLY_TOOLTIP Show only buildings that are loaded, included in the theme,\nand have cell dimensions (1–4) valid for zone spawning
+FILTER_WALL_TO_WALL Wall-to-wall
+FILTER_WALL_TO_WALL_TOOLTIP Show only buildings designed to be placed flush against their neighbours\nwith no side gaps.\n\nDetected by two signals:\n• Corner placement mode (CornerLeft / CornerRight) — always wall-to-wall.\n• Straight buildings whose mesh fills ≥ 85 % of the lot width — no side\n  setback left by the creator.\n\nWorkshop buildings are often tagged as ordinary residential/commercial even\nwhen they are wall-to-wall, so category filtering alone is not enough.\nThis filter checks the mesh geometry directly.
+OPTIONS_NO_OPTION No option available
+OPTIONS_INCLUDE Include
+OPTIONS_SPAWN_WEIGHT_LABEL Spawn weight (1–100):
+OPTIONS_SPAWN_WEIGHT_TOOLTIP Relative spawn weight compared to other buildings of the same zone, level, and size.\n\nExample: two buildings at weight 10 each spawn 50 % of the time.\nA building at weight 20 is twice as likely as one at weight 10 in the same slot.\n\nA building alone in its slot always spawns (100 %), regardless of its weight.\n\nMin: 1  |  Default: 10  |  Max: 100
+OPTIONS_CORNER_LABEL Use on corner lots
+OPTIONS_CORNER_TOOLTIP Also offer this building for corner lots (intersections).\n\nUse this for straight buildings that should fill corners. The building keeps\nspawning on normal lots too. Note: a straight building can't physically wrap the\ncorner like a purpose-built corner asset — it fronts the main street and its side\nwall faces the cross street.\n\nTrue corner assets (shown as 'Corner (left/right)' in the preview) already fill\ncorners, so this option has no effect on them.
+OPTIONS_UPGRADE_LABEL Upgrade:
+OPTIONS_UPGRADE_TOOLTIP Name of the building to spawn when upgraded.\nLeave empty for random spawn.
+OPTIONS_ASSET_NAME_LABEL Asset name:
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL Asset name (Workshop {0}):
+OPTIONS_ASSET_NAME_TOOLTIP Full internal prefab name. For workshop assets this includes the Steam Workshop ID.\nClick to select and copy.
+OPTIONS_PLOP Plop
+OPTIONS_BULLDOZE_ALL Bulldoze All
+OPTIONS_BASE_LABEL Base:
+OPTIONS_BASE_TOOLTIP Name of the original building.
+OPTIONS_WORKSHOP_ID_TOOLTIP Workshop ID: {0}
+THEME_ITEM_BADGE_VANILLA Vanilla-only theme: no DLC or workshop assets required.
+THEME_ITEM_BADGE_DLC Needs DLC. No workshop subscriptions required.
+THEME_ITEM_MISSING_FILL {0} missing: supplemented with vanilla.
+THEME_ITEM_MISSING_FALLBACK {0} missing: affected buckets fall back to vanilla.
+PREVIEW_WALL_TO_WALL Wall to wall
+PREVIEW_CORNER_LEFT Corner (left)
+PREVIEW_CORNER_RIGHT Corner (right)
+PREVIEW_LEVEL Level {0}
+BUILDING_ITEM_NOT_LOADED (Not Loaded)
+ORIGIN_WORKSHOP Workshop
+ORIGIN_VANILLA Vanilla asset
+ORIGIN_INCLUDED_IN Included in {0}
+CATEGORY_RESIDENTIAL_LOW Low density residential
+CATEGORY_RESIDENTIAL_HIGH High density residential
+CATEGORY_RESIDENTIAL_ECO Self-sufficient residential
+CATEGORY_COMMERCIAL_LOW Low density commercial
+CATEGORY_COMMERCIAL_HIGH High density commercial
+CATEGORY_COMMERCIAL_LEISURE Leisure commercial
+CATEGORY_COMMERCIAL_TOURISM Tourism commercial
+CATEGORY_COMMERCIAL_ECO Organic & local produce commercial
+CATEGORY_INDUSTRIAL Generic Industry
+CATEGORY_FARMING Farming Industry
+CATEGORY_FORESTRY Forest Industry
+CATEGORY_OIL Oil Industry
+CATEGORY_ORE Ore Industry
+CATEGORY_OFFICE Office
+CATEGORY_OFFICE_HIGHTECH IT office
+CATEGORY_RESIDENTIAL_W2W Wall-to-Wall residential
+CATEGORY_COMMERCIAL_W2W Wall-to-Wall commercial
+CATEGORY_OFFICE_W2W Wall-to-Wall office
+CATEGORY_OFFICE_FINANCIAL Financial Office
+MODAL_OK OK
+MODAL_CANCEL Cancel
+MODAL_CLOSE Close
+MODAL_CREATE Create
+MODAL_RENAME Rename
+MODAL_CLONE Clone
+NEW_THEME_TITLE Create New Theme
+NEW_THEME_NAME_LABEL Theme name:
+RENAME_THEME_NAME_LABEL New name:
+CLONE_TITLE Clone Building
+CLONE_NAME_LABEL Building name:
+CLONE_EXISTS_TOOLTIP Building already exists with that level
+CLONE_ENTER_NAME_TOOLTIP Please enter a name
+WARNING_TITLE Warning
+DEPS_COPY_MISSING Copy Missing IDs
+DEPS_COPY_MISSING_TOOLTIP Copy Steam Workshop IDs of all missing assets to clipboard (one per line)
+DEPS_COPY_ALL Copy All IDs
+DEPS_COPY_ALL_TOOLTIP Copy Steam Workshop IDs of all assets in this theme to clipboard (one per line)\nUseful for managing activation in Skyve
+DEPS_SUBSCRIBE_MISSING Subscribe Missing
+DEPS_SUBSCRIBE_MISSING_TOOLTIP Subscribe to all missing workshop assets on Steam\nThe game must be restarted to load the newly subscribed assets
+DEPS_REQUESTED Requested ({0})
+DEPS_NO_THEME No theme selected.
+DEPS_SUMMARY {0} workshop asset(s) — {1} loaded, {2} missing.
+DEPS_SECTION_MISSING Missing — not loaded ({0})
+DEPS_SECTION_LOADED Loaded ({0})
+DEPS_NO_WORKSHOP_ASSETS This theme has no workshop assets.
+DEPS_STEAM_ID_TOOLTIP Steam Workshop ID: {0}
+DEPS_OPEN Open
+DEPS_OPEN_TOOLTIP Open in Steam Workshop
+POLICY_TAB_THEMES Themes
+POLICY_ENABLE_MANAGEMENT_CITY Enable Theme Management for this city
+POLICY_ENABLE_MANAGEMENT_DISTRICT Enable Theme Management for this district
+POLICY_DISTRICT_OPTIONS District Options
+POLICY_DISTRICT_OPTIONS_TOOLTIP Configure blacklist mode, level behaviour,\nmissing asset handling and spawn diagnostics for this district.
+POLICY_THEME_WARNING This theme might not work like expected:
+DIAG_TITLE District Theme Diagnostics
+DIAG_COPY Copy to Clipboard
+DIAG_COPIED Copied!
+DIAG_SKYVE_NOTE Skyve is installed — use 'Workshop Dependencies' in the Theme Manager\nto copy missing asset IDs and manage activation in Skyve.
+DISTRICT_OPTIONS_TITLE District Theme Options
+DISTRICT_BLACKLIST_LABEL Allow buildings not in any theme (blacklist mode)
+DISTRICT_BLACKLIST_TOOLTIP When enabled, all vanilla/theme buildings can spawn — the themes become a blacklist\n(only explicitly excluded buildings are blocked).\nWhen disabled, only buildings included in an active theme for this district can spawn.
+DISTRICT_LEVEL_UP_LABEL Level up — no buildings for that level:
+DISTRICT_NOT_LOADED_LABEL Subscribed building not loaded:
+DISTRICT_LEVEL_VANILLA Vanilla fallback — game picks a vanilla building
+DISTRICT_LEVEL_STRICT Strict — freeze upgrades at current level
+DISTRICT_LEVEL_TOOLTIP Vanilla fallback: the game picks a vanilla building for the higher level.\n\nStrict: upgrades are blocked when the theme has no buildings at the target level.\nThe building stays at its current level indefinitely.\n\nTo control exactly which building a level-up produces, use the 'Upgrade to' field\nin the Theme Manager for that building.
+DISTRICT_MISSING_SKIP Skip — theme-only, slots may be sparse
+DISTRICT_MISSING_FILL Fill with vanilla — supplement missing slots
+DISTRICT_MISSING_FALLBACK Fall back to vanilla — use vanilla if sparse
+DISTRICT_MISSING_TOOLTIP Skip: missing buildings are quietly dropped. The theme still applies using\nonly loaded assets — slots may be sparse if many are missing.\n\nFill with vanilla: vanilla buildings supplement each missing slot.\nYour loaded theme buildings still appear; vanilla fills the gaps.\n\nFall back to vanilla: if any building in a slot is missing, that entire\nslot falls back to vanilla only. No sparse areas, but less theme coverage.
+DISTRICT_AUTO_BULLDOZE_LABEL Auto-remove non-theme buildings
+DISTRICT_AUTO_BULLDOZE_TOOLTIP Gradually demolishes existing buildings in this district that are not\npart of any active theme. Only affects growable residential, commercial,\nindustrial, and office buildings — service buildings are never touched.\nHas no effect when 'Allow buildings not in any theme' is enabled.
+DISTRICT_ENFORCE_SPEC_LABEL Also remove non-specialized buildings
+DISTRICT_ENFORCE_SPEC_TOOLTIP When a district has an active specialization (Farming, Forestry, Self-Sufficient,\nTourism, etc.), this option also removes themed buildings whose type does not\nmatch the specialization — for example, generic industry in a farming district.\n\nUse this to fully transition a district to its specialization: existing buildings\nof the wrong type are gradually replaced by correctly-specialised ones from the\nactive themes.\n\nOnly active when 'Auto-remove non-theme buildings' is also enabled.\nHas no effect if the district has no active specialization policy.
+DISTRICT_PREFER_ELECTRICITY_LABEL Prefer zones with electricity
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP Only spawn new buildings in zone cells that are already connected to\nthe electricity grid. Cells without power are skipped and retried later.\n\n⚠ Spawning can be significantly slower while large parts of the district\nare not yet electrified. After 40 consecutive skips the filter is\nsuspended automatically so growth is never blocked permanently — it\nre-activates as soon as an electrified cell is found again.
+DISTRICT_CLUSTER_LABEL Cluster against existing buildings (wall-to-wall)
+DISTRICT_CLUSTER_TOOLTIP Forces new buildings to spawn next to existing ones and slides them\nalong the road so their visible walls touch, eliminating the small\ngaps that arise when a building's mesh is narrower than its lot.\n\nHow it works:\n  • Cell adjacency — spawn attempts at lots with no neighbouring\n    building are skipped, so growth radiates outward from existing\n    construction instead of dropping random isolated buildings.\n  • Position snap — when a spawn is accepted, the new building is\n    nudged along the road (up to ½ cell, 4 m) so its mesh edge meets\n    the neighbour's mesh edge. Works for buildings whose model is\n    smaller than its 8 m cell allocation, and respects rotated /\n    non-grid-aligned meshes via projected bounding boxes.\n\nFallback: when no neighbour is found anywhere after 40 attempts,\nthe filter suspends so the first building in an empty district can\nland normally — subsequent buildings then cluster against it.\n\nBest paired with wall-to-wall themes, but works with any theme.
+DISTRICT_SIZE_PREF_LABEL Building size preference per zone type  (Default = original game behaviour):
+DISTRICT_SIZE_DEFAULT Default
+DISTRICT_SIZE_BIGGEST Biggest first
+DISTRICT_SIZE_WIDEST Widest first
+DISTRICT_SIZE_DEEPEST Deepest first
+DISTRICT_SIZE_RANDOM Random (weight only)
+DISTRICT_SIZE_SMALLEST Smallest first
+DISTRICT_SIZE_TALLEST Tallest first
+DISTRICT_SIZE_SHORTEST Shortest first
+DISTRICT_SIZE_PREF_TOOLTIP Default: original game behaviour — tries widest lot first, shrinks until a theme building fits.\nBiggest first: prefers widest × deepest footprint.\nWidest first: prefers widest buildings, tie-break by shallowest depth.\nDeepest first: prefers deepest buildings, tie-break by narrowest width.\nRandom (weight only): no size bias — purely by spawn weight.\nSmallest first: prefers narrowest × shallowest footprint.\nTallest first: prefers tallest buildings (by mesh height).\nShortest first: prefers shortest buildings (by mesh height).
+DISTRICT_RESIDENTIAL_LABEL Residential:
+DISTRICT_COMMERCIAL_LABEL Commercial:
+DISTRICT_INDUSTRIAL_LABEL Industrial:
+DISTRICT_OFFICE_LABEL Office:
+DISTRICT_STRENGTH_LABEL Preference strength:
+DISTRICT_STRENGTH_GENTLE Gentle
+DISTRICT_STRENGTH_MODERATE Moderate
+DISTRICT_STRENGTH_STRONG Strong
+DISTRICT_STRENGTH_ABSOLUTE Absolute (always pick preferred size)
+DISTRICT_STRENGTH_TOOLTIP Controls how strongly size preference overrides spawn weight.\n\nGentle (α=0.5): size gives a mild boost — spawn weight still matters a lot.\nModerate (α=1.0): balanced — size and weight both influence selection.\nStrong (α=2.0): size strongly dominates — top-ranked sizes appear most of the time.\nAbsolute: only the highest-ranked size spawns; spawn weight breaks ties within that size.
+DISTRICT_DIAGNOSTICS_BUTTON Spawn Diagnostics
+DISTRICT_DIAGNOSTICS_TOOLTIP Show why buildings are or are not spawning in this district.\nEnable 'Generate Debug Output' in mod settings for detailed data.
+CONFLICT_TITLE Building Themes 2 — Mod Conflict
+CONFLICT_MESSAGE Building Themes 2 detected a critical mod conflict:
+THEMES_BUTTON THEMES

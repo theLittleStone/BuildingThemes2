@@ -132,11 +132,11 @@ namespace BuildingThemes
                     {
                         try
                         {
-                            string text = "Building Themes 2 detected a critical mod conflict:\n\n" +
+                            string text = Localization.Get("CONFLICT_MESSAGE") + "\n\n" +
                                 string.Join("\n\n", criticals.ConvertAll(c => "• " + c.ModName + ": " + c.Reason).ToArray());
                             ExceptionPanel panel = UIView.library.ShowModal<ExceptionPanel>("ExceptionPanel");
                             if (panel != null)
-                                panel.SetMessage("Building Themes 2 — Mod Conflict", text, false);
+                                panel.SetMessage(Localization.Get("CONFLICT_TITLE"), text, false);
                         }
                         catch (Exception ex)
                         {

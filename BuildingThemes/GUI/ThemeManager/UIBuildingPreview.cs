@@ -201,7 +201,7 @@ namespace BuildingThemes.GUI
             // Wall-to-wall classification (BT2's own mesh-based catalog) — just below the origin
             if (m_item.isWallToWall)
             {
-                m_wallToWall.text = "Wall to wall";
+                m_wallToWall.text = Localization.Get("PREVIEW_WALL_TO_WALL");
                 m_wallToWall.width = width - 10;
                 m_wallToWall.isVisible = true;
                 m_wallToWall.relativePosition = new Vector3(5, infoBottom + 2);
@@ -217,7 +217,7 @@ namespace BuildingThemes.GUI
             if (zm == BuildingInfo.ZoningMode.CornerLeft || zm == BuildingInfo.ZoningMode.CornerRight)
             {
                 m_corner.text = zm == BuildingInfo.ZoningMode.CornerLeft
-                    ? "Corner (left)" : "Corner (right)";
+                    ? Localization.Get("PREVIEW_CORNER_LEFT") : Localization.Get("PREVIEW_CORNER_RIGHT");
                 m_corner.width = width - 10;
                 m_corner.isVisible = true;
                 m_corner.relativePosition = new Vector3(5, infoBottom + 2);
@@ -245,7 +245,7 @@ namespace BuildingThemes.GUI
             }
             if (m_item.level != 0)
             {
-                m_level.text = "Level " + m_item.level;
+                m_level.text = Localization.Get("PREVIEW_LEVEL", m_item.level);
                 m_level.isVisible = true;
                 m_level.relativePosition = new Vector3(5, bottomY);
             }

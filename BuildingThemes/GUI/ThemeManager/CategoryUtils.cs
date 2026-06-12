@@ -100,26 +100,32 @@ namespace BuildingThemes.GUI
             "DistrictSpecializationFinancial"
         };
 
-        public static readonly string[] tooltips = {
-            "Low density residential",
-            "High density residential",
-            "Self-sufficient residential",
-            "Low density commercial",
-            "High density commercial",
-            "Leisure commercial",
-            "Tourism commercial",
-            "Organic & local produce commercial",
-            "Generic Industry",
-            "Farming Industry",
-            "Forest Industry",
-            "Oil Industry",
-            "Ore Industry",
-            "Office",
-            "IT office",
-            "Wall-to-Wall residential",
-            "Wall-to-Wall commercial",
-            "Wall-to-Wall office",
-            "Financial Office"
-        };
+        public static string[] tooltips
+        {
+            get
+            {
+                return new string[] {
+                    Localization.Get("CATEGORY_RESIDENTIAL_LOW"),
+                    Localization.Get("CATEGORY_RESIDENTIAL_HIGH"),
+                    Localization.Get("CATEGORY_RESIDENTIAL_ECO"),
+                    Localization.Get("CATEGORY_COMMERCIAL_LOW"),
+                    Localization.Get("CATEGORY_COMMERCIAL_HIGH"),
+                    Localization.Get("CATEGORY_COMMERCIAL_LEISURE"),
+                    Localization.Get("CATEGORY_COMMERCIAL_TOURISM"),
+                    Localization.Get("CATEGORY_COMMERCIAL_ECO"),
+                    Localization.Get("CATEGORY_INDUSTRIAL"),
+                    Localization.Get("CATEGORY_FARMING"),
+                    Localization.Get("CATEGORY_FORESTRY"),
+                    Localization.Get("CATEGORY_OIL"),
+                    Localization.Get("CATEGORY_ORE"),
+                    Localization.Get("CATEGORY_OFFICE"),
+                    Localization.Get("CATEGORY_OFFICE_HIGHTECH"),
+                    Localization.Get("CATEGORY_RESIDENTIAL_W2W"),
+                    Localization.Get("CATEGORY_COMMERCIAL_W2W"),
+                    Localization.Get("CATEGORY_OFFICE_W2W"),
+                    Localization.Get("CATEGORY_OFFICE_FINANCIAL")
+                };
+            }
+        }
     }
 }

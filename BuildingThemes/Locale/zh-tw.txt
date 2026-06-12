@@ -1,0 +1,223 @@
+MOD_DESCRIPTION 建立建築主題並套用到城市與地區。由社群維護的 boformer（Sebastian Schöner）原版 Building Themes 分支。Harmony 2.x 移植：roberto-naharro。
+SETTINGS_GROUP_BEHAVIOUR 行為
+SETTINGS_MISSING_ASSETS_LABEL 預設：缺少的工作坊建築
+SETTINGS_MISSING_ASSETS_SKIP 略過（地塊稀疏，僅主題）
+SETTINGS_MISSING_ASSETS_FILL 以原版補充（填補缺少的地塊）
+SETTINGS_MISSING_ASSETS_FALLBACK 改用原版（建築不足時使用原版）
+SETTINGS_EMPTY_LEVEL_LABEL 預設：當主題沒有某等級的建築時
+SETTINGS_EMPTY_LEVEL_VANILLA 原版替代（遊戲為該等級挑選原版建築）
+SETTINGS_EMPTY_LEVEL_STRICT 嚴格（凍結升級；建築停留在目前等級）
+SETTINGS_AUTO_BULLDOZE_PACE_LABEL 自動拆除速度
+SETTINGS_AUTO_BULLDOZE_PACE_GENTLE 溫和（慢）
+SETTINGS_AUTO_BULLDOZE_PACE_NORMAL 正常
+SETTINGS_AUTO_BULLDOZE_PACE_AGGRESSIVE 積極（快）
+SETTINGS_INVALID_THEME_WARNING 選擇無效主題時顯示警告
+SETTINGS_GROUP_DEBUGGING 偵錯
+SETTINGS_DEBUG_OUTPUT 產生偵錯輸出
+SETTINGS_GROUP_MAINTENANCE 維護
+SETTINGS_UNLOCK_POLICIES 一開始就解鎖政策面板
+SETTINGS_PREFAB_CLONING 啟用預製體複製（實驗性 — 請閱讀下方警告）
+SETTINGS_PREFAB_CLONING_WARNING ⚠ 存檔風險：複製的建築會在載入時產生\n並儲存在你的存檔中。\n如果你停用此功能或取消訂閱本模組，\n所有複製的建築會在下次載入時消失。\n存檔不會損壞，但那些建築\n將永久遺失。\n只有在你接受此風險時才啟用。
+SETTINGS_GROUP_DSP District Styles Plus
+SETTINGS_DSP_DESCRIPTION 將 District Styles Plus 的風格匯入為 BT2 主題。\n每個主題命名為「[DSP] <風格名稱>」。\n請先載入城市 — 已匯入的風格會被略過。
+SETTINGS_DSP_IMPORT_BUTTON 從 District Styles Plus 匯入
+SETTINGS_DSP_NEEDS_GAME 此操作需要進行中的遊戲。\n請先載入城市，再按下此按鈕。
+SETTINGS_DSP_RESULT_NONE 找不到 District Styles Plus 自訂風格。請確認目前城市中已建立 District Styles Plus 自訂風格。
+SETTINGS_DSP_RESULT_ALL_SKIPPED 全部 {0} 個風格皆已匯入（前綴「{1}」）。沒有新內容可加入。
+SETTINGS_DSP_RESULT_IMPORTED 已將 {0} 個風格匯入為 Building Themes 主題（前綴「{1}」）。
+SETTINGS_DSP_RESULT_MIXED 已匯入 {0} 個風格（前綴「{1}」）。{2} 個已存在，已略過。
+SETTINGS_RESET_DEFAULTS 還原預設值
+SETTINGS_XML_CORRUPT BuildingThemes 無法讀取儲存你的設定與主題的\nBuildingThemes.xml 檔案！\n要修復，請刪除該檔案並重新啟動遊戲：
+THEME_MANAGER_TITLE 主題管理器
+THEME_MANAGER_COPY_OF {0} 的副本
+THEME_MANAGER_THEME_NOT_FOUND 找不到主題
+THEME_MANAGER_VALIDITY_EMPTY 未包含任何建築。
+THEME_MANAGER_VALIDITY_NO_L1 未包含任何 1 級建築。
+THEME_MANAGER_VALIDITY_NOT_LOADED 已載入 {0}/{1} 棟建築。
+THEME_MANAGER_READONLY_TOOLTIP 內建主題為唯讀。\n請使用「複製主題」建立可編輯的副本。
+THEME_MANAGER_NEW_THEME 新增主題
+THEME_MANAGER_DELETE_THEME 刪除主題
+THEME_MANAGER_DELETE_CONFIRM 確定要刪除主題「{0}」嗎？
+THEME_MANAGER_DEPENDENCIES 工作坊相依項目
+THEME_MANAGER_DEPENDENCIES_TOOLTIP 列出本主題的所有工作坊資產，依「已載入 / 缺少」狀態分組
+THEME_MANAGER_RENAME_THEME 重新命名主題
+THEME_MANAGER_COPY_THEME 複製主題
+THEME_MANAGER_BTN_ALL 全部
+THEME_MANAGER_BTN_NONE 全不
+THEME_MANAGER_BTN_VALID 有效
+THEME_MANAGER_BTN_MISSING 缺少
+THEME_MANAGER_INCLUDE_LABEL 包含：
+THEME_MANAGER_EXCLUDE_LABEL 排除：
+THEME_MANAGER_INCLUDE_ALL_TOOLTIP 將目前篩選檢視中的所有建築加入本主題
+THEME_MANAGER_INCLUDE_NONE_TOOLTIP 將目前篩選檢視中的所有建築從本主題排除
+THEME_MANAGER_INCLUDE_VALID_TOOLTIP 加入目前篩選檢視中所有可生成的建築\n（已載入 + 有效的格位尺寸 1–4）
+THEME_MANAGER_EXCLUDE_MISSING_TOOLTIP 將目前篩選檢視中所有缺少/未載入的建築從本主題排除
+THEME_MANAGER_EXCLUDE_MISSING_TITLE 排除缺少
+THEME_MANAGER_EXCLUDE_MISSING_CONFIRM 要將目前篩選檢視中的 {0} 棟缺少建築從本主題排除嗎？
+THEME_MANAGER_INCLUDE_VALID_TITLE 包含有效
+THEME_MANAGER_INCLUDE_VALID_CONFIRM 要將目前篩選檢視中的 {0} 棟可生成建築加入本主題嗎？
+THEME_MANAGER_CLONE_BUILDING 複製建築
+THEME_MANAGER_RESIZE_TOOLTIP 拖曳以調整大小
+THEME_MANAGER_COUNTER_SHOWN 可生成 {0} / 顯示 {1}
+THEME_MANAGER_COUNTER_MISSING 缺少 {0}
+THEME_MANAGER_COUNTER_DLC DLC/環境 {0}
+FILTER_ALL 全部
+FILTER_NONE 全不
+FILTER_ALL_DLC 全部 DLC
+FILTER_DISPLAY_LABEL 顯示：
+FILTER_ORIGIN_DEFAULT 原版
+FILTER_ORIGIN_CUSTOM 自訂
+FILTER_ORIGIN_CLONED 複製
+FILTER_STATUS_INCLUDED 已包含
+FILTER_STATUS_EXCLUDED 已排除
+FILTER_LEVEL_LABEL 等級：
+FILTER_SIZE_LABEL 尺寸：
+FILTER_DLC_TOOLTIP 依 DLC / 內容創作者套件篩選。\n只會顯示已安裝且在本主題中有建築的 DLC。
+FILTER_HEIGHT_LABEL 高度：
+FILTER_HEIGHT_MIN_TOOLTIP 建築最低高度（公尺），留空表示不限
+FILTER_HEIGHT_MAX_TOOLTIP 建築最高高度（公尺），留空表示不限
+FILTER_NAME_LABEL 名稱：
+FILTER_ALSO_IN_LABEL 也屬於：
+FILTER_ALSO_IN_TOOLTIP 只顯示同時包含在所選主題中的建築。\n便於比較或合併主題。
+FILTER_IN_ANY_THEME 任一主題
+FILTER_SHOW_LOADED 顯示已載入
+FILTER_SHOW_LOADED_TOOLTIP 顯示預製體已載入且可用的建築
+FILTER_SHOW_MISSING 顯示缺少
+FILTER_SHOW_MISSING_TOOLTIP 顯示目前未載入的工作坊/自訂資產\n（未訂閱、被 Skyve 停用或載入錯誤）
+FILTER_SHOW_DLC 顯示 DLC/環境
+FILTER_SHOW_DLC_TOOLTIP 顯示無法使用的原版/DLC 資產\n（未擁有 DLC，或資產被此地圖環境排除）
+FILTER_SPAWNABLE_ONLY 僅可生成
+FILTER_SPAWNABLE_ONLY_TOOLTIP 只顯示已載入、包含在主題中\n且格位尺寸（1–4）適合在分區中生成的建築
+FILTER_WALL_TO_WALL 毗連建築
+FILTER_WALL_TO_WALL_TOOLTIP 只顯示設計為與鄰棟緊貼、兩側無縫隙的建築。\n\n以兩種訊號偵測：\n• 轉角放置模式（CornerLeft / CornerRight）— 一定是毗連建築。\n• 模型填滿地塊寬度 85 % 以上的直排建築 — 作者沒有\n  留下側面退縮。\n\n工作坊建築即使是毗連建築，也常被標記為一般住宅/商業，\n因此只靠類別篩選並不足夠。\n本篩選器直接檢查模型幾何形狀。
+OPTIONS_NO_OPTION 沒有可用的選項
+OPTIONS_INCLUDE 包含
+OPTIONS_SPAWN_WEIGHT_LABEL 生成權重 (1–100)：
+OPTIONS_SPAWN_WEIGHT_TOOLTIP 相對於同分區、同等級、同尺寸其他建築的生成權重。\n\n範例：兩棟權重為 10 的建築各有 50 % 的出現機率。\n同一格位中權重 20 的建築出現機率是權重 10 的兩倍。\n\n格位中只有一棟建築時，無論權重為何都必定出現（100 %）。\n\n最小：1  |  預設：10  |  最大：100
+OPTIONS_CORNER_LABEL 用於轉角地塊
+OPTIONS_CORNER_TOOLTIP 讓此建築也可出現在轉角地塊（路口）。\n\n適用於需要填補轉角的直排建築。該建築仍會在一般地塊上\n生成。注意：直排建築無法像專門的轉角資產那樣真正包住\n轉角 — 它面向主街，側牆朝向橫街。\n\n真正的轉角資產（預覽中顯示為「轉角（左/右）」）本來就能填補\n轉角，此選項對它們無效。
+OPTIONS_UPGRADE_LABEL 升級：
+OPTIONS_UPGRADE_TOOLTIP 升級時要生成的建築名稱。\n留空則隨機生成。
+OPTIONS_ASSET_NAME_LABEL 資產名稱：
+OPTIONS_ASSET_NAME_WORKSHOP_LABEL 資產名稱（工作坊 {0}）：
+OPTIONS_ASSET_NAME_TOOLTIP 預製體的完整內部名稱。工作坊資產包含 Steam 工作坊 ID。\n點擊以選取並複製。
+OPTIONS_PLOP 放置
+OPTIONS_BULLDOZE_ALL 全部拆除
+OPTIONS_BASE_LABEL 原型：
+OPTIONS_BASE_TOOLTIP 原始建築的名稱。
+OPTIONS_WORKSHOP_ID_TOOLTIP 工作坊 ID：{0}
+THEME_ITEM_BADGE_VANILLA 純原版主題：不需要 DLC 或工作坊資產。
+THEME_ITEM_BADGE_DLC 需要 DLC。不需要訂閱工作坊。
+THEME_ITEM_MISSING_FILL 缺少 {0} 棟：以原版補充。
+THEME_ITEM_MISSING_FALLBACK 缺少 {0} 棟：受影響的格位改用原版。
+PREVIEW_WALL_TO_WALL 毗連建築
+PREVIEW_CORNER_LEFT 轉角（左）
+PREVIEW_CORNER_RIGHT 轉角（右）
+PREVIEW_LEVEL 等級 {0}
+BUILDING_ITEM_NOT_LOADED （未載入）
+ORIGIN_WORKSHOP 工作坊
+ORIGIN_VANILLA 原版資產
+ORIGIN_INCLUDED_IN 收錄於 {0}
+CATEGORY_RESIDENTIAL_LOW 低密度住宅
+CATEGORY_RESIDENTIAL_HIGH 高密度住宅
+CATEGORY_RESIDENTIAL_ECO 自給自足住宅
+CATEGORY_COMMERCIAL_LOW 低密度商業
+CATEGORY_COMMERCIAL_HIGH 高密度商業
+CATEGORY_COMMERCIAL_LEISURE 休閒商業
+CATEGORY_COMMERCIAL_TOURISM 觀光商業
+CATEGORY_COMMERCIAL_ECO 有機與在地產品商業
+CATEGORY_INDUSTRIAL 一般工業
+CATEGORY_FARMING 農業
+CATEGORY_FORESTRY 林業
+CATEGORY_OIL 石油工業
+CATEGORY_ORE 礦石工業
+CATEGORY_OFFICE 辦公
+CATEGORY_OFFICE_HIGHTECH IT 辦公
+CATEGORY_RESIDENTIAL_W2W 毗連住宅
+CATEGORY_COMMERCIAL_W2W 毗連商業
+CATEGORY_OFFICE_W2W 毗連辦公
+CATEGORY_OFFICE_FINANCIAL 金融辦公
+MODAL_OK 確定
+MODAL_CANCEL 取消
+MODAL_CLOSE 關閉
+MODAL_CREATE 建立
+MODAL_RENAME 重新命名
+MODAL_CLONE 複製
+NEW_THEME_TITLE 建立新主題
+NEW_THEME_NAME_LABEL 主題名稱：
+RENAME_THEME_NAME_LABEL 新名稱：
+CLONE_TITLE 複製建築
+CLONE_NAME_LABEL 建築名稱：
+CLONE_EXISTS_TOOLTIP 該等級的建築已存在
+CLONE_ENTER_NAME_TOOLTIP 請輸入名稱
+WARNING_TITLE 警告
+DEPS_COPY_MISSING 複製缺少的 ID
+DEPS_COPY_MISSING_TOOLTIP 將所有缺少資產的 Steam 工作坊 ID 複製到剪貼簿（每行一個）
+DEPS_COPY_ALL 複製全部 ID
+DEPS_COPY_ALL_TOOLTIP 將本主題所有資產的 Steam 工作坊 ID 複製到剪貼簿（每行一個）\n便於在 Skyve 中管理啟用狀態
+DEPS_SUBSCRIBE_MISSING 訂閱缺少項目
+DEPS_SUBSCRIBE_MISSING_TOOLTIP 在 Steam 上訂閱所有缺少的工作坊資產\n需重新啟動遊戲才能載入新訂閱的資產
+DEPS_REQUESTED 已要求（{0}）
+DEPS_NO_THEME 未選擇主題。
+DEPS_SUMMARY 共 {0} 個工作坊資產 — 已載入 {1}，缺少 {2}。
+DEPS_SECTION_MISSING 缺少 — 未載入（{0}）
+DEPS_SECTION_LOADED 已載入（{0}）
+DEPS_NO_WORKSHOP_ASSETS 本主題沒有工作坊資產。
+DEPS_STEAM_ID_TOOLTIP Steam 工作坊 ID：{0}
+DEPS_OPEN 開啟
+DEPS_OPEN_TOOLTIP 在 Steam 工作坊中開啟
+POLICY_TAB_THEMES 主題
+POLICY_ENABLE_MANAGEMENT_CITY 為本城市啟用主題管理
+POLICY_ENABLE_MANAGEMENT_DISTRICT 為本地區啟用主題管理
+POLICY_DISTRICT_OPTIONS 地區選項
+POLICY_DISTRICT_OPTIONS_TOOLTIP 為本地區設定黑名單模式、等級行為、\n缺少資產處理與生成診斷。
+POLICY_THEME_WARNING 此主題可能無法如預期運作：
+DIAG_TITLE 地區主題診斷
+DIAG_COPY 複製到剪貼簿
+DIAG_COPIED 已複製！
+DIAG_SKYVE_NOTE 偵測到已安裝 Skyve — 請使用主題管理器中的「工作坊相依項目」\n複製缺少資產的 ID，並在 Skyve 中管理啟用狀態。
+DISTRICT_OPTIONS_TITLE 地區主題選項
+DISTRICT_BLACKLIST_LABEL 允許不屬於任何主題的建築（黑名單模式）
+DISTRICT_BLACKLIST_TOOLTIP 啟用後，所有原版/主題建築都可生成 — 主題變成黑名單\n（只有明確排除的建築會被阻擋）。\n停用後，只有本地區作用中主題包含的建築才能生成。
+DISTRICT_LEVEL_UP_LABEL 升級 — 該等級沒有建築時：
+DISTRICT_NOT_LOADED_LABEL 已訂閱但未載入的建築：
+DISTRICT_LEVEL_VANILLA 原版替代 — 遊戲挑選原版建築
+DISTRICT_LEVEL_STRICT 嚴格 — 凍結升級，維持目前等級
+DISTRICT_LEVEL_TOOLTIP 原版替代：遊戲為更高等級挑選一棟原版建築。\n\n嚴格：當主題沒有目標等級的建築時，升級會被阻擋。\n建築將無限期停留在目前等級。\n\n要精確控制升級產生哪棟建築，請在主題管理器中\n使用該建築的「升級」欄位。
+DISTRICT_MISSING_SKIP 略過 — 僅主題，地塊可能稀疏
+DISTRICT_MISSING_FILL 以原版補充 — 填補缺少的地塊
+DISTRICT_MISSING_FALLBACK 改用原版 — 建築不足時使用原版
+DISTRICT_MISSING_TOOLTIP 略過：缺少的建築會被直接捨棄。主題仍只以已載入的資產\n生效 — 缺少較多時地塊可能稀疏。\n\n以原版補充：原版建築補上每個缺少的格位。\n已載入的主題建築仍會出現，原版填補空缺。\n\n改用原版：如果格位中有任何建築缺少，整個格位\n將只使用原版。不會出現稀疏區域，但主題覆蓋率降低。
+DISTRICT_AUTO_BULLDOZE_LABEL 自動移除非主題建築
+DISTRICT_AUTO_BULLDOZE_TOOLTIP 逐步拆除本地區中不屬於任何作用中主題的現有建築。\n僅影響可成長的住宅、商業、工業與辦公建築 —\n絕不會動到公共服務建築。\n啟用「允許不屬於任何主題的建築」時無效。
+DISTRICT_ENFORCE_SPEC_LABEL 同時移除不符合特化的建築
+DISTRICT_ENFORCE_SPEC_TOOLTIP 當地區有作用中的特化（農業、林業、自給自足、觀光等）時，\n此選項也會移除類型與特化不符的主題建築 —\n例如農業地區中的一般工業。\n\n用它讓地區完全轉型為其特化：類型不符的現有建築\n會逐步被作用中主題裡正確特化的建築取代。\n\n僅在同時啟用「自動移除非主題建築」時生效。\n地區沒有作用中的特化政策時無效。
+DISTRICT_PREFER_ELECTRICITY_LABEL 優先有電力的分區
+DISTRICT_PREFER_ELECTRICITY_TOOLTIP 只在已接上電網的分區格位中生成新建築。\n沒有電力的格位會被略過並稍後重試。\n\n⚠ 在地區大部分區域尚未通電時，生成速度可能明顯變慢。\n連續略過 40 次後，此篩選會自動暫停，確保成長不會被\n永久阻斷 — 一旦再次找到通電的格位就會立即恢復。
+DISTRICT_CLUSTER_LABEL 緊貼現有建築群聚（毗連建築）
+DISTRICT_CLUSTER_TOOLTIP 強制新建築生成在現有建築旁，並沿道路平移，\n使可見牆面互相貼合，消除建築模型比地塊窄時\n產生的小縫隙。\n\n運作方式：\n  • 格位相鄰 — 略過沒有相鄰建築的地塊的生成嘗試，\n    使成長從現有建築向外擴散，而不是隨機放置\n    孤立的建築。\n  • 位置吸附 — 當生成被接受時，新建築會沿道路平移\n    （最多 ½ 格位，4 公尺），使其模型邊緣與鄰棟的模型\n    邊緣相接。適用於模型小於 8 公尺格位配置的建築，\n    並以投影邊界框處理旋轉/未對齊格線的模型。\n\n後備機制：嘗試 40 次仍找不到鄰棟時，此篩選會暫停，\n讓空地區的第一棟建築能正常落地 — 後續建築隨後\n緊貼它群聚。\n\n與毗連建築主題搭配最佳，但任何主題皆適用。
+DISTRICT_SIZE_PREF_LABEL 依分區類型的建築尺寸偏好（預設 = 遊戲原始行為）：
+DISTRICT_SIZE_DEFAULT 預設
+DISTRICT_SIZE_BIGGEST 最大優先
+DISTRICT_SIZE_WIDEST 最寬優先
+DISTRICT_SIZE_DEEPEST 最深優先
+DISTRICT_SIZE_RANDOM 隨機（僅權重）
+DISTRICT_SIZE_SMALLEST 最小優先
+DISTRICT_SIZE_TALLEST 最高優先
+DISTRICT_SIZE_SHORTEST 最矮優先
+DISTRICT_SIZE_PREF_TOOLTIP 預設：遊戲原始行為 — 先嘗試最寬的地塊，逐步縮小直到主題建築放得下。\n最大優先：偏好最寬 × 最深的占地。\n最寬優先：偏好最寬的建築，平手時選較淺的。\n最深優先：偏好最深的建築，平手時選較窄的。\n隨機（僅權重）：不偏好尺寸 — 純粹依生成權重。\n最小優先：偏好最窄 × 最淺的占地。\n最高優先：偏好最高的建築（依模型高度）。\n最矮優先：偏好最矮的建築（依模型高度）。
+DISTRICT_RESIDENTIAL_LABEL 住宅：
+DISTRICT_COMMERCIAL_LABEL 商業：
+DISTRICT_INDUSTRIAL_LABEL 工業：
+DISTRICT_OFFICE_LABEL 辦公：
+DISTRICT_STRENGTH_LABEL 偏好強度：
+DISTRICT_STRENGTH_GENTLE 輕微
+DISTRICT_STRENGTH_MODERATE 中等
+DISTRICT_STRENGTH_STRONG 強烈
+DISTRICT_STRENGTH_ABSOLUTE 絕對（一律選擇偏好尺寸）
+DISTRICT_STRENGTH_TOOLTIP 控制尺寸偏好凌駕生成權重的程度。\n\n輕微 (α=0.5)：尺寸只帶來些微加成 — 生成權重仍然很重要。\n中等 (α=1.0)：均衡 — 尺寸與權重共同影響選擇。\n強烈 (α=2.0)：尺寸明顯主導 — 排名靠前的尺寸大多數時候出現。\n絕對：只生成排名最高的尺寸；同尺寸內由生成權重決定。
+DISTRICT_DIAGNOSTICS_BUTTON 生成診斷
+DISTRICT_DIAGNOSTICS_TOOLTIP 顯示建築在本地區生成或不生成的原因。\n在模組設定中啟用「產生偵錯輸出」可取得詳細資料。
+CONFLICT_TITLE Building Themes 2 — 模組衝突
+CONFLICT_MESSAGE Building Themes 2 偵測到嚴重的模組衝突：
+THEMES_BUTTON 主題
