@@ -13,6 +13,17 @@ namespace BuildingThemes.GUI
 
         private UICheckBox m_include;
         private UITextField m_spawnRate;
+        private UICheckBox m_markCorner;
+        private bool m_updatingCorner;  // suppress the corner checkbox event during Show()
+
+        private const string CornerHelpTooltip =
+            "Also offer this building for corner lots (intersections).\n\n" +
+            "Use this for straight buildings that should fill corners. The building keeps\n" +
+            "spawning on normal lots too. Note: a straight building can't physically wrap the\n" +
+            "corner like a purpose-built corner asset — it fronts the main street and its side\n" +
+            "wall faces the cross street.\n\n" +
+            "True corner assets (shown as 'Corner (left/right)' in the preview) already fill\n" +
+            "corners, so this option has no effect on them.";
 
         private UILabel m_assetIdLabel;
         private UITextField m_assetName;
@@ -100,6 +111,18 @@ namespace BuildingThemes.GUI
                 int.TryParse(m_spawnRate.text, out spawnRate); // 0 on empty/invalid → clamped to 1
                 UIThemeManager.instance.ChangeSpawnRate(spawnRate); // also calls CreateBuilding
                 m_spawnRate.text = m_item.building.spawnRate.ToString();
+            };
+
+            // Mark as corner — lets a straight-zoned building also fill corner lots
+            m_markCorner = UIUtils.CreateCheckBox(this);
+            m_markCorner.text = "Use on corner lots";
+            m_markCorner.label.textScale = 0.8f;
+            m_markCorner.isVisible = false;
+            m_markCorner.tooltip = CornerHelpTooltip;
+            m_markCorner.eventCheckChanged += (c, state) =>
+            {
+                if (m_item == null || m_updatingCorner) return;  // ignore programmatic sets in Show()
+                UIThemeManager.instance.ChangeMarkAsCorner(state);
             };
 
             // Upgrade Name
@@ -273,6 +296,7 @@ namespace BuildingThemes.GUI
             m_noOption.isVisible = false;
             m_include.isVisible = false;
             m_spawnRate.parent.isVisible = false;
+            m_markCorner.isVisible = false;
             m_upgradeName.parent.isVisible = false;
             m_baseName.parent.isVisible = false;
             m_assetName.parent.isVisible = false;
@@ -305,6 +329,26 @@ namespace BuildingThemes.GUI
             m_spawnRate.parent.isVisible = true;
             m_spawnRate.isEnabled = !builtIn;
             m_spawnRate.tooltip = builtIn ? readOnlyTip : null;
+
+            // "Use on corner lots" — only offered for buildings that could plausibly work as a
+            // corner. Requirements, checked against the prefab/mesh:
+            //   • loaded prefab (unloaded assets have no zoning/mesh info),
+            //   • straight-zoned (true corner assets already fill corners — no checkbox needed),
+            //   • wall-to-wall by mesh analysis (flat party walls on the sides). A detached
+            //     building with garden setbacks can't sit flush in a corner block, so offering
+            //     the option for it makes no sense.
+            bool cornerEligible = m_item.prefab != null
+                && m_item.prefab.m_zoningMode == BuildingInfo.ZoningMode.Straight
+                && m_item.isWallToWall;
+            m_markCorner.isVisible = cornerEligible;
+            if (cornerEligible)
+            {
+                m_updatingCorner = true;
+                m_markCorner.isChecked = m_item.building != null && m_item.building.markAsCorner;
+                m_updatingCorner = false;
+                m_markCorner.isEnabled = !builtIn;
+                m_markCorner.tooltip = builtIn ? readOnlyTip : CornerHelpTooltip;
+            }
 
             m_upgradeName.text = "";
             m_upgradeBuilding = null;

@@ -283,6 +283,14 @@ namespace BuildingThemes
             [XmlAttribute("environments"), DefaultValue(null)]
             public string environments = null;
 
+            /// <summary>
+            /// User opt-in: treat this (normally straight-zoned) building as a corner building so
+            /// it is also offered for corner lots. Only meaningful for buildings whose prefab
+            /// m_zoningMode is Straight — true corner assets already fill corners natively.
+            /// </summary>
+            [XmlAttribute("mark-as-corner"), DefaultValue(false)]
+            public bool markAsCorner = false;
+
             public bool Equals(Building other)
             {
                 if (other == null) { return false; }
@@ -292,7 +300,8 @@ namespace BuildingThemes
                     && this.upgradeName == other.upgradeName
                     && this.baseName == other.baseName
                     && this.spawnRate == other.spawnRate
-                    && this.include == other.include;
+                    && this.include == other.include
+                    && this.markAsCorner == other.markAsCorner;
             }
 
             public Building(string name)
@@ -312,6 +321,7 @@ namespace BuildingThemes
                 this.include = builtInBuilding.include;
                 this.dlc = builtInBuilding.dlc;
                 this.environments = builtInBuilding.environments;
+                this.markAsCorner = builtInBuilding.markAsCorner;
             }
 
             public Building()

@@ -52,7 +52,9 @@ namespace BuildingThemes.GUI
         private const float TITLE_HEIGHT = 40;
         // Minimum window dimensions (= original fixed size)
         private const float MIN_WIDTH = SPACING + LEFT_WIDTH + SPACING + MIDDLE_WIDTH + SPACING + RIGHT_WIDTH + SPACING;
-        private const float MIN_HEIGHT = (TITLE_HEIGHT + HEIGHT + SPACING + MIN_WIDTH) / 2f - 60f; // ~722
+        // +50 so the building-options panel (which gets half the right-panel height) is tall
+        // enough to fit the extra "Use on corner lots" checkbox row without clipping.
+        private const float MIN_HEIGHT = (TITLE_HEIGHT + HEIGHT + SPACING + MIN_WIDTH) / 2f - 60f + 50f; // ~772
         #endregion
 
         private static GameObject _gameObject;
@@ -321,6 +323,18 @@ namespace BuildingThemes.GUI
             {
                 selectedBuilding.building.spawnRate = spawnRate;
                 m_isDistrictThemesDirty = true;
+            }
+        }
+
+        public void ChangeMarkAsCorner(bool mark)
+        {
+            if (selectedTheme != null && selectedTheme.isBuiltIn) return;
+            CreateBuilding(selectedBuilding);
+
+            if (selectedBuilding.building.markAsCorner != mark)
+            {
+                selectedBuilding.building.markAsCorner = mark;
+                m_isDistrictThemesDirty = true;  // triggers recompile + save in Update()
             }
         }
 

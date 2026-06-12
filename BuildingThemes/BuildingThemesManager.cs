@@ -1035,6 +1035,7 @@ namespace BuildingThemes
                             // -1  = not found in any theme
                             // 1–100 = accepted; building is added N times to the pool
                             int spawnRate = -1;
+                            bool markCorner = false;  // user opted this building in as a corner building
 
                             if (enabledThemes != null && enabledThemes.Count > 0)
                             {
@@ -1049,6 +1050,7 @@ namespace BuildingThemes
 
                                     if (building != null && building.include)
                                     {
+                                        markCorner = building.markAsCorner;
                                         // Migrate legacy spawnRate=0: old behaviour silently excluded
                                         // the building; now we make that explicit via include=false.
                                         if (building.spawnRate == 0)
@@ -1169,6 +1171,25 @@ namespace BuildingThemes
                                 // mod begin
                             }
                             // mod end
+
+                            // "Mark as corner" opt-in: a normally straight-zoned building the user
+                            // flagged as a corner is ALSO injected into the CornerLeft and CornerRight
+                            // buckets for its size, so the vanilla corner cases can pick it for corner
+                            // lots (it stays available on straight lots too). True corner-zoned assets
+                            // already live in a corner bucket, so they're skipped here.
+                            if (markCorner && prefab.m_zoningMode == BuildingInfo.ZoningMode.Straight)
+                            {
+                                int cornerLeftIndex  = GetAreaIndex(prefab.m_class.m_service, prefab.m_class.m_subService, prefab.m_class.m_level, prefab.m_cellWidth, prefab.m_cellLength, BuildingInfo.ZoningMode.CornerLeft);
+                                int cornerRightIndex = GetAreaIndex(prefab.m_class.m_service, prefab.m_class.m_subService, prefab.m_class.m_level, prefab.m_cellWidth, prefab.m_cellLength, BuildingInfo.ZoningMode.CornerRight);
+                                foreach (int ci in new[] { cornerLeftIndex, cornerRightIndex })
+                                {
+                                    if (m_areaBuildings[ci] == null) m_areaBuildings[ci] = new FastList<ushort>();
+                                    for (uint s = 0; s < spawnRate; s++) m_areaBuildings[ci].Add((ushort)j);
+                                }
+                                if (recordDiagnostics)
+                                    Debugger.LogFormat("[CornerPool] district {0}: {1} MARKED-AS-CORNER size={2}x{3} -> L={4} R={5}",
+                                        diagnosticsDistrictId, prefab.name, prefab.m_cellWidth, prefab.m_cellLength, cornerLeftIndex, cornerRightIndex);
+                            }
                         }
                     }
                 }
